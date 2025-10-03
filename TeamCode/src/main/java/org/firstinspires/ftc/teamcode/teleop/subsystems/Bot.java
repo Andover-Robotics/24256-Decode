@@ -4,28 +4,33 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class Bot {
-    private static Bot singleton;
+    public static Bot instance;
 
     public OpMode opMode;
 
     // drivetrain motors
     private DcMotor fl, fr, bl, br;
 
+    // other subsystems
+    public Intake intake;
+
     private Bot(OpMode opMode) {
+        // make sure to set the direction of the motors
         fl = opMode.hardwareMap.get(DcMotor.class, "fl");
         fr = opMode.hardwareMap.get(DcMotor.class, "fr");
         bl = opMode.hardwareMap.get(DcMotor.class, "bl");
         br = opMode.hardwareMap.get(DcMotor.class, "br");
 
-        // make sure to set the direction of the motors
+        // initialize other subsystems
+        intake = new Intake(opMode.hardwareMap);
     }
 
     public static Bot getInstance(OpMode opMode) {
-        if (singleton == null) {
-            singleton = new Bot(opMode);
+        if (instance == null) {
+            instance = new Bot(opMode);
         }
-        singleton.opMode = opMode;
-        return singleton;
+        instance.opMode = opMode;
+        return instance;
     }
 
     public void driveRobotCentric(double throttle, double strafe, double turn) {
