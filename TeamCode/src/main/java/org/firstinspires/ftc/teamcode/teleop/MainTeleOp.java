@@ -26,10 +26,6 @@ public class MainTeleOp extends LinearOpMode {
 
         if (isStopRequested()) return;
 
-        Actions.runBlocking(
-                new ParallelAction(bot.actionPeriodic())
-        );
-
         while (opModeIsActive()) {
             TelemetryPacket packet = new TelemetryPacket();
 
@@ -38,6 +34,8 @@ public class MainTeleOp extends LinearOpMode {
             double turn = gamepad1.right_stick_x;
 
             bot.driveRobotCentric(throttle, strafe, turn);
+
+            bot.periodic();
 
             if (gamepad1.left_bumper) {
                 bot.intake.runIntake(Intake.Direction.FORWARD);
@@ -48,6 +46,7 @@ public class MainTeleOp extends LinearOpMode {
             }
 
             telemetry.addData("Flywheel Velocity", bot.outtake.getRealVelocity());
+            telemetry.update();
         }
     }
 }

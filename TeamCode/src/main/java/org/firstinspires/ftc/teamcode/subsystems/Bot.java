@@ -53,7 +53,7 @@ public class Bot {
         br.setPower(brPower);
     }
 
-    private void periodic() {
+    public void periodic() {
         outtake.periodic();
     }
 

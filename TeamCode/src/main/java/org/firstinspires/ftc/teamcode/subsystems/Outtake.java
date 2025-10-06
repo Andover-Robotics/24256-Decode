@@ -17,7 +17,7 @@ public class Outtake {
 
     public PIDFController controller;
 
-    // flywheel velocity calculations scaling factor
+    // flywheel calculations
     private static double FLYWHEEL_VELOCITY_SCALING_FACTOR = 1.0;
     private static double VELOCITY_BOUND = 50;
 
