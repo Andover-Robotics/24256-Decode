@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import androidx.annotation.NonNull;
+
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -13,6 +17,7 @@ public class Bot {
 
     // other subsystems
     public Intake intake;
+    public Outtake outtake;
 
     private Bot(OpMode opMode) {
         // make sure to set the direction of the motors
@@ -23,6 +28,7 @@ public class Bot {
 
         // initialize other subsystems
         intake = new Intake(opMode.hardwareMap);
+        outtake = new Outtake(opMode.hardwareMap);
     }
 
     public static Bot getInstance(OpMode opMode) {
@@ -45,5 +51,19 @@ public class Bot {
         fr.setPower(frPower);
         bl.setPower(blPower);
         br.setPower(brPower);
+    }
+
+    private void periodic() {
+        outtake.periodic();
+    }
+
+    public Action actionPeriodic() {
+        return new Action() {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                periodic();
+                return true;
+            }
+        };
     }
 }

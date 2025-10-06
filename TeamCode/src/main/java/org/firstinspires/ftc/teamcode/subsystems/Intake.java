@@ -1,14 +1,16 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import java.util.Objects;
 
+@Config
 public class Intake {
     private DcMotor intakeMotor;
-    private final double INTAKE_FORWARD_POWER = 1.0;
-    private final double INTAKE_REVERSE_POWER = -1.0;
+    public final double INTAKE_FORWARD_POWER = 1.0;
+    public final double INTAKE_REVERSE_POWER = -1.0;
 
     public enum Direction {
         FORWARD,
