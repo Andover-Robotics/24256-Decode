@@ -27,6 +27,10 @@ public class Bot {
         fr = new Motor(hardwareMap, "fr");
         bl = new Motor(hardwareMap, "bl");
         br = new Motor(hardwareMap, "br");
+        fl.setRunMode(Motor.RunMode.RawPower);
+        fr.setRunMode(Motor.RunMode.RawPower);
+        bl.setRunMode(Motor.RunMode.RawPower);
+        br.setRunMode(Motor.RunMode.RawPower);
 
         // initialize other subsystems
         intake = new Intake(hardwareMap);

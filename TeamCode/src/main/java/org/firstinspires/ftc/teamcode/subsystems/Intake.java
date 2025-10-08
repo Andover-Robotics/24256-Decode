@@ -19,6 +19,7 @@ public class Intake {
 
     public Intake(HardwareMap hardwareMap) {
         motor = new Motor(hardwareMap, "intake");
+        motor.setRunMode(Motor.RunMode.RawPower);
     }
 
     public void runIntake(Direction direction) {

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDFController;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -27,6 +28,7 @@ public class Outtake {
         controller.setPIDF(kP, kI, kD, kF);
         controller.setTolerance(VELOCITY_BOUND);
         motor = new MotorEx(hardwareMap, "outtake", MotorEx.GoBILDA.RPM_312);
+        motor.setRunMode(Motor.RunMode.RawPower);
     }
 
     public void setTargetVelocity(double targetVelocity) {
