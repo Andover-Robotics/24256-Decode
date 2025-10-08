@@ -4,8 +4,9 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Bot {
     public static Bot instance;
@@ -13,7 +14,7 @@ public class Bot {
     public OpMode opMode;
 
     // drivetrain motors
-    private DcMotor fl, fr, bl, br;
+    private Motor fl, fr, bl, br;
 
     // other subsystems
     public Intake intake;
@@ -21,14 +22,15 @@ public class Bot {
 
     private Bot(OpMode opMode) {
         // make sure to set the direction of the motors
-        fl = opMode.hardwareMap.get(DcMotor.class, "fl");
-        fr = opMode.hardwareMap.get(DcMotor.class, "fr");
-        bl = opMode.hardwareMap.get(DcMotor.class, "bl");
-        br = opMode.hardwareMap.get(DcMotor.class, "br");
+        HardwareMap hardwareMap = opMode.hardwareMap;
+        fl = new Motor(hardwareMap, "fl");
+        fr = new Motor(hardwareMap, "fr");
+        bl = new Motor(hardwareMap, "bl");
+        br = new Motor(hardwareMap, "br");
 
         // initialize other subsystems
-        intake = new Intake(opMode.hardwareMap);
-        outtake = new Outtake(opMode.hardwareMap);
+        intake = new Intake(hardwareMap);
+        outtake = new Outtake(hardwareMap);
     }
 
     public static Bot getInstance(OpMode opMode) {
@@ -47,10 +49,10 @@ public class Bot {
         double blPower = (throttle - strafe - turn) / mag;
         double brPower = (throttle + strafe - turn) / mag;
 
-        fl.setPower(flPower);
-        fr.setPower(frPower);
-        bl.setPower(blPower);
-        br.setPower(brPower);
+        fl.set(flPower);
+        fr.set(frPower);
+        bl.set(blPower);
+        br.set(brPower);
     }
 
     public void periodic() {

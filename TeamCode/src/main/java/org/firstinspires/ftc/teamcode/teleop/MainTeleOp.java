@@ -3,8 +3,7 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.ParallelAction;
-import com.acmerobotics.roadrunner.ftc.Actions;
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -13,12 +12,11 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake;
 
 @TeleOp(name = "TeleOp")
 public class MainTeleOp extends LinearOpMode {
-    private Bot bot;
-
     @Override
     public void runOpMode() throws InterruptedException {
         Bot.instance = null;
-        bot = Bot.getInstance(this);
+        Bot bot = Bot.getInstance(this);
+        GamepadEx gp1 = new GamepadEx(gamepad1);
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -29,9 +27,9 @@ public class MainTeleOp extends LinearOpMode {
         while (opModeIsActive()) {
             TelemetryPacket packet = new TelemetryPacket();
 
-            double throttle = -gamepad1.left_stick_y;
-            double strafe = gamepad1.left_stick_x;
-            double turn = gamepad1.right_stick_x;
+            double throttle = -gp1.getLeftY();
+            double strafe = gp1.getLeftX();
+            double turn = gp1.getRightX();
 
             bot.driveRobotCentric(throttle, strafe, turn);
 
