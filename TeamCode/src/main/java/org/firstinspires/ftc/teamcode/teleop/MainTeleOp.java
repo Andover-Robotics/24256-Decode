@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -35,9 +36,9 @@ public class MainTeleOp extends LinearOpMode {
 
             bot.periodic();
 
-            if (gamepad1.left_bumper) {
+            if (gp1.getButton(GamepadKeys.Button.LEFT_BUMPER)) {
                 bot.intake.runIntake(Intake.Direction.FORWARD);
-            } else if (gamepad1.right_bumper) {
+            } else if (gp1.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
                 bot.intake.runIntake(Intake.Direction.REVERSE);
             } else {
                 bot.intake.runIntake(Intake.Direction.STOP);
