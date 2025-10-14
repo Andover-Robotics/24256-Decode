@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.subsystems.Bot;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 
-@TeleOp(name = "TeleOp")
+@TeleOp(name = "Decode TeleOp")
 public class MainTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
@@ -28,7 +28,7 @@ public class MainTeleOp extends LinearOpMode {
         while (opModeIsActive()) {
             TelemetryPacket packet = new TelemetryPacket();
 
-            double throttle = -gp1.getLeftY();
+            double throttle = gp1.getLeftY();
             double strafe = gp1.getLeftX();
             double turn = gp1.getRightX();
 
@@ -44,7 +44,7 @@ public class MainTeleOp extends LinearOpMode {
                 bot.intake.runIntake(Intake.Direction.STOP);
             }
 
-            telemetry.addData("Flywheel Velocity", bot.outtake.getRealVelocity());
+//            telemetry.addData("Flywheel Velocity", bot.outtake.getRealVelocity());
             telemetry.update();
         }
     }

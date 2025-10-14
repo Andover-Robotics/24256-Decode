@@ -18,23 +18,23 @@ public class Bot {
 
     // other subsystems
     public Intake intake;
-    public Outtake outtake;
+//    public Outtake outtake;
 
     private Bot(OpMode opMode) {
         // make sure to set the direction of the motors
         HardwareMap hardwareMap = opMode.hardwareMap;
-        fl = new Motor(hardwareMap, "fl");
-        fr = new Motor(hardwareMap, "fr");
-        bl = new Motor(hardwareMap, "bl");
-        br = new Motor(hardwareMap, "br");
+        fl = new Motor(opMode.hardwareMap, "fl");
+        fr = new Motor(opMode.hardwareMap, "fr");
+        bl = new Motor(opMode.hardwareMap, "bl");
+        br = new Motor(opMode.hardwareMap, "br");
         fl.setRunMode(Motor.RunMode.RawPower);
         fr.setRunMode(Motor.RunMode.RawPower);
         bl.setRunMode(Motor.RunMode.RawPower);
         br.setRunMode(Motor.RunMode.RawPower);
 
         // initialize other subsystems
-        intake = new Intake(hardwareMap);
-        outtake = new Outtake(hardwareMap);
+        intake = new Intake(opMode);
+//        outtake = new Outtake(opMode);
     }
 
     public static Bot getInstance(OpMode opMode) {
@@ -53,14 +53,14 @@ public class Bot {
         double blPower = (throttle - strafe - turn) / mag;
         double brPower = (throttle + strafe - turn) / mag;
 
-        fl.set(flPower);
-        fr.set(frPower);
-        bl.set(blPower);
-        br.set(brPower);
+        fl.set(-flPower);
+        fr.set(-frPower);
+        bl.set(-blPower);
+        br.set(-brPower);
     }
 
     public void periodic() {
-        outtake.periodic();
+//        outtake.periodic();
     }
 
     public Action actionPeriodic() {

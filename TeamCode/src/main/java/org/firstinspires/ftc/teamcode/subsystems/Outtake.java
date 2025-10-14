@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 @Config
@@ -24,10 +25,10 @@ public class Outtake {
 
     private double targetVelocity = 0;
 
-    public Outtake(HardwareMap hardwareMap) {
+    public Outtake(OpMode opMode) {
         controller.setPIDF(kP, kI, kD, kF);
         controller.setTolerance(VELOCITY_BOUND);
-        motor = new MotorEx(hardwareMap, "outtake", MotorEx.GoBILDA.RPM_312);
+        motor = new MotorEx(opMode.hardwareMap, "outtake", MotorEx.GoBILDA.RPM_312);
         motor.setRunMode(Motor.RunMode.RawPower);
     }
 

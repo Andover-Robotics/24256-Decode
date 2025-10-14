@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 @Config
@@ -16,9 +17,8 @@ public class Intake {
         STOP
     }
 
-
-    public Intake(HardwareMap hardwareMap) {
-        motor = new Motor(hardwareMap, "intake");
+    public Intake(OpMode opMode) {
+        motor = new Motor(opMode.hardwareMap, "intake");
         motor.setRunMode(Motor.RunMode.RawPower);
     }
 
