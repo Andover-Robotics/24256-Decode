@@ -14,7 +14,7 @@ public class Bot {
     public OpMode opMode;
 
     // drivetrain motors
-    private Motor fl, fr, bl, br;
+    public Motor fl, fr, bl, br;
 
     // other subsystems
     public Intake intake;
@@ -54,9 +54,9 @@ public class Bot {
         double brPower = (throttle + strafe - turn) / mag;
 
         fl.set(-flPower);
-        fr.set(-frPower);
+        fr.set(frPower);
         bl.set(-blPower);
-        br.set(-brPower);
+        br.set(brPower);
     }
 
     public void periodic() {

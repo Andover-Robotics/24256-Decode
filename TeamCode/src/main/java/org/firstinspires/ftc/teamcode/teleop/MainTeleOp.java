@@ -33,7 +33,6 @@ public class MainTeleOp extends LinearOpMode {
             double turn = gp1.getRightX();
 
             bot.driveRobotCentric(throttle, strafe, turn);
-
             bot.periodic();
 
             if (gp1.getButton(GamepadKeys.Button.LEFT_BUMPER)) {
