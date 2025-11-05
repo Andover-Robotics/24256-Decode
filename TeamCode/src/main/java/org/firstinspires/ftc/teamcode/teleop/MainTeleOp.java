@@ -35,6 +35,7 @@ public class MainTeleOp extends LinearOpMode {
             bot.driveRobotCentric(throttle, strafe, turn);
             bot.periodic();
 
+            gp1.readButtons();
             if (gp1.getButton(GamepadKeys.Button.LEFT_BUMPER)) {
                 bot.intake.runIntake(Intake.Direction.FORWARD);
             } else if (gp1.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
