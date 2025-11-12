@@ -37,11 +37,11 @@ public class MainTeleOp extends LinearOpMode {
 
             gp1.readButtons();
             if (gp1.getButton(GamepadKeys.Button.LEFT_BUMPER)) {
-                bot.intake.runIntake(Intake.Direction.FORWARD);
+                bot.intake.in();
             } else if (gp1.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
-                bot.intake.runIntake(Intake.Direction.REVERSE);
+                bot.intake.out();
             } else {
-                bot.intake.runIntake(Intake.Direction.STOP);
+                bot.intake.stop();
             }
 
 //            telemetry.addData("Flywheel Velocity", bot.outtake.getRealVelocity());

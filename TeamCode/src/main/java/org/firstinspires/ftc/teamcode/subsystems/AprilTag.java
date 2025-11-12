@@ -24,6 +24,14 @@ public class AprilTag {
         this.colorTarget = colorTarget;
     }
 
+    public AprilTagType getColorTarget() {
+        return colorTarget;
+    }
+
+    public void setColorTarget(AprilTagType colorTarget) {
+        this.colorTarget = colorTarget;
+    }
+
     public enum AprilTagType {
         // source: https://ftc-resources.firstinspires.org/ftc/field/apriltag-art
         GOAL_RED(24),

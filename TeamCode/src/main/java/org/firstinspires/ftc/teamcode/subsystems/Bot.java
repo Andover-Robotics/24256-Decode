@@ -6,7 +6,6 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Bot {
     public static Bot instance;
@@ -22,7 +21,6 @@ public class Bot {
 
     private Bot(OpMode opMode) {
         // make sure to set the direction of the motors
-        HardwareMap hardwareMap = opMode.hardwareMap;
         fl = new Motor(opMode.hardwareMap, "fl");
         fr = new Motor(opMode.hardwareMap, "fr");
         bl = new Motor(opMode.hardwareMap, "bl");

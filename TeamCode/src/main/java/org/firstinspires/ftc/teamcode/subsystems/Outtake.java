@@ -1,11 +1,10 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.controller.PIDFController;
+import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 @Config
 public class Outtake {
@@ -16,17 +15,19 @@ public class Outtake {
     public static double kI = 0;
     public static double kD = 0;
     public static double kF = 0;
+    public static double kStatic = 0;
+    public static double kV = 0;
 
-    public PIDFController controller;
+    public PIDController controller;
 
     // flywheel calculations
-    private static double FLYWHEEL_VELOCITY_SCALING_FACTOR = 1.0;
+    private static double FLYWHEEL_GEAR_RATIO = 1.0;
     private static double VELOCITY_BOUND = 50;
 
     private double targetVelocity = 0;
 
     public Outtake(OpMode opMode) {
-        controller.setPIDF(kP, kI, kD, kF);
+        controller.setPID(kP, kI, kD);
         controller.setTolerance(VELOCITY_BOUND);
         motor = new MotorEx(opMode.hardwareMap, "outtake", MotorEx.GoBILDA.RPM_312);
         motor.setRunMode(Motor.RunMode.RawPower);
@@ -36,17 +37,22 @@ public class Outtake {
         this.targetVelocity = targetVelocity;
     }
 
+    public double getTargetVelocity() {
+        return targetVelocity;
+    }
+
     public double getRealVelocity() {
-        return motor.getVelocity() * FLYWHEEL_VELOCITY_SCALING_FACTOR;
+        return motor.getVelocity() * FLYWHEEL_GEAR_RATIO;
     }
 
     public void periodic() {
-        double output = controller.calculate(getRealVelocity(), targetVelocity);
+        double pidOutput = controller.calculate(getRealVelocity(), targetVelocity);
+        double ffOutput = kStatic + kV * targetVelocity;
 
-        motor.set(output);
+        motor.set(pidOutput + ffOutput);
     }
 
-    public boolean isTolerance() {
+    public boolean inTolerance() {
         return controller.atSetPoint();
     }
 
