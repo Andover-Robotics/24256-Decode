@@ -39,7 +39,8 @@ public class MainTeleOp extends LinearOpMode {
         Bot bot = Bot.getInstance(this);
         GamepadEx gp1 = new GamepadEx(gamepad1);
 
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
         waitForStart();
 
@@ -71,6 +72,7 @@ public class MainTeleOp extends LinearOpMode {
             handleActions(packet);
 
 //            telemetry.addData("Flywheel Velocity", bot.outtake.getRealVelocity());
+            dashboard.sendTelemetryPacket(packet);
             telemetry.update();
         }
     }
