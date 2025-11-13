@@ -14,7 +14,6 @@ public class Outtake {
     public static double kP = 0;
     public static double kI = 0;
     public static double kD = 0;
-    public static double kF = 0;
     public static double kStatic = 0;
     public static double kV = 0;
 
