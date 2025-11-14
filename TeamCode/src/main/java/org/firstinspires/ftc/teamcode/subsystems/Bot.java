@@ -17,7 +17,7 @@ public class Bot {
 
     // other subsystems
     public Intake intake;
-//    public Outtake outtake;
+    public Outtake outtake;
 
     private Bot(OpMode opMode) {
         // make sure to set the direction of the motors
@@ -30,9 +30,8 @@ public class Bot {
         bl.setRunMode(Motor.RunMode.RawPower);
         br.setRunMode(Motor.RunMode.RawPower);
 
-        // initialize other subsystems
         intake = new Intake(opMode);
-//        outtake = new Outtake(opMode);
+        outtake = new Outtake(opMode);
     }
 
     public static Bot getInstance(OpMode opMode) {
@@ -58,7 +57,7 @@ public class Bot {
     }
 
     public void periodic() {
-//        outtake.periodic();
+        outtake.periodic();
     }
 
     public Action actionPeriodic() {

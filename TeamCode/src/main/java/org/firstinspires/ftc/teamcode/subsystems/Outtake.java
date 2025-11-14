@@ -26,7 +26,7 @@ public class Outtake {
     private double targetVelocity = 0;
 
     public Outtake(OpMode opMode) {
-        controller.setPID(kP, kI, kD);
+        controller = new PIDController(kP, kI, kD);
         controller.setTolerance(VELOCITY_BOUND);
         motor = new MotorEx(opMode.hardwareMap, "outtake", MotorEx.GoBILDA.RPM_312);
         motor.setRunMode(Motor.RunMode.RawPower);
@@ -44,11 +44,15 @@ public class Outtake {
         return motor.getVelocity() * FLYWHEEL_GEAR_RATIO;
     }
 
+    public void setPower(double power) {
+        motor.set(power);
+    }
+
     public void periodic() {
         double pidOutput = controller.calculate(getRealVelocity(), targetVelocity);
         double ffOutput = kStatic + kV * targetVelocity;
 
-        motor.set(pidOutput + ffOutput);
+        setPower(pidOutput + ffOutput);
     }
 
     public boolean inTolerance() {

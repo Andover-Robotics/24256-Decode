@@ -1,16 +1,14 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @Config
 public class Intake {
     private Motor motor;
-    private SimpleServo gate;
+    private Servo gate;
 
     // intake configuration
     private static double inPower = 1.0;
@@ -18,13 +16,13 @@ public class Intake {
     private static double storePower = 0.15;
 
     // gate configuration
-    private static double gateOpen = 0.0;
-    private static double gateClosed = 0.0;
+    private static double gateOpen = 0.61;
+    private static double gateClosed = 0.25;
 
     public Intake(OpMode opMode) {
         motor = new Motor(opMode.hardwareMap, "intake");
         motor.setRunMode(Motor.RunMode.RawPower);
-        gate = new SimpleServo(opMode.hardwareMap, "gate", 0, 360, AngleUnit.DEGREES);
+        gate = opMode.hardwareMap.get(Servo.class, "gate");
     }
 
     public void setPower(double power) {
