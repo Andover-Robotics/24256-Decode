@@ -41,7 +41,7 @@ public class Outtake {
     }
 
     public double getRealVelocity() {
-        return motor.getVelocity() * FLYWHEEL_GEAR_RATIO;
+        return motor.getVelocity() / motor.getCPR() * 60 * FLYWHEEL_GEAR_RATIO;
     }
 
     public void setPower(double power) {
