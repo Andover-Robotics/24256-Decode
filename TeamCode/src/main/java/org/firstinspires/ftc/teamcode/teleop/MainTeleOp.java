@@ -52,7 +52,7 @@ public class MainTeleOp extends LinearOpMode {
             double turn = gp1.getRightX();
 
             bot.driveRobotCentric(throttle, strafe, turn);
-//            bot.periodic();
+            bot.periodic();
 
             gp1.readButtons();
             if (gp1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2) {
@@ -77,7 +77,8 @@ public class MainTeleOp extends LinearOpMode {
 
             handleActions(packet);
 
-//            telemetry.addData("Flywheel Velocity", bot.outtake.getRealVelocity());
+            telemetry.addData("Flywheel Velocity", bot.outtake.getRealVelocity());
+
             dashboard.sendTelemetryPacket(packet);
             telemetry.update();
         }
