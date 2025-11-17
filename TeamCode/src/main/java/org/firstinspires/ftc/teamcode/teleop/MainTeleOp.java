@@ -38,6 +38,7 @@ public class MainTeleOp extends LinearOpMode {
         Bot.instance = null;
         Bot bot = Bot.getInstance(this);
         GamepadEx gp1 = new GamepadEx(gamepad1);
+        GamepadEx gp2 = new GamepadEx(gamepad2);
 
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
@@ -47,6 +48,7 @@ public class MainTeleOp extends LinearOpMode {
         while (opModeIsActive() && !isStopRequested()) {
             TelemetryPacket packet = new TelemetryPacket();
 
+            gp1.readButtons();;
             double throttle = gp1.getLeftY();
             double strafe = gp1.getLeftX();
             double turn = gp1.getRightX();
@@ -54,22 +56,22 @@ public class MainTeleOp extends LinearOpMode {
             bot.driveRobotCentric(throttle, strafe, turn);
             bot.periodic();
 
-            gp1.readButtons();
-            if (gp1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2) {
+            gp2.readButtons();
+            if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2) {
                 bot.intake.in();
-            } else if (gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.2) {
+            } else if (gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.2) {
                 bot.intake.out();
             } else {
                 bot.intake.store();
             }
 
-            if (gp1.getButton(GamepadKeys.Button.LEFT_BUMPER)) {
+            if (gp2.getButton(GamepadKeys.Button.LEFT_BUMPER)) {
                 bot.intake.openGate();
-            } else if (gp1.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
+            } else if (gp2.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
                 bot.intake.closeGate();
             }
 
-            if (gp1.getButton(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
+            if (gp2.getButton(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
                 bot.outtake.setPower(-1.0);
             } else {
                 bot.outtake.setPower(0.0);
