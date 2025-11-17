@@ -48,7 +48,7 @@ public class MainTeleOp extends LinearOpMode {
         while (opModeIsActive() && !isStopRequested()) {
             TelemetryPacket packet = new TelemetryPacket();
 
-            gp1.readButtons();;
+            gp2.readButtons();
             double throttle = gp1.getLeftY();
             double strafe = gp1.getLeftX();
             double turn = gp1.getRightX();
