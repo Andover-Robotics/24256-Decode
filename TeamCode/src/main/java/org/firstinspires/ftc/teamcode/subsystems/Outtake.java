@@ -29,6 +29,7 @@ public class Outtake {
         controller = new PIDController(kP, kI, kD);
         motor = new MotorEx(opMode.hardwareMap, "outtake", MotorEx.GoBILDA.RPM_312);
         motor.setRunMode(Motor.RunMode.RawPower);
+        motor.setInverted(true);
     }
 
     public void setTargetVelocity(double targetVelocity) {

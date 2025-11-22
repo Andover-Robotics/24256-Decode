@@ -19,7 +19,7 @@ public class Bot {
     public Intake intake;
     public Outtake outtake;
 
-    private Bot(OpMode opMode) {
+    private Bot(OpMode opMode) { // new Bot(opMode);
         // make sure to set the direction of the motors
         fl = new Motor(opMode.hardwareMap, "fl");
         fr = new Motor(opMode.hardwareMap, "fr");
@@ -29,6 +29,8 @@ public class Bot {
         fr.setRunMode(Motor.RunMode.RawPower);
         bl.setRunMode(Motor.RunMode.RawPower);
         br.setRunMode(Motor.RunMode.RawPower);
+        fl.setInverted(true);
+        bl.setInverted(true);
 
         intake = new Intake(opMode);
         outtake = new Outtake(opMode);
@@ -50,9 +52,9 @@ public class Bot {
         double blPower = (throttle - strafe - turn) / mag;
         double brPower = (throttle + strafe - turn) / mag;
 
-        fl.set(-flPower);
+        fl.set(flPower);
         fr.set(frPower);
-        bl.set(-blPower);
+        bl.set(blPower);
         br.set(brPower);
     }
 

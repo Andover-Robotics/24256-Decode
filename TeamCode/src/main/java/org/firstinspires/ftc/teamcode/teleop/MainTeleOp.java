@@ -48,7 +48,7 @@ public class MainTeleOp extends LinearOpMode {
         while (opModeIsActive() && !isStopRequested()) {
             TelemetryPacket packet = new TelemetryPacket();
 
-            gp2.readButtons();
+            gp1.readButtons();
             double throttle = gp1.getLeftY();
             double strafe = gp1.getLeftX();
             double turn = gp1.getRightX();
@@ -69,12 +69,6 @@ public class MainTeleOp extends LinearOpMode {
                 bot.intake.openGate();
             } else if (gp2.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
                 bot.intake.closeGate();
-            }
-
-            if (gp2.getButton(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
-                bot.outtake.setPower(-1.0);
-            } else {
-                bot.outtake.setPower(0.0);
             }
 
             handleActions(packet);
