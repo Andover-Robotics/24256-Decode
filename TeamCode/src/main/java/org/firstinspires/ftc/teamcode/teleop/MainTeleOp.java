@@ -75,7 +75,7 @@ public class MainTeleOp extends LinearOpMode {
             if (gp2.getButton(GamepadKeys.Button.DPAD_UP)) {
                 bot.outtake.setPower(1.0);
             } else {
-                bot.outtake.setPower(0.0)
+                bot.outtake.setPower(0.0);
             }
 
             handleActions(packet);
