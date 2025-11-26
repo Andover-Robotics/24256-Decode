@@ -8,7 +8,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 @Config
 public class Outtake {
-    private MotorEx motor;
+    private MotorEx motor1;
+    private MotorEx motor2;
 
     // PID constants
     public static double kP = 0;
@@ -21,15 +22,16 @@ public class Outtake {
 
     // flywheel calculations
     private static double FLYWHEEL_GEAR_RATIO = 1.0;
-    private static double VELOCITY_BOUND = 50;
+    private static double VELOCITY_TOLERANCE = 50;
 
     private double targetVelocity = 0;
 
     public Outtake(OpMode opMode) {
         controller = new PIDController(kP, kI, kD);
-        motor = new MotorEx(opMode.hardwareMap, "outtake", MotorEx.GoBILDA.RPM_312);
-        motor.setRunMode(Motor.RunMode.RawPower);
-        motor.setInverted(true);
+        motor1 = new MotorEx(opMode.hardwareMap, "outtake1", MotorEx.GoBILDA.BARE);
+        motor1.setRunMode(Motor.RunMode.RawPower);
+        motor2 = new MotorEx(opMode.hardwareMap, "outtake2", Motor.GoBILDA.BARE);
+        motor2.setRunMode(Motor.RunMode.RawPower);
     }
 
     public void setTargetVelocity(double targetVelocity) {
@@ -41,11 +43,12 @@ public class Outtake {
     }
 
     public double getRealVelocity() {
-        return motor.getVelocity() / motor.getCPR() / FLYWHEEL_GEAR_RATIO * 60;
+        return motor1.getVelocity() / motor1.getCPR() / FLYWHEEL_GEAR_RATIO * 60;
     }
 
     public void setPower(double power) {
-        motor.set(power);
+        motor1.set(power);
+        motor2.set(power);
     }
 
     public void periodic() {
@@ -56,7 +59,6 @@ public class Outtake {
     }
 
     public boolean inTolerance() {
-        return Math.abs(getRealVelocity() - targetVelocity) < VELOCITY_BOUND;
+        return Math.abs(getRealVelocity() - targetVelocity) < VELOCITY_TOLERANCE;
     }
-
 }
