@@ -62,7 +62,7 @@ public class MainTeleOp extends LinearOpMode {
             } else if (gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.2) {
                 bot.intake.out();
             } else {
-                bot.intake.store();
+                bot.intake.stop();
             }
 
             if (gp2.getButton(GamepadKeys.Button.LEFT_BUMPER)) {

@@ -30,7 +30,8 @@ public class Outtake {
         controller = new PIDController(kP, kI, kD);
         motor1 = new MotorEx(opMode.hardwareMap, "outtake1", MotorEx.GoBILDA.BARE);
         motor1.setRunMode(Motor.RunMode.RawPower);
-        motor2 = new MotorEx(opMode.hardwareMap, "outtake2", Motor.GoBILDA.BARE);
+        motor1.setInverted(true);
+        motor2 = new MotorEx(opMode.hardwareMap, "outtake2", MotorEx.GoBILDA.BARE);
         motor2.setRunMode(Motor.RunMode.RawPower);
     }
 
