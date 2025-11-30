@@ -8,6 +8,13 @@ import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 public class Bot {
+    public enum Alliance {
+        RED,
+        BLUE
+    }
+
+    public static Alliance alliance;
+
     public static Bot instance;
 
     public OpMode opMode;
@@ -42,6 +49,14 @@ public class Bot {
         }
         instance.opMode = opMode;
         return instance;
+    }
+
+    public static void switchAlliance() {
+        if (alliance == Alliance.RED) {
+            alliance = Alliance.BLUE;
+        } else {
+            alliance = Alliance.RED;
+        }
     }
 
     public void driveRobotCentric(double throttle, double strafe, double turn) {

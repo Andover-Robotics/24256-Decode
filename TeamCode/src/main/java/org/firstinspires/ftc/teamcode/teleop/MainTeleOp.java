@@ -37,6 +37,8 @@ public class MainTeleOp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Bot.instance = null;
         Bot bot = Bot.getInstance(this);
+        Bot.alliance = Bot.Alliance.RED;
+
         GamepadEx gp1 = new GamepadEx(gamepad1);
         GamepadEx gp2 = new GamepadEx(gamepad2);
 
@@ -78,8 +80,13 @@ public class MainTeleOp extends LinearOpMode {
                 bot.outtake.setPower(0.0);
             }
 
+            if (gp2.getButton(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
+                Bot.switchAlliance();
+            }
+
             handleActions(packet);
 
+            telemetry.addData("Flywheel Target Velocity", bot.outtake.getTargetVelocity());
             telemetry.addData("Flywheel Velocity", bot.outtake.getRealVelocity());
 
             dashboard.sendTelemetryPacket(packet);

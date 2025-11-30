@@ -6,6 +6,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
+import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 public class AprilTag {
@@ -16,12 +17,16 @@ public class AprilTag {
     private AprilTagResult goal = null;
     private AprilTagType colorTarget;
 
-    public AprilTag(HardwareMap hardwareMap, AprilTagType colorTarget) {
+    public AprilTag(HardwareMap hardwareMap) {
         processor = new AprilTagProcessor.Builder()
                 .setTagLibrary(AprilTagGameDatabase.getDecodeTagLibrary())
                 .build();
         visionPortal = VisionPortal.easyCreateWithDefaults(hardwareMap.get(WebcamName.class, "webcam"), processor);
-        this.colorTarget = colorTarget;
+        if (Bot.alliance == Bot.Alliance.RED) {
+            colorTarget = AprilTagType.GOAL_RED;
+        } else if (Bot.alliance == Bot.Alliance.BLUE) {
+            colorTarget = AprilTagType.GOAL_BLUE;
+        }
     }
 
     public AprilTagType getColorTarget() {
@@ -59,22 +64,15 @@ public class AprilTag {
 
     public class AprilTagResult {
         AprilTagType type;
-        double range;
-        double bearing;
-        double yaw;
+        AprilTagPoseFtc ftcPose;
 
-        public AprilTagResult(AprilTagType type, double range, double bearing, double yaw) {
+        public AprilTagResult(AprilTagType type, AprilTagPoseFtc ftcPose) {
             this.type = type;
-            this.range = range;
-            this.bearing = bearing;
-            this.yaw = yaw;
+            this.ftcPose = ftcPose;
         }
     }
 
     public void updateDetections() {
-        // obelisk only needs to be get once, but we should
-        // always set goal to null to ensure that the user
-        // knows if they're getting a consistent reading or not
         goal = null;
 
         for (AprilTagDetection detection : processor.getDetections()) {
@@ -84,9 +82,7 @@ public class AprilTag {
             AprilTagType type = AprilTagType.fromAprilTagId(detection.id);
             AprilTagResult result = new AprilTagResult(
                     type,
-                    detection.ftcPose.range,
-                    detection.ftcPose.bearing,
-                    detection.ftcPose.yaw
+                    detection.ftcPose
             );
 
             if (type == colorTarget)
