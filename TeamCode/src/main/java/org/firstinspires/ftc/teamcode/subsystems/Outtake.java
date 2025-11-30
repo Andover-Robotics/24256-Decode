@@ -32,7 +32,7 @@ public class Outtake {
     public static float shooterD = 0;
 
     public static boolean MANUAL = true;
-    private static float MANUAL_VELOCITY = 4000;
+    public static float MANUAL_VELOCITY = 4000;
 
 
     private double targetVelocity = 0;
