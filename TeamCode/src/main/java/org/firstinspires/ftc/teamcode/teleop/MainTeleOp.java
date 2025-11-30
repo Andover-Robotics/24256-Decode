@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystems.Bot;
-import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.Outtake;
 
 import java.util.ArrayList;
 
@@ -88,6 +88,9 @@ public class MainTeleOp extends LinearOpMode {
 
             telemetry.addData("Flywheel Target Velocity", bot.outtake.getTargetVelocity());
             telemetry.addData("Flywheel Velocity", bot.outtake.getRealVelocity());
+            if (!Outtake.MANUAL) {
+                telemetry.addData("AprilTag Distance", bot.outtake.aprilTag.getDistance());
+            }
 
             dashboard.sendTelemetryPacket(packet);
             telemetry.update();

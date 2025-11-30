@@ -25,14 +25,14 @@ public class Outtake {
     private static double VELOCITY_TOLERANCE = 50;
 
     // aim
-    AprilTag aprilTag;
-    public static float shooterA = 0;
-    public static float shooterB = 0;
-    public static float shooterC = 0;
-    public static float shooterD = 0;
+    public AprilTag aprilTag;
+    public static double shooterA = 0;
+    public static double shooterB = 0;
+    public static double shooterC = 0;
+    public static double shooterD = 0;
 
     public static boolean MANUAL = true;
-    public static float MANUAL_VELOCITY = 4000;
+    public static double MANUAL_VELOCITY = 4000;
 
 
     private double targetVelocity = 0;
@@ -46,20 +46,19 @@ public class Outtake {
         motor2.setRunMode(Motor.RunMode.RawPower);
 
         if (MANUAL) {
-            this.aprilTag = null;
+            aprilTag = null;
         } else {
-            this.aprilTag = new AprilTag(opMode.hardwareMap);
+            aprilTag = new AprilTag(opMode.hardwareMap);
         }
     }
 
     public double getRegressionVelocity() {
-        AprilTag.AprilTagResult result = this.aprilTag.getGoal();
+        Double distance = aprilTag.getDistance();
 
-        if (aprilTag == null || result == null) {
+        if (aprilTag == null || distance == null) {
             return MANUAL_VELOCITY;
         } else {
             this.aprilTag.updateDetections();
-            double distance = result.ftcPose.range;
             return shooterA * Math.sqrt(shooterB * distance + shooterC) + shooterD;
         }
     }
@@ -78,7 +77,7 @@ public class Outtake {
     }
 
     public void periodic() {
-        this.targetVelocity = getRegressionVelocity();
+        targetVelocity = getRegressionVelocity();
 
         double pidOutput = controller.calculate(getRealVelocity(), targetVelocity);
         double ffOutput = kStatic + kV * targetVelocity;

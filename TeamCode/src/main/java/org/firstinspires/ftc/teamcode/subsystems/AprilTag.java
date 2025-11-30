@@ -100,4 +100,13 @@ public class AprilTag {
     public AprilTagType getObelisk() {
         return obelisk;
     }
+
+    public Double getDistance() {
+        if (goal == null) {
+            return null;
+        } else {
+            // TODO: Add calculations
+            return goal.ftcPose.range;
+        }
+    }
 }
