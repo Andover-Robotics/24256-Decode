@@ -17,6 +17,8 @@ public class AprilTag {
     private AprilTagResult goal = null;
     private AprilTagType colorTarget;
 
+    private static double heightOffset = 0;
+
     public AprilTag(HardwareMap hardwareMap) {
         processor = new AprilTagProcessor.Builder()
                 .setTagLibrary(AprilTagGameDatabase.getDecodeTagLibrary())
@@ -105,8 +107,10 @@ public class AprilTag {
         if (goal == null) {
             return null;
         } else {
-            // TODO: Add calculations
-            return goal.ftcPose.range;
+            double aprilTagDistance = goal.ftcPose.range;
+            double twoDim = Math.sqrt(aprilTagDistance * aprilTagDistance - heightOffset * heightOffset);
+            double bearingCorrection = twoDim * Math.cos(goal.ftcPose.bearing); // cos(x) = cos(-x)
+            return bearingCorrection;
         }
     }
 }
