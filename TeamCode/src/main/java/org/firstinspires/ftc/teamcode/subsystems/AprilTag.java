@@ -17,7 +17,9 @@ public class AprilTag {
     private AprilTagResult goal = null;
     private AprilTagType colorTarget;
 
+    // distance configuration
     private static double heightOffset = 0;
+    private static double toInsideOffset = 0;
 
     public AprilTag(HardwareMap hardwareMap) {
         processor = new AprilTagProcessor.Builder()
@@ -110,7 +112,7 @@ public class AprilTag {
             double aprilTagDistance = goal.ftcPose.range;
             double twoDim = Math.sqrt(aprilTagDistance * aprilTagDistance - heightOffset * heightOffset);
             double bearingCorrection = twoDim * Math.cos(goal.ftcPose.bearing); // cos(x) = cos(-x)
-            return bearingCorrection;
+            return bearingCorrection + toInsideOffset;
         }
     }
 }
