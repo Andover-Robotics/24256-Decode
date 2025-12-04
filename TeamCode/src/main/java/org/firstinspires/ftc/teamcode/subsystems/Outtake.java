@@ -53,10 +53,12 @@ public class Outtake {
     }
 
     public double getRegressionVelocity() {
+        if (aprilTag == null) return MANUAL_VELOCITY;
+
         this.aprilTag.updateDetections();
         Double distance = aprilTag.getDistance();
 
-        if (aprilTag == null || distance == null) {
+        if (distance == null) {
             return MANUAL_VELOCITY;
         } else {
             return shooterA * Math.sqrt(shooterB * distance + shooterC) + shooterD;
