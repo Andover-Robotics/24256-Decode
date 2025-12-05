@@ -111,7 +111,7 @@ public class AprilTag {
         } else {
             double aprilTagDistance = goal.ftcPose.range;
             double twoDim = Math.sqrt(aprilTagDistance * aprilTagDistance - heightOffset * heightOffset);
-            double bearingCorrection = twoDim * Math.cos(goal.ftcPose.bearing); // cos(x) = cos(-x)
+            double bearingCorrection = twoDim * Math.cos(Math.toRadians(goal.ftcPose.bearing)); // cos(x) = cos(-x)
             return bearingCorrection + toInsideOffset;
         }
     }
