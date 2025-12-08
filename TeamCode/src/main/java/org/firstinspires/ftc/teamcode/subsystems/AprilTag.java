@@ -11,7 +11,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
-import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 public class AprilTag {
@@ -128,5 +127,9 @@ public class AprilTag {
             double goalY = (Bot.alliance == Bot.Alliance.RED) ? redGoalY : blueGoalY;
             return Math.hypot(goalX - robotPosition.x, goalY - robotPosition.y);
         }
+    }
+
+    public void closeVisionPortal() {
+        visionPortal.close();
     }
 }

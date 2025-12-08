@@ -95,5 +95,7 @@ public class MainTeleOp extends LinearOpMode {
             dashboard.sendTelemetryPacket(packet);
             telemetry.update();
         }
+
+        bot.outtake.aprilTag.closeVisionPortal();
     }
 }
