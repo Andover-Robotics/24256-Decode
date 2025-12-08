@@ -3,6 +3,11 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
@@ -17,11 +22,22 @@ public class AprilTag {
     private AprilTagResult goal = null;
     private AprilTagType colorTarget;
 
-    private static double heightOffset = 0;
+    private static double redGoalX = 0;
+    private static double redGoalY = 0;
+
+    private static double blueGoalX = 0;
+    private static double blueGoalY = 0;
+
+    // reference: ConceptAprilTagLocalization.java
+    private static Position cameraPosition = new Position(DistanceUnit.INCH,
+            0, 0, 0, 0);
+    private static YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES,
+            0, -90, 0, 0);
 
     public AprilTag(HardwareMap hardwareMap) {
         processor = new AprilTagProcessor.Builder()
                 .setTagLibrary(AprilTagGameDatabase.getDecodeTagLibrary())
+                .setCameraPose(cameraPosition, cameraOrientation)
                 .build();
         visionPortal = VisionPortal.easyCreateWithDefaults(hardwareMap.get(WebcamName.class, "webcam"), processor);
         if (Bot.alliance == Bot.Alliance.RED) {
@@ -66,11 +82,11 @@ public class AprilTag {
 
     public class AprilTagResult {
         AprilTagType type;
-        AprilTagPoseFtc ftcPose;
+        Pose3D robotPose;
 
-        public AprilTagResult(AprilTagType type, AprilTagPoseFtc ftcPose) {
+        public AprilTagResult(AprilTagType type, Pose3D robotPose) {
             this.type = type;
-            this.ftcPose = ftcPose;
+            this.robotPose = robotPose;
         }
     }
 
@@ -84,7 +100,7 @@ public class AprilTag {
             AprilTagType type = AprilTagType.fromAprilTagId(detection.id);
             AprilTagResult result = new AprilTagResult(
                     type,
-                    detection.ftcPose
+                    detection.robotPose
             );
 
             if (type == colorTarget)
@@ -107,10 +123,10 @@ public class AprilTag {
         if (goal == null) {
             return null;
         } else {
-            double aprilTagDistance = goal.ftcPose.range;
-            double twoDim = Math.sqrt(aprilTagDistance * aprilTagDistance - heightOffset * heightOffset);
-            double bearingCorrection = twoDim * Math.cos(goal.ftcPose.bearing); // cos(x) = cos(-x)
-            return bearingCorrection;
+            Position robotPosition = goal.robotPose.getPosition();
+            double goalX = (Bot.alliance == Bot.Alliance.RED) ? redGoalX : blueGoalX;
+            double goalY = (Bot.alliance == Bot.Alliance.RED) ? redGoalY : blueGoalY;
+            return Math.hypot(goalX - robotPosition.x, goalY - robotPosition.y);
         }
     }
 }
