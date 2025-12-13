@@ -1,10 +1,15 @@
-package org.firstinspires.ftc.teamcode.subsystems;
+package org.firstinspires.ftc.teamcode.subsystems.shooter;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+
+import org.firstinspires.ftc.teamcode.auto.config.Localizer;
+import org.firstinspires.ftc.teamcode.subsystems.Bot;
 
 @Config
 public class Outtake {
@@ -25,7 +30,6 @@ public class Outtake {
     private static double VELOCITY_TOLERANCE = 50;
 
     // aim
-    public AprilTag aprilTag;
     public static double shooterA = 0;
     public static double shooterB = 0;
     public static double shooterC = 0;
@@ -34,10 +38,26 @@ public class Outtake {
     public static boolean MANUAL = true;
     public static double MANUAL_VELOCITY = 4000;
 
+    // TODO: determine goal verticies
+    private static Goal redGoal = new Goal(
+            new Vector2d(0, 0),
+            new Vector2d(0, 0),
+            new Vector2d(0, 0)
+    );
+
+    private static Goal blueGoal = new Goal(
+            new Vector2d(0, 0),
+            new Vector2d(0, 0),
+            new Vector2d(0, 0)
+    );
+
+    private Localizer localizer;
+
+    public double goalDistance;
 
     private double targetVelocity = 0;
 
-    public Outtake(OpMode opMode) {
+    public Outtake(OpMode opMode, Localizer localizer) {
         controller = new PIDController(kP, kI, kD);
         motor1 = new MotorEx(opMode.hardwareMap, "outtake1", MotorEx.GoBILDA.BARE);
         motor1.setRunMode(Motor.RunMode.RawPower);
@@ -45,23 +65,21 @@ public class Outtake {
         motor2 = new MotorEx(opMode.hardwareMap, "outtake2", MotorEx.GoBILDA.BARE);
         motor2.setRunMode(Motor.RunMode.RawPower);
 
-        if (MANUAL) {
-            aprilTag = null;
-        } else {
-            aprilTag = new AprilTag(opMode.hardwareMap);
-        }
+        this.localizer = localizer;
     }
 
     public double getRegressionVelocity() {
-        if (aprilTag == null) return MANUAL_VELOCITY;
+        if (MANUAL) return MANUAL_VELOCITY;
 
-        this.aprilTag.updateDetections();
-        Double distance = aprilTag.getDistance();
+        Pose2d robotPose = localizer.getPose();
 
-        if (distance == null) {
-            return MANUAL_VELOCITY;
+        Vector2d hit = ((Bot.alliance == Bot.Alliance.RED) ? redGoal : blueGoal).getGoal(robotPose);
+
+        if (hit == null) {
+            return 0;
         } else {
-            return shooterA * Math.sqrt(shooterB * distance + shooterC) + shooterD;
+            goalDistance = (robotPose.position.minus(hit)).norm();
+            return shooterA + Math.sqrt(goalDistance * shooterB + shooterC) * shooterD;
         }
     }
 

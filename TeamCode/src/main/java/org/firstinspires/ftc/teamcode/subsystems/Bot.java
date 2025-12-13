@@ -7,6 +7,8 @@ import com.acmerobotics.roadrunner.Action;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.teamcode.subsystems.shooter.Outtake;
+
 public class Bot {
     public enum Alliance {
         RED,
@@ -40,7 +42,7 @@ public class Bot {
         bl.setInverted(true);
 
         intake = new Intake(opMode);
-        outtake = new Outtake(opMode);
+        outtake = new Outtake(opMode, null);
     }
 
     public static Bot getInstance(OpMode opMode) {
