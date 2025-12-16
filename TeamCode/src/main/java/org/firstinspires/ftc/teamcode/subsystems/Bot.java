@@ -62,11 +62,11 @@ public class Bot {
     }
 
     public void driveRobotCentric(double throttle, double strafe, double turn) {
-        // source: https://gm0.org/en/latest/docs/software/tutorials/mecanum-drive.html
         double mag = Math.max(Math.abs(throttle) + Math.abs(strafe) + Math.abs(turn), 1);
+
         double flPower = (throttle + strafe + turn) / mag;
-        double frPower = (throttle - strafe + turn) / mag;
-        double blPower = (throttle - strafe - turn) / mag;
+        double frPower = (throttle - strafe - turn) / mag;
+        double blPower = (throttle - strafe + turn) / mag;
         double brPower = (throttle + strafe - turn) / mag;
 
         fl.set(flPower);
