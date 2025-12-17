@@ -35,7 +35,6 @@ public class MainTeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Bot.instance = null;
         Bot bot = Bot.getInstance(this);
         Bot.alliance = Bot.Alliance.RED;
 

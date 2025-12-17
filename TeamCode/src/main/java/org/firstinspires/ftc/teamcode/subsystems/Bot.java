@@ -4,9 +4,11 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.teamcode.auto.config.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.shooter.Outtake;
 
 public class Bot {
@@ -17,7 +19,7 @@ public class Bot {
 
     public static Alliance alliance;
 
-    public static Bot instance;
+    public static Bot instance = null;
 
     public OpMode opMode;
 
@@ -27,6 +29,8 @@ public class Bot {
     // other subsystems
     public Intake intake;
     public Outtake outtake;
+
+    MecanumDrive drive;
 
     private Bot(OpMode opMode) { // new Bot(opMode);
         // make sure to set the direction of the motors
@@ -40,6 +44,8 @@ public class Bot {
         br.setRunMode(Motor.RunMode.RawPower);
         fl.setInverted(true);
         bl.setInverted(true);
+
+        drive = new MecanumDrive(opMode.hardwareMap, new Pose2d(0, 0, 0));
 
         intake = new Intake(opMode);
         outtake = new Outtake(opMode, null);
@@ -59,6 +65,14 @@ public class Bot {
         } else {
             alliance = Alliance.RED;
         }
+    }
+
+    public void setPose(Pose2d pose) {
+        drive.localizer.setPose(pose);
+    }
+
+    public Pose2d getPose() {
+        return drive.localizer.getPose();
     }
 
     public void driveRobotCentric(double throttle, double strafe, double turn) {
