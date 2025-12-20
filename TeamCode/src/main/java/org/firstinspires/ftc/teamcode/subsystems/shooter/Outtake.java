@@ -84,8 +84,8 @@ public class Outtake {
         double s = Math.sin(robotPose.heading.log());
 
         return new Pose2d(
-                robotPose.position.x * c - robotPose.position.y * s,
-                robotPose.position.x * s + robotPose.position.y * c,
+                robotPose.position.x + offsetFromCenter.x * c - offsetFromCenter.y * s,
+                robotPose.position.y + offsetFromCenter.x * s + offsetFromCenter.y * c,
                 robotPose.heading.log()
         );
     }
