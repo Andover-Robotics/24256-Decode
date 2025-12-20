@@ -4,7 +4,11 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.InstantAction;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
@@ -31,6 +35,16 @@ public class Bot {
     public Outtake outtake;
 
     MecanumDrive drive;
+
+    public static double SHOOT_THREE_DELAY = 0.0;
+    public static double SHOOT_ONE_DELAY = 0.0;
+
+    public static Pose2d mirror(Pose2d initial) {
+        return new Pose2d(new Vector2d(initial.position.x, -initial.position.y), -initial.heading.log());
+    }
+
+    public static Pose2d redResetPose = new Pose2d(0, 0, Math.toRadians(180));
+    public static Pose2d blueResetPose = mirror(redResetPose);
 
     private Bot(OpMode opMode) { // new Bot(opMode);
         // make sure to set the direction of the motors
@@ -101,5 +115,18 @@ public class Bot {
                 return true;
             }
         };
+    }
+
+    public Action actionShoot(double delay) {
+        return new SequentialAction(
+                new InstantAction(() -> intake.in()),
+                new InstantAction(() -> outtake.enable()),
+                outtake.actionBlockUntilInTolerance(),
+                new InstantAction(() -> intake.openGate()),
+                new SleepAction(delay),
+                new InstantAction(() -> intake.closeGate()),
+                new InstantAction(() -> intake.store()),
+                new InstantAction(() -> outtake.disable())
+        );
     }
 }

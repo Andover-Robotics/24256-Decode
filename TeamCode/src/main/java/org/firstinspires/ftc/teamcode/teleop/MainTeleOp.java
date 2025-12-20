@@ -79,8 +79,24 @@ public class MainTeleOp extends LinearOpMode {
                 bot.outtake.setPower(0.0);
             }
 
-            if (gp2.getButton(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
+            if (!bot.outtake.isEnabled()) {
+                if (gp2.getButton(GamepadKeys.Button.A)) {
+                    addAction(bot.actionShoot(Bot.SHOOT_ONE_DELAY));
+                } else if (gp2.getButton(GamepadKeys.Button.B)) {
+                    addAction(bot.actionShoot(Bot.SHOOT_THREE_DELAY));
+                }
+            }
+
+            if (gp1.getButton(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
                 Bot.switchAlliance();
+            }
+
+            if (gp1.getButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)) {
+                if (Bot.alliance == Bot.Alliance.RED) {
+                    bot.setPose(Bot.redResetPose);
+                } else {
+                    bot.setPose(Bot.blueResetPose);
+                }
             }
 
             handleActions(packet);
@@ -88,8 +104,10 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("Flywheel Target Velocity", bot.outtake.getTargetVelocity());
             telemetry.addData("Flywheel Velocity", bot.outtake.getRealVelocity());
             if (!Outtake.MANUAL) {
-                telemetry.addData("AprilTag Distance", bot.outtake.goalDistance);
+                telemetry.addData("Distance", bot.outtake.goalDistance);
             }
+            telemetry.addData("Controller #1 Left Stick", gp1.getLeftY());
+            telemetry.addData("Controller #2 Left Stick", gp2.getLeftY());
 
             dashboard.sendTelemetryPacket(packet);
             telemetry.update();

@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.subsystems.shooter;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.arcrobotics.ftclib.controller.PIDController;
@@ -37,6 +41,8 @@ public class Outtake {
 
     public static boolean MANUAL = true;
     public static double MANUAL_VELOCITY = 4000;
+
+    private boolean enabled = false;
 
     // TODO: determine goal verticies
     private static Goal redGoal = new Goal(
@@ -97,7 +103,7 @@ public class Outtake {
     }
 
     public void periodic() {
-        targetVelocity = getRegressionVelocity();
+        targetVelocity = (enabled) ? getRegressionVelocity() : 0;
 
         double pidOutput = controller.calculate(getRealVelocity(), targetVelocity);
         double ffOutput = kStatic + kV * targetVelocity;
@@ -107,5 +113,26 @@ public class Outtake {
 
     public boolean inTolerance() {
         return Math.abs(getRealVelocity() - targetVelocity) < VELOCITY_TOLERANCE;
+    }
+
+    public void enable() {
+        enabled = true;
+    }
+
+    public void disable() {
+        enabled = false;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public Action actionBlockUntilInTolerance() {
+        return new Action() {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                return !inTolerance();
+            }
+        };
     }
 }
