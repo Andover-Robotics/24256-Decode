@@ -53,7 +53,8 @@ public class Outtake {
     private static List<Vector2d> redGoalCorners = Arrays.asList(
             new Vector2d(70.06, -47.65),
             new Vector2d(48.41, -63.36),
-            new Vector2d(70.16, -63.63)
+            new Vector2d(48.23, -69.94),
+            new Vector2d(70.16, -70.20)
     );
 
     private static Goal redGoal = new Goal(redGoalCorners);
