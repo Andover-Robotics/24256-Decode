@@ -42,6 +42,8 @@ public class Outtake {
     public static boolean MANUAL = true;
     public static double MANUAL_VELOCITY = 4000;
 
+    public static Vector2d offsetFromCenter = new Vector2d(0, 0);
+
     private boolean enabled = false;
 
     // TODO: determine goal verticies
@@ -74,18 +76,31 @@ public class Outtake {
         this.localizer = localizer;
     }
 
+    public Pose2d getPose() {
+        Pose2d robotPose = localizer.getPose();
+
+        // rotate offset vector
+        double c = Math.cos(robotPose.heading.log());
+        double s = Math.sin(robotPose.heading.log());
+
+        return new Pose2d(
+                robotPose.position.x * c - robotPose.position.y * s,
+                robotPose.position.x * s + robotPose.position.y * c,
+                robotPose.heading.log()
+        );
+    }
+
     public double getRegressionVelocity() {
         if (MANUAL) return MANUAL_VELOCITY;
 
-        Pose2d robotPose = localizer.getPose();
-
-        Vector2d hit = ((Bot.alliance == Bot.Alliance.RED) ? redGoal : blueGoal).getGoal(robotPose);
+        Pose2d startPose = getPose();
+        Vector2d hit = ((Bot.alliance == Bot.Alliance.RED) ? redGoal : blueGoal).getGoal(startPose);
 
         if (hit == null) {
             return 0;
         } else {
-            goalDistance = (robotPose.position.minus(hit)).norm();
-            return shooterA + Math.sqrt(goalDistance * shooterB + shooterC) * shooterD;
+            goalDistance = (hit.minus(startPose.position)).norm();
+            return shooterA + Math.sqrt(shooterB + goalDistance * shooterC) * shooterD;
         }
     }
 
