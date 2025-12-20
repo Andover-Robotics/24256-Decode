@@ -43,6 +43,10 @@ public class Bot {
         return new Pose2d(new Vector2d(initial.position.x, -initial.position.y), -initial.heading.log());
     }
 
+    public static Vector2d mirror(Vector2d initial) {
+        return new Vector2d(initial.x, -initial.y);
+    }
+
     public static Pose2d redResetPose = new Pose2d(0, 0, Math.toRadians(180));
     public static Pose2d blueResetPose = mirror(redResetPose);
 

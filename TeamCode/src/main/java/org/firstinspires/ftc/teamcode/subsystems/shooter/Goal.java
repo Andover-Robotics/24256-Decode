@@ -4,16 +4,13 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Goal {
-    Vector2d x0;
-    Vector2d x1;
-    Vector2d x2;
+    List<Vector2d> goalCorners;
 
-    public Goal(Vector2d x0, Vector2d x1, Vector2d x2) {
-        this.x0 = x0;
-        this.x1 = x1;
-        this.x2 = x2;
+    public Goal(List<Vector2d> goalCorners) {
+        this.goalCorners = goalCorners;
     }
 
     private static double cross(Vector2d p0, Vector2d p1) {
@@ -48,14 +45,13 @@ public class Goal {
     public ArrayList<Vector2d> getHits(Pose2d ray) {
         ArrayList<Vector2d> hits = new ArrayList<Vector2d>();
 
-        Vector2d intersection0 = raySegmentIntersect(ray, x0, x1);
-        if (intersection0 != null) hits.add(intersection0);
+        int L = goalCorners.size();
 
-        Vector2d intersection1 = raySegmentIntersect(ray, x1, x2);
-        if (intersection1 != null) hits.add(intersection1);
-
-        Vector2d intersection2 = raySegmentIntersect(ray, x2, x0);
-        if (intersection2 != null) hits.add(intersection2);
+        for (int i = 0; i < L; i++) {
+            Vector2d hit = raySegmentIntersect(ray, goalCorners.get(i), goalCorners.get((i + 1) % L));
+            if (hit != null)
+                hits.add(hit);
+        }
 
         return hits;
     }

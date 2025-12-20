@@ -15,6 +15,10 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.teamcode.auto.config.Localizer;
 import org.firstinspires.ftc.teamcode.subsystems.Bot;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Config
 public class Outtake {
     private MotorEx motor1;
@@ -46,18 +50,15 @@ public class Outtake {
 
     private boolean enabled = false;
 
-    // TODO: determine goal verticies
-    private static Goal redGoal = new Goal(
-            new Vector2d(0, 0),
-            new Vector2d(0, 0),
-            new Vector2d(0, 0)
+    private static List<Vector2d> redGoalCorners = Arrays.asList(
+            new Vector2d(70.06, -47.65),
+            new Vector2d(48.41, -63.36),
+            new Vector2d(70.16, -63.63)
     );
 
-    private static Goal blueGoal = new Goal(
-            new Vector2d(0, 0),
-            new Vector2d(0, 0),
-            new Vector2d(0, 0)
-    );
+    private static Goal redGoal = new Goal(redGoalCorners);
+
+    private static Goal blueGoal = new Goal(redGoalCorners.stream().map(Bot::mirror).collect(Collectors.toList()));
 
     private Localizer localizer;
 
