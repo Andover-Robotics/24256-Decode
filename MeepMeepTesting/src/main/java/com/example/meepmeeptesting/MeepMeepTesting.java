@@ -30,7 +30,6 @@ public class MeepMeepTesting {
                         .actionBuilder(new Pose2d(-72 + 17.4016/2, -24, Math.toRadians(180)))
                         // starting load
                         .strafeToLinearHeading(new Vector2d(-24, -24), Math.toRadians(225))
-                        .setTangent(0)
 
                          // pickup 1
                         .strafeToLinearHeading(new Vector2d(-12, -24 - 4), Math.toRadians(-90))
@@ -45,12 +44,10 @@ public class MeepMeepTesting {
 
 
                         // pickup 2 -> shoot 2
-                        .setTangent(0)
                         .strafeToLinearHeading(new Vector2d(12, -24 - 4), Math.toRadians(-90))
                         .strafeToLinearHeading(new Vector2d(12, -48), Math.toRadians(-90))
                         .strafeToLinearHeading(new Vector2d(-24, -24), Math.toRadians(225))
 
-                        .setTangent(0)
                         .strafeToLinearHeading(new Vector2d(36, -24 - 4), Math.toRadians(-90))
                         .strafeToLinearHeading(new Vector2d(36, -48), Math.toRadians(-90))
                         .strafeToLinearHeading(new Vector2d(-24, -24), Math.toRadians(225))
