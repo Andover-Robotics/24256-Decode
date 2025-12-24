@@ -56,6 +56,7 @@ public class MainTeleOp extends LinearOpMode {
 
             bot.driveRobotCentric(throttle, strafe, turn);
             bot.periodic();
+            bot.drive.updatePoseEstimate();
 
             gp2.readButtons();
             if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2) {
@@ -101,6 +102,7 @@ public class MainTeleOp extends LinearOpMode {
 
             handleActions(packet);
 
+            telemetry.addData("Bot Alliance", (Bot.alliance == Bot.Alliance.RED) ? "Red" : "Blue");
             telemetry.addData("Flywheel Target Velocity", bot.outtake.getTargetVelocity());
             telemetry.addData("Flywheel Velocity", bot.outtake.getRealVelocity());
             if (!Outtake.MANUAL) {
