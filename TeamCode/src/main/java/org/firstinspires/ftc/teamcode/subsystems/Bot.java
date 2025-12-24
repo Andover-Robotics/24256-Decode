@@ -34,7 +34,7 @@ public class Bot {
     public Intake intake;
     public Outtake outtake;
 
-    MecanumDrive drive;
+    public MecanumDrive drive;
 
     public static double SHOOT_THREE_DELAY = 0.0;
     public static double SHOOT_ONE_DELAY = 0.0;
@@ -63,9 +63,11 @@ public class Bot {
         fl.setInverted(true);
         bl.setInverted(true);
 
-        drive = new MecanumDrive(opMode.hardwareMap, new Pose2d(0, 0, 0));
+//        drive = new MecanumDrive(opMode.hardwareMap, new Pose2d(0, 0, 0));
+        drive = null;
 
         intake = new Intake(opMode);
+//        outtake = new Outtake(opMode, drive.localizer);
         outtake = new Outtake(opMode, null);
     }
 
