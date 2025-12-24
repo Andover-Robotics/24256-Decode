@@ -61,6 +61,8 @@ public class Outtake {
 
     private static Goal blueGoal = new Goal(redGoalCorners.stream().map(Bot::mirror).collect(Collectors.toList()));
 
+    public Vector2d hit = null;
+
     private Localizer localizer;
 
     public double goalDistance;
@@ -96,7 +98,7 @@ public class Outtake {
         if (MANUAL) return MANUAL_VELOCITY;
 
         Pose2d startPose = getPose();
-        Vector2d hit = ((Bot.alliance == Bot.Alliance.RED) ? redGoal : blueGoal).getGoal(startPose);
+        hit = ((Bot.alliance == Bot.Alliance.RED) ? redGoal : blueGoal).getGoal(startPose);
 
         if (hit == null) {
             return 0;

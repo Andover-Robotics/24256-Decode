@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -104,7 +105,14 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("Flywheel Target Velocity", bot.outtake.getTargetVelocity());
             telemetry.addData("Flywheel Velocity", bot.outtake.getRealVelocity());
             if (!Outtake.MANUAL) {
-                telemetry.addData("Distance", bot.outtake.goalDistance);
+                Vector2d hit = bot.outtake.hit;
+                if (hit != null) {
+                    telemetry.addData("Distance", bot.outtake.goalDistance);
+                    telemetry.addData("Hit Pose: ", hit.x + " " + hit.y);
+                    packet.fieldOverlay()
+                            .setFill("red")
+                            .fillCircle(hit.x, hit.y, 5);
+                }
             }
             telemetry.addData("Controller #1 Left Stick", gp1.getLeftY());
             telemetry.addData("Controller #2 Left Stick", gp2.getLeftY());
