@@ -34,7 +34,7 @@ public class NoGateAuto extends LinearOpMode {
 
         Pose2d startPose = (Bot.alliance == Bot.Alliance.RED) ? redAllianceStartPose : Bot.mirror(redAllianceStartPose);
 
-        Action auto = drive.actionBuilderColor(startPose, Bot.alliance == Bot.Alliance.RED)
+        Action auto = drive.actionBuilderColor(startPose, Bot.alliance == Bot.Alliance.BLUE)
                 .waitSeconds(3)
                 .build();
 
