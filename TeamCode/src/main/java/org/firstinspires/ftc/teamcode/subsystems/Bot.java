@@ -61,7 +61,9 @@ public class Bot {
         bl.setRunMode(Motor.RunMode.RawPower);
         br.setRunMode(Motor.RunMode.RawPower);
         fl.setInverted(true);
+        fr.setInverted(true);
         bl.setInverted(true);
+        br.setInverted(true);
 
 //        drive = new MecanumDrive(opMode.hardwareMap, new Pose2d(0, 0, 0));
         drive = null;
@@ -96,17 +98,25 @@ public class Bot {
     }
 
     public void driveRobotCentric(double throttle, double strafe, double turn) {
-        double mag = Math.max(Math.abs(throttle) + Math.abs(strafe) + Math.abs(turn), 1);
-
-        double flPower = (throttle + strafe + turn) / mag;
-        double frPower = (throttle - strafe - turn) / mag;
-        double blPower = (throttle - strafe + turn) / mag;
-        double brPower = (throttle + strafe - turn) / mag;
-
-        fl.set(flPower);
-        fr.set(frPower);
-        bl.set(blPower);
-        br.set(brPower);
+        double[] speeds = {
+                (throttle + strafe + turn), // Front Left
+                (throttle - strafe - turn), // Front Right
+                (throttle - strafe + turn), // Back Left
+                (throttle + strafe - turn)  // Back Right
+        };
+        double maxSpeed = 0;
+        for (int i = 0; i < 4; i++) {
+            maxSpeed = Math.max(maxSpeed, speeds[i]);
+        }
+        if (maxSpeed > 1) {
+            for (int i = 0; i < 4; i++) {
+                speeds[i] /= maxSpeed;
+            }
+        }
+        fl.set(speeds[0]);
+        fr.set(speeds[1]);
+        bl.set(speeds[2]);
+        br.set(speeds[3]);
     }
 
     public void periodic() {
