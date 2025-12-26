@@ -25,11 +25,11 @@ public class Outtake {
     private MotorEx motor2;
 
     // PID constants
-    public static double kP = 0;
+    public static double kP = 0.00025;
     public static double kI = 0;
     public static double kD = 0;
     public static double kStatic = 0;
-    public static double kV = 0;
+    public static double kV = 0.000185;
 
     public PIDController controller;
 
@@ -122,6 +122,7 @@ public class Outtake {
     }
 
     public void periodic() {
+        controller.setPID(kP, kI, kD);
         targetVelocity = (enabled) ? getRegressionVelocity() : 0;
 
         double pidOutput = controller.calculate(getRealVelocity(), targetVelocity);

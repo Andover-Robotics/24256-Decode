@@ -46,6 +46,8 @@ public class MainTeleOp extends LinearOpMode {
 
         waitForStart();
 
+        bot.outtake.enable();
+
         while (opModeIsActive() && !isStopRequested()) {
             TelemetryPacket packet = new TelemetryPacket();
 
@@ -72,12 +74,6 @@ public class MainTeleOp extends LinearOpMode {
                 bot.intake.closeGate();
             }
 
-            // TODO: Temporary flywheel control
-            if (gp2.getButton(GamepadKeys.Button.DPAD_UP)) {
-                bot.outtake.setPower(1.0);
-            } else {
-                bot.outtake.setPower(0.0);
-            }
 
             if (!bot.outtake.isEnabled()) {
                 if (gp2.getButton(GamepadKeys.Button.A)) {
