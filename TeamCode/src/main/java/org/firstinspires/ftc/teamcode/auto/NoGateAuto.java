@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.RaceAction;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -15,8 +17,14 @@ import org.firstinspires.ftc.teamcode.subsystems.Bot;
 @Autonomous(name = "Decode No Gate Auto")
 public class NoGateAuto extends LinearOpMode {
     // Positions
-    public static Pose2d redAllianceStartPose = new Pose2d(0, 0, 0);
-
+    public static Pose2d redAllianceStartPose = new Pose2d(-72 + (24 + 384.0 / 2) / 25.4, -24, 0);
+    public static Pose2d shoot = new Pose2d(-24, -24, Math.toRadians(225));
+    public static Vector2d preFirstIntake = new Vector2d(-12, -28);
+    public static Vector2d firstIntake = new Vector2d(-12, -52);
+    public static Vector2d preSecondIntake = new Vector2d(12, -28);
+    public static Vector2d secondIntake = new Vector2d(12, -56);
+    public static Vector2d preThirdIntake = new Vector2d(36, -28);
+    public static Vector2d thirdIntake = new Vector2d(36, -56);
 
     public void runOpMode() throws InterruptedException {
         Bot bot = Bot.getInstance(this);
@@ -35,7 +43,11 @@ public class NoGateAuto extends LinearOpMode {
         Pose2d startPose = (Bot.alliance == Bot.Alliance.RED) ? redAllianceStartPose : Bot.mirror(redAllianceStartPose);
 
         Action auto = drive.actionBuilderColor(startPose, Bot.alliance == Bot.Alliance.BLUE)
-                .waitSeconds(3)
+                // shoot preload
+                .afterTime(0.01, new InstantAction(() -> bot.intake.in()))
+                .strafeToLinearHeading(shoot.position, shoot.heading.log())
+                .stopAndAdd(bot.actionShoot(Bot.SHOOT_THREE_DELAY))
+
                 .build();
 
         drive.localizer.setPose(startPose);

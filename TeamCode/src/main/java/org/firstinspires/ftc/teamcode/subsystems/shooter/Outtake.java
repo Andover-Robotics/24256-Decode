@@ -122,8 +122,14 @@ public class Outtake {
     }
 
     public void periodic() {
+        if (!enabled) {
+            setPower(0);
+            return;
+        }
+
         controller.setPID(kP, kI, kD);
-        targetVelocity = (enabled) ? getRegressionVelocity() : 0;
+
+        targetVelocity = getRegressionVelocity();
 
         double pidOutput = controller.calculate(getRealVelocity(), targetVelocity);
         double ffOutput = kStatic + kV * targetVelocity;
@@ -140,6 +146,7 @@ public class Outtake {
     }
 
     public void disable() {
+        controller.reset();
         enabled = false;
     }
 

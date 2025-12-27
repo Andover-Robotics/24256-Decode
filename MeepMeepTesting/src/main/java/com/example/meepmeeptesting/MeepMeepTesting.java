@@ -33,7 +33,7 @@ public class MeepMeepTesting {
 
                          // pickup 1
                         .strafeToLinearHeading(new Vector2d(-12, -24 - 4), Math.toRadians(-90))
-                        .strafeToLinearHeading(new Vector2d(-12, -48), Math.toRadians(-90))
+                        .strafeToLinearHeading(new Vector2d(-12, -48 - 4), Math.toRadians(-90))
 
                         // open gate
                         .strafeToLinearHeading(new Vector2d(0, -56), Math.toRadians(180))
