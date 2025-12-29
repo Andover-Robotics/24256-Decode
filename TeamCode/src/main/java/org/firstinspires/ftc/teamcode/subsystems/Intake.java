@@ -9,13 +9,13 @@ public class Intake {
     private Servo gate;
 
     // intake configuration
-    private static double inPower = 1.0;
-    private static double outPower = -1.0;
-    private static double storePower = 0.15;
+    public static double inPower = 1.0;
+    public static double outPower = -1.0;
+    public static double storePower = 0.15;
 
     // gate configuration
-    private static double gateOpen = 0.61;
-    private static double gateClosed = 0.25;
+    public static double gateOpen = 0.61;
+    public static double gateClosed = 0.25;
 
     public Intake(OpMode opMode) {
         motor = new Motor(opMode.hardwareMap, "intake");

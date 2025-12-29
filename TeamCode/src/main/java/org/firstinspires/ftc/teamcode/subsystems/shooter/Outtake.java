@@ -1,10 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems.shooter;
 
-import androidx.annotation.NonNull;
-
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.arcrobotics.ftclib.controller.PIDController;
@@ -152,14 +148,5 @@ public class Outtake {
 
     public boolean isEnabled() {
         return enabled;
-    }
-
-    public Action actionBlockUntilInTolerance() {
-        return new Action() {
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                return !inTolerance();
-            }
-        };
     }
 }

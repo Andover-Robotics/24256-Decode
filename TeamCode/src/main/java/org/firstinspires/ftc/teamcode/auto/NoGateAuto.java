@@ -2,8 +2,8 @@ package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.RaceAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
@@ -52,7 +52,7 @@ public class NoGateAuto extends LinearOpMode {
 
         drive.localizer.setPose(startPose);
         Actions.runBlocking(
-                new RaceAction( /* ends when auto ends */
+                new ParallelAction( /* ends when auto ends */
                         bot.actionPeriodic(),
                         auto
                 )

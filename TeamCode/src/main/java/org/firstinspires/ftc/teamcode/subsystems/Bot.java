@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
@@ -14,7 +15,9 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.auto.config.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.shooter.Outtake;
+import org.firstinspires.ftc.teamcode.util.WaitUntilAction;
 
+@Config
 public class Bot {
     public enum Alliance {
         RED,
@@ -137,7 +140,7 @@ public class Bot {
         return new SequentialAction(
                 new InstantAction(() -> intake.in()),
                 new InstantAction(() -> outtake.enable()),
-                outtake.actionBlockUntilInTolerance(),
+                new WaitUntilAction(() -> outtake.inTolerance()),
                 new InstantAction(() -> intake.openGate()),
                 new SleepAction(delay),
                 new InstantAction(() -> intake.closeGate()),
