@@ -85,7 +85,7 @@ public class SimpleServoTester extends OpMode {
         telemetry.addLine("*** Servo Control ***");
         telemetry.addData("Dpad Up/Down Buttons", "Increment/Decrement Position (%.3f)", POS_DELTA);
 
-        telemetry.addLine("*** Servo Data ***");
+        telemetry.addLine("\n*** Servo Data ***");
         telemetry.addData("Name", servoChoices[selectedServoIndex]);
         telemetry.addData("Position", "%.4f", servo.getPosition());
     }
