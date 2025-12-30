@@ -58,10 +58,9 @@ public class Outtake {
     private static Goal blueGoal = new Goal(redGoalCorners.stream().map(Bot::mirror).collect(Collectors.toList()));
 
     public Vector2d hit = null;
+    public Double hitDistance = null;
 
     private Localizer localizer;
-
-    public double goalDistance;
 
     private double targetVelocity = 0;
 
@@ -90,17 +89,24 @@ public class Outtake {
         );
     }
 
+    public void getHit() {
+        if (localizer == null) return;
+        Pose2d startPose = getPose();
+        hit = ((Bot.alliance == Bot.Alliance.RED) ? redGoal : blueGoal).getGoal(startPose);
+        if (hit == null) {
+            hitDistance = null;
+            return;
+        }
+        hitDistance = (hit.minus(startPose.position)).norm();
+    }
+
     public double getRegressionVelocity() {
         if (MANUAL) return MANUAL_VELOCITY;
 
-        Pose2d startPose = getPose();
-        hit = ((Bot.alliance == Bot.Alliance.RED) ? redGoal : blueGoal).getGoal(startPose);
-
-        if (hit == null) {
+        if (hitDistance == null) {
             return 0;
         } else {
-            goalDistance = (hit.minus(startPose.position)).norm();
-            return shooterA + Math.sqrt(shooterB + goalDistance * shooterC) * shooterD;
+            return shooterA + Math.sqrt(shooterB + hitDistance * shooterC) * shooterD;
         }
     }
 
@@ -118,14 +124,15 @@ public class Outtake {
     }
 
     public void periodic() {
-        if (!enabled) {
+        getHit();
+
+        controller.setPID(kP, kI, kD);
+        targetVelocity = getRegressionVelocity();
+
+        if (!enabled || targetVelocity == 0) {
             setPower(0);
             return;
         }
-
-        controller.setPID(kP, kI, kD);
-
-        targetVelocity = getRegressionVelocity();
 
         double pidOutput = controller.calculate(getRealVelocity(), targetVelocity);
         double ffOutput = kStatic + kV * targetVelocity;

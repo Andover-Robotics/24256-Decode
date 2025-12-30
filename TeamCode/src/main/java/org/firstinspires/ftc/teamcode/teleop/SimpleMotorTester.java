@@ -72,7 +72,7 @@ public class SimpleMotorTester extends OpMode {
         telemetry.addLine("*** Motor Control ***");
         telemetry.addData("Left Stick", "Motor Power (%.2f)", power);
 
-        telemetry.addLine("*** Motor Data ***");
+        telemetry.addLine("\n*** Motor Data ***");
         telemetry.addData("Name", motorChoices[selectedMotorIndex]);
     }
 }

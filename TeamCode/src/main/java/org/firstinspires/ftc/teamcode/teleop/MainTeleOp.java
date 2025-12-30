@@ -101,17 +101,15 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("Bot Alliance", (Bot.alliance == Bot.Alliance.RED) ? "Red" : "Blue");
             telemetry.addData("Flywheel Target Velocity", bot.outtake.getTargetVelocity());
             telemetry.addData("Flywheel Velocity", bot.outtake.getRealVelocity());
-            if (!Outtake.MANUAL) {
-                Vector2d hit = bot.outtake.hit;
-                if (hit != null) {
-                    telemetry.addData("Distance", bot.outtake.goalDistance);
-                    telemetry.addData("Hit Pose: ", hit.x + " " + hit.y);
-                    packet.fieldOverlay()
-                            .setFill("red")
-                            .fillCircle(hit.x, hit.y, 5);
-                }
+            Vector2d hit = bot.outtake.hit;
+            if (hit != null) {
+                telemetry.addData("\nHit Distance", bot.outtake.hitDistance);
+                telemetry.addData("Hit Pose: ", hit.x + " " + hit.y);
+                packet.fieldOverlay()
+                        .setFill("red")
+                        .fillCircle(hit.x, hit.y, 5);
             }
-            telemetry.addData("Controller #1 Left Stick", gp1.getLeftY());
+            telemetry.addData("\nController #1 Left Stick", gp1.getLeftY());
             telemetry.addData("Controller #2 Left Stick", gp2.getLeftY());
 
             dashboard.sendTelemetryPacket(packet);
