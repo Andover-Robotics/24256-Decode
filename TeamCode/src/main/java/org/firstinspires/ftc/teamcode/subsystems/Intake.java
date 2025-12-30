@@ -14,13 +14,17 @@ public class Intake {
     public static double storePower = 0.15;
 
     // gate configuration
-    public static double gateOpen = 0.61;
-    public static double gateClosed = 0.25;
+    public static double gateOpen = 0.88;
+    public static double gateClosed = 0.70;
+
+    private double gatePosition = gateOpen;
 
     public Intake(OpMode opMode) {
         motor = new Motor(opMode.hardwareMap, "intake");
         motor.setRunMode(Motor.RunMode.RawPower);
         gate = opMode.hardwareMap.get(Servo.class, "gate");
+
+        closeGate();
     }
 
     public void setPower(double power) {
@@ -45,9 +49,19 @@ public class Intake {
 
     public void openGate() {
         gate.setPosition(gateOpen);
+        gatePosition = gateOpen;
     }
 
     public void closeGate() {
         gate.setPosition(gateClosed);
+        gatePosition = gateClosed;
+    }
+
+    public void toggleGate() {
+        if (gatePosition == gateOpen) {
+            closeGate();
+        } else {
+            openGate();
+        }
     }
 }
