@@ -21,7 +21,7 @@ public class Outtake {
     private MotorEx motor2;
 
     // PID constants
-    public static double kP = 0.00025;
+    public static double kP = 0.0004;
     public static double kI = 0;
     public static double kD = 0;
     public static double kStatic = 0;
@@ -68,9 +68,9 @@ public class Outtake {
         controller = new PIDController(kP, kI, kD);
         motor1 = new MotorEx(opMode.hardwareMap, "outtake1", MotorEx.GoBILDA.BARE);
         motor1.setRunMode(Motor.RunMode.RawPower);
-        motor1.setInverted(true);
         motor2 = new MotorEx(opMode.hardwareMap, "outtake2", MotorEx.GoBILDA.BARE);
         motor2.setRunMode(Motor.RunMode.RawPower);
+        motor2.setInverted(true);
 
         this.localizer = localizer;
     }

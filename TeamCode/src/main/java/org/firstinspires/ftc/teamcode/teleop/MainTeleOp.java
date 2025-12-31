@@ -46,7 +46,8 @@ public class MainTeleOp extends LinearOpMode {
 
         waitForStart();
 
-        bot.outtake.enable();
+        if (Outtake.MANUAL)
+            bot.outtake.enable();
 
         while (opModeIsActive() && !isStopRequested()) {
             TelemetryPacket packet = new TelemetryPacket();
@@ -58,7 +59,8 @@ public class MainTeleOp extends LinearOpMode {
 
             bot.driveRobotCentric(throttle, strafe, turn);
             bot.periodic();
-//            bot.drive.updatePoseEstimate();
+            if (bot.drive != null)
+                bot.drive.updatePoseEstimate();
 
             gp2.readButtons();
             if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2) {
@@ -66,7 +68,7 @@ public class MainTeleOp extends LinearOpMode {
             } else if (gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.2) {
                 bot.intake.out();
             } else {
-                bot.intake.stop();
+                bot.intake.store();
             }
 
             if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
@@ -75,11 +77,17 @@ public class MainTeleOp extends LinearOpMode {
 
             if (!bot.outtake.isEnabled()) {
                 if (gp2.getButton(GamepadKeys.Button.A)) {
-                    addAction(bot.actionShoot(Bot.SHOOT_ONE_DELAY));
+                    addAction(bot.actionShootOne());
                 } else if (gp2.getButton(GamepadKeys.Button.B)) {
-                    addAction(bot.actionShoot(Bot.SHOOT_THREE_DELAY));
+                    addAction(bot.actionShootThree());
                 }
             }
+
+//            if (gp2.getButton(GamepadKeys.Button.A)) {
+//                bot.outtake.setPower(1.0);
+//            } else {
+//                bot.outtake.setPower(0.0);
+//            }
 
             if (gp1.getButton(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
                 Bot.switchAlliance();

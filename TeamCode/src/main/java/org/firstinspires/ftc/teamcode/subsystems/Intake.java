@@ -11,11 +11,11 @@ public class Intake {
     // intake configuration
     public static double inPower = 1.0;
     public static double outPower = -1.0;
-    public static double storePower = 0.15;
+    public static double storePower = 0.3;
 
     // gate configuration
-    public static double gateOpen = 0.88;
-    public static double gateClosed = 0.70;
+    public static double gateOpen = 0.74;
+    public static double gateClosed = 0.56;
 
     private double gatePosition = gateOpen;
 

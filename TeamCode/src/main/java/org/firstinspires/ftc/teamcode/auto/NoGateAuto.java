@@ -44,9 +44,9 @@ public class NoGateAuto extends LinearOpMode {
 
         Action auto = drive.actionBuilderColor(startPose, Bot.alliance == Bot.Alliance.BLUE)
                 // shoot preload
-                .afterTime(0.01, new InstantAction(() -> bot.intake.in()))
+                .afterTime(0.01, new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
-                .stopAndAdd(bot.actionShoot(Bot.SHOOT_THREE_DELAY))
+                .stopAndAdd(bot.actionShootThree())
 
                 .build();
 

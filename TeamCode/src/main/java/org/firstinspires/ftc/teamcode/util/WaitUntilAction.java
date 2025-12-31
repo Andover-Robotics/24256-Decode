@@ -11,13 +11,33 @@ public class WaitUntilAction implements Action {
     }
 
     private ConditionalFunction f;
+    private double minTime;
+    private double beginTs = -1.0;
+
+    public WaitUntilAction(ConditionalFunction f, double minTime) {
+        this.f = f;
+        this.minTime = minTime;
+    }
 
     public WaitUntilAction(ConditionalFunction f) {
-        this.f = f;
+        this(f, 0.0);
+    }
+
+    private static double getTimeSeconds() {
+        return System.currentTimeMillis() / 1000.0;
     }
 
     @Override
     public boolean run(@NonNull TelemetryPacket packet) {
+        double deltaTs = 0;
+        if (beginTs < 0) {
+            beginTs = getTimeSeconds();
+        } else {
+            deltaTs = getTimeSeconds() - beginTs;
+        }
+
+        if (deltaTs < minTime) return true;
+
         return !f.condition();
     }
 }

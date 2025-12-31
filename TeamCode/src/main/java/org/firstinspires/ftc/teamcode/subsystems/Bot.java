@@ -39,8 +39,8 @@ public class Bot {
 
     public MecanumDrive drive;
 
-    public static double SHOOT_THREE_DELAY = 0.0;
-    public static double SHOOT_ONE_DELAY = 0.0;
+    public static double SHOOT_ONE_DELAY = 0.5;
+    public static double MIN_GATE_TIME = 0.1;
 
     public static Pose2d mirror(Pose2d initial) {
         return new Pose2d(new Vector2d(initial.position.x, -initial.position.y), -initial.heading.log());
@@ -64,9 +64,7 @@ public class Bot {
         bl.setRunMode(Motor.RunMode.RawPower);
         br.setRunMode(Motor.RunMode.RawPower);
         fl.setInverted(true);
-        fr.setInverted(true);
         bl.setInverted(true);
-        br.setInverted(true);
 
 //        drive = new MecanumDrive(opMode.hardwareMap, new Pose2d(0, 0, 0));
         drive = null;
@@ -136,14 +134,41 @@ public class Bot {
         };
     }
 
-    public Action actionShoot(double delay) {
+    public Action actionShootOne() {
         return new SequentialAction(
                 new InstantAction(() -> intake.in()),
                 new InstantAction(() -> outtake.enable()),
-                new WaitUntilAction(() -> outtake.inTolerance()),
+                new WaitUntilAction(() -> outtake.inTolerance(), MIN_GATE_TIME),
+
                 new InstantAction(() -> intake.openGate()),
-                new SleepAction(delay),
+                new SleepAction(SHOOT_ONE_DELAY),
                 new InstantAction(() -> intake.closeGate()),
+
+                new InstantAction(() -> intake.store()),
+                new InstantAction(() -> outtake.disable())
+        );
+    }
+
+    public Action actionShootThree() {
+        return new SequentialAction(
+                new InstantAction(() -> intake.in()),
+                new InstantAction(() -> outtake.enable()),
+
+                new WaitUntilAction(() -> outtake.inTolerance(), MIN_GATE_TIME),
+                new InstantAction(() -> intake.openGate()),
+                new SleepAction(SHOOT_ONE_DELAY),
+                new InstantAction(() -> intake.closeGate()),
+
+                new WaitUntilAction(() -> outtake.inTolerance(), MIN_GATE_TIME),
+                new InstantAction(() -> intake.openGate()),
+                new SleepAction(SHOOT_ONE_DELAY),
+                new InstantAction(() -> intake.closeGate()),
+
+                new WaitUntilAction(() -> outtake.inTolerance(), MIN_GATE_TIME),
+                new InstantAction(() -> intake.openGate()),
+                new SleepAction(SHOOT_ONE_DELAY),
+                new InstantAction(() -> intake.closeGate()),
+
                 new InstantAction(() -> intake.store()),
                 new InstantAction(() -> outtake.disable())
         );
