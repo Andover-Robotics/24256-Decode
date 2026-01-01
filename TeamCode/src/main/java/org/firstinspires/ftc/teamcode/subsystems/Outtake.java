@@ -5,7 +5,6 @@ import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 @Config
 public class Outtake {
@@ -26,17 +25,17 @@ public class Outtake {
     private static double VELOCITY_TOLERANCE = 50;
 
     // aim
-    public static double shooterA = 0.204122;
-    public static double shooterB = -15.08678;
-    public static double shooterC = 4061.32491;
+    public static double shooterA = 0.248463;
+    public static double shooterB = -9.02865;
+    public static double shooterC = 3535.63289;
 
     public static boolean MANUAL = false;
     public static double MANUAL_VELOCITY = 0;
 
-    private boolean enabled = false;
+    public static boolean enabled = false;
 
-    public static double HEIGHT_FROM_CAM_TO_BASE = 13.5;
-    public static double TO_INSIDE_OFFSET = 19.0;
+    public static double HEIGHT_FROM_CAM_TO_ATAG = 15;
+    public static double TO_INSIDE_OFFSET = 0;
 
     public Double hitDistance = null;
 
@@ -66,7 +65,7 @@ public class Outtake {
         double directDistance = goal.ftcPose.range;
 
         // pythagorean theorem to get 2D distance
-        double twoDimDistance = Math.sqrt(directDistance * directDistance - HEIGHT_FROM_CAM_TO_BASE * HEIGHT_FROM_CAM_TO_BASE);
+        double twoDimDistance = Math.sqrt(directDistance * directDistance - HEIGHT_FROM_CAM_TO_ATAG * HEIGHT_FROM_CAM_TO_ATAG);
 
         // crude approximation - works when parallel to goal
         double bearingCorrection = twoDimDistance * Math.cos(bearing);

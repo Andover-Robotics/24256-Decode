@@ -18,7 +18,7 @@ public class Intake {
 
     // gate configuration
     public static double gateOpen = 0.74;
-    public static double gateClosed = 0.56;
+    public static double gateClosed = 0.60;
 
     private double gatePosition = gateOpen;
 
