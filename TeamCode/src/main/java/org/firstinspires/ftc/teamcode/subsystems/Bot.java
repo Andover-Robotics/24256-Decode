@@ -11,10 +11,10 @@ import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.auto.config.MecanumDrive;
-import org.firstinspires.ftc.teamcode.subsystems.shooter.Outtake;
 import org.firstinspires.ftc.teamcode.util.WaitUntilAction;
 
 @Config
@@ -39,8 +39,10 @@ public class Bot {
 
     public MecanumDrive drive;
 
-    public static double SHOOT_ONE_DELAY = 0.5;
-    public static double MIN_GATE_TIME = 0.1;
+    public static double SHOOT_ONE_DELAY = 1.0;
+    public static double GATE_DELAY = 1.0;
+
+    public AprilTag aprilTag;
 
     public static Pose2d mirror(Pose2d initial) {
         return new Pose2d(new Vector2d(initial.position.x, -initial.position.y), -initial.heading.log());
@@ -53,7 +55,16 @@ public class Bot {
     public static Pose2d redResetPose = new Pose2d(0, 0, Math.toRadians(180));
     public static Pose2d blueResetPose = mirror(redResetPose);
 
-    private Bot(OpMode opMode) { // new Bot(opMode);
+    private Bot(LinearOpMode opMode) { // new Bot(opMode);
+        this.opMode = opMode;
+        aprilTag = new AprilTag(opMode);
+
+//        drive = new MecanumDrive(opMode.hardwareMap, new Pose2d(0, 0, 0));
+        drive = null;
+
+        intake = new Intake(opMode);
+        outtake = new Outtake(opMode, aprilTag);
+
         // make sure to set the direction of the motors
         fl = new Motor(opMode.hardwareMap, "fl");
         fr = new Motor(opMode.hardwareMap, "fr");
@@ -66,15 +77,13 @@ public class Bot {
         fl.setInverted(true);
         bl.setInverted(true);
 
-//        drive = new MecanumDrive(opMode.hardwareMap, new Pose2d(0, 0, 0));
-        drive = null;
-
-        intake = new Intake(opMode);
-//        outtake = new Outtake(opMode, drive.localizer);
-        outtake = new Outtake(opMode, null);
+        fl.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        fr.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        bl.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        br.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
     }
 
-    public static Bot getInstance(OpMode opMode) {
+    public static Bot getInstance(LinearOpMode opMode) {
         if (instance == null) {
             instance = new Bot(opMode);
         }
@@ -138,12 +147,10 @@ public class Bot {
         return new SequentialAction(
                 new InstantAction(() -> intake.in()),
                 new InstantAction(() -> outtake.enable()),
-                new WaitUntilAction(() -> outtake.inTolerance(), MIN_GATE_TIME),
-
+                new SleepAction(GATE_DELAY),
                 new InstantAction(() -> intake.openGate()),
                 new SleepAction(SHOOT_ONE_DELAY),
                 new InstantAction(() -> intake.closeGate()),
-
                 new InstantAction(() -> intake.store()),
                 new InstantAction(() -> outtake.disable())
         );
@@ -151,26 +158,26 @@ public class Bot {
 
     public Action actionShootThree() {
         return new SequentialAction(
-                new InstantAction(() -> intake.in()),
-                new InstantAction(() -> outtake.enable()),
-
-                new WaitUntilAction(() -> outtake.inTolerance(), MIN_GATE_TIME),
-                new InstantAction(() -> intake.openGate()),
-                new SleepAction(SHOOT_ONE_DELAY),
-                new InstantAction(() -> intake.closeGate()),
-
-                new WaitUntilAction(() -> outtake.inTolerance(), MIN_GATE_TIME),
-                new InstantAction(() -> intake.openGate()),
-                new SleepAction(SHOOT_ONE_DELAY),
-                new InstantAction(() -> intake.closeGate()),
-
-                new WaitUntilAction(() -> outtake.inTolerance(), MIN_GATE_TIME),
-                new InstantAction(() -> intake.openGate()),
-                new SleepAction(SHOOT_ONE_DELAY),
-                new InstantAction(() -> intake.closeGate()),
-
-                new InstantAction(() -> intake.store()),
-                new InstantAction(() -> outtake.disable())
+//                new InstantAction(() -> intake.in()),
+//                new InstantAction(() -> outtake.enable()),
+//
+//                new WaitUntilAction(() -> outtake.inTolerance(), MIN_GATE_TIME),
+//                new InstantAction(() -> intake.openGate()),
+//                new SleepAction(SHOOT_ONE_DELAY),
+//                new InstantAction(() -> intake.closeGate()),
+//
+//                new WaitUntilAction(() -> outtake.inTolerance(), MIN_GATE_TIME),
+//                new InstantAction(() -> intake.openGate()),
+//                new SleepAction(SHOOT_ONE_DELAY),
+//                new InstantAction(() -> intake.closeGate()),
+//
+//                new WaitUntilAction(() -> outtake.inTolerance(), MIN_GATE_TIME),
+//                new InstantAction(() -> intake.openGate()),
+//                new SleepAction(SHOOT_ONE_DELAY),
+//                new InstantAction(() -> intake.closeGate()),
+//
+//                new InstantAction(() -> intake.store()),
+//                new InstantAction(() -> outtake.disable())
         );
     }
 }

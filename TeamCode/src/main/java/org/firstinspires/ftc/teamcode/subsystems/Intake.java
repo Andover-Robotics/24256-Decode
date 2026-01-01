@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
+@Config
 public class Intake {
     private Motor motor;
     private Servo gate;
@@ -19,7 +22,7 @@ public class Intake {
 
     private double gatePosition = gateOpen;
 
-    public Intake(OpMode opMode) {
+    public Intake(LinearOpMode opMode) {
         motor = new Motor(opMode.hardwareMap, "intake");
         motor.setRunMode(Motor.RunMode.RawPower);
         gate = opMode.hardwareMap.get(Servo.class, "gate");

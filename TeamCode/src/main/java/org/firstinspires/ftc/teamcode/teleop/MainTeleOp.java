@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystems.Bot;
-import org.firstinspires.ftc.teamcode.subsystems.shooter.Outtake;
+import org.firstinspires.ftc.teamcode.subsystems.Outtake;
 
 import java.util.ArrayList;
 
@@ -37,6 +37,8 @@ public class MainTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Bot bot = Bot.getInstance(this);
+
+        Bot.alliance = Bot.Alliance.RED;
 
         GamepadEx gp1 = new GamepadEx(gamepad1);
         GamepadEx gp2 = new GamepadEx(gamepad2);
@@ -89,16 +91,8 @@ public class MainTeleOp extends LinearOpMode {
 //                bot.outtake.setPower(0.0);
 //            }
 
-            if (gp1.getButton(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
+            if (gp1.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
                 Bot.switchAlliance();
-            }
-
-            if (gp1.getButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)) {
-                if (Bot.alliance == Bot.Alliance.RED) {
-                    bot.setPose(Bot.redResetPose);
-                } else {
-                    bot.setPose(Bot.blueResetPose);
-                }
             }
 
             handleActions(packet);
@@ -106,13 +100,9 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("Bot Alliance", (Bot.alliance == Bot.Alliance.RED) ? "Red" : "Blue");
             telemetry.addData("Flywheel Target Velocity", bot.outtake.getTargetVelocity());
             telemetry.addData("Flywheel Velocity", bot.outtake.getRealVelocity());
-            Vector2d hit = bot.outtake.hit;
-            if (hit != null) {
+            if (bot.outtake.hitDistance != null) {
                 telemetry.addData("\nHit Distance", bot.outtake.hitDistance);
-                telemetry.addData("Hit Pose: ", hit.x + " " + hit.y);
-                packet.fieldOverlay()
-                        .setFill("red")
-                        .fillCircle(hit.x, hit.y, 5);
+                telemetry.addData("\nBearing", Math.toDegrees(bot.outtake.bearing));
             }
             telemetry.addData("\nController #1 Left Stick", gp1.getLeftY());
             telemetry.addData("Controller #2 Left Stick", gp2.getLeftY());

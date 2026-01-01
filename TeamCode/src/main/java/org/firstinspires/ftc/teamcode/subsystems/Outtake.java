@@ -1,19 +1,11 @@
-package org.firstinspires.ftc.teamcode.subsystems.shooter;
+package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-
-import org.firstinspires.ftc.teamcode.auto.config.Localizer;
-import org.firstinspires.ftc.teamcode.subsystems.Bot;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Config
 public class Outtake {
@@ -34,37 +26,27 @@ public class Outtake {
     private static double VELOCITY_TOLERANCE = 50;
 
     // aim
-    public static double shooterA = 0;
-    public static double shooterB = 0;
-    public static double shooterC = 0;
-    public static double shooterD = 0;
+    public static double shooterA = 0.204122;
+    public static double shooterB = -15.08678;
+    public static double shooterC = 4061.32491;
 
-    public static boolean MANUAL = true;
-    public static double MANUAL_VELOCITY = 4000;
-
-    public static Vector2d offsetFromCenter = new Vector2d(0, 0);
+    public static boolean MANUAL = false;
+    public static double MANUAL_VELOCITY = 0;
 
     private boolean enabled = false;
 
-    private static List<Vector2d> redGoalCorners = Arrays.asList(
-            new Vector2d(70.06, -47.65),
-            new Vector2d(48.41, -63.36),
-            new Vector2d(48.23, -69.94),
-            new Vector2d(70.16, -70.20)
-    );
+    public static double HEIGHT_FROM_CAM_TO_BASE = 13.5;
+    public static double TO_INSIDE_OFFSET = 19.0;
 
-    private static Goal redGoal = new Goal(redGoalCorners);
-
-    private static Goal blueGoal = new Goal(redGoalCorners.stream().map(Bot::mirror).collect(Collectors.toList()));
-
-    public Vector2d hit = null;
     public Double hitDistance = null;
-
-    private Localizer localizer;
 
     private double targetVelocity = 0;
 
-    public Outtake(OpMode opMode, Localizer localizer) {
+    private AprilTag aprilTag;
+
+    public double bearing;
+
+    public Outtake(LinearOpMode opMode, AprilTag aprilTag) {
         controller = new PIDController(kP, kI, kD);
         motor1 = new MotorEx(opMode.hardwareMap, "outtake1", MotorEx.GoBILDA.BARE);
         motor1.setRunMode(Motor.RunMode.RawPower);
@@ -72,32 +54,24 @@ public class Outtake {
         motor2.setRunMode(Motor.RunMode.RawPower);
         motor2.setInverted(true);
 
-        this.localizer = localizer;
+        this.aprilTag = aprilTag;
     }
 
-    public Pose2d getPose() {
-        Pose2d robotPose = localizer.getPose();
+    private Double getHitDistance() {
+        AprilTag.AprilTagResult goal = aprilTag.getGoal();
+        if (goal == null)
+            return null;
 
-        // rotate offset vector
-        double c = Math.cos(robotPose.heading.log());
-        double s = Math.sin(robotPose.heading.log());
+        bearing = Math.toRadians(goal.ftcPose.bearing);
+        double directDistance = goal.ftcPose.range;
 
-        return new Pose2d(
-                robotPose.position.x + offsetFromCenter.x * c - offsetFromCenter.y * s,
-                robotPose.position.y + offsetFromCenter.x * s + offsetFromCenter.y * c,
-                robotPose.heading.log()
-        );
-    }
+        // pythagorean theorem to get 2D distance
+        double twoDimDistance = Math.sqrt(directDistance * directDistance - HEIGHT_FROM_CAM_TO_BASE * HEIGHT_FROM_CAM_TO_BASE);
 
-    public void getHit() {
-        if (localizer == null) return;
-        Pose2d startPose = getPose();
-        hit = ((Bot.alliance == Bot.Alliance.RED) ? redGoal : blueGoal).getGoal(startPose);
-        if (hit == null) {
-            hitDistance = null;
-            return;
-        }
-        hitDistance = (hit.minus(startPose.position)).norm();
+        // crude approximation - works when parallel to goal
+        double bearingCorrection = twoDimDistance * Math.cos(bearing);
+
+        return bearingCorrection + TO_INSIDE_OFFSET;
     }
 
     public double getRegressionVelocity() {
@@ -106,7 +80,7 @@ public class Outtake {
         if (hitDistance == null) {
             return 0;
         } else {
-            return shooterA + Math.sqrt(shooterB + hitDistance * shooterC) * shooterD;
+            return shooterA * Math.pow(hitDistance, 2) + shooterB * hitDistance + shooterC;
         }
     }
 
@@ -124,15 +98,16 @@ public class Outtake {
     }
 
     public void periodic() {
-        getHit();
-
-        controller.setPID(kP, kI, kD);
+        aprilTag.updateDetections();
+        hitDistance = getHitDistance();
         targetVelocity = getRegressionVelocity();
 
         if (!enabled || targetVelocity == 0) {
             setPower(0);
             return;
         }
+
+        controller.setPID(kP, kI, kD);
 
         double pidOutput = controller.calculate(getRealVelocity(), targetVelocity);
         double ffOutput = kStatic + kV * targetVelocity;
