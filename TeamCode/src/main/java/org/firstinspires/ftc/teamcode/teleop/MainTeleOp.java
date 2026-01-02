@@ -56,10 +56,13 @@ public class MainTeleOp extends LinearOpMode {
             double strafe = gp1.getLeftX();
             double turn = gp1.getRightX();
 
-            bot.driveRobotCentric(throttle, strafe, turn);
+            double scalar = 1.0;
+            if (gp1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2) {
+                scalar = 0.6;
+            }
+
+            bot.driveRobotCentric(throttle, strafe, turn, scalar);
             bot.periodic();
-            if (bot.drive != null)
-                bot.drive.updatePoseEstimate();
 
             gp2.readButtons();
             if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2) {
@@ -76,9 +79,7 @@ public class MainTeleOp extends LinearOpMode {
 
             if (!bot.outtake.isEnabled()) {
                 if (gp2.getButton(GamepadKeys.Button.A)) {
-                    addAction(bot.actionShootOne());
-                } else if (gp2.getButton(GamepadKeys.Button.B)) {
-                    addAction(bot.actionShootThree());
+                    addAction(bot.actionShoot());
                 }
             }
 

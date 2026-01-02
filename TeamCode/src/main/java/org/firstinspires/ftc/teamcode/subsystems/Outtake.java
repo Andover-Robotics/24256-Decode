@@ -31,6 +31,7 @@ public class Outtake {
 
     public static boolean MANUAL = false;
     public static double MANUAL_VELOCITY = 0;
+    public static double DEFAULT_VELOCITY = 3900;
 
     public static boolean enabled = false;
 
@@ -64,10 +65,10 @@ public class Outtake {
         bearing = Math.toRadians(goal.ftcPose.bearing);
         double directDistance = goal.ftcPose.range;
 
-        // pythagorean theorem to get 2D distance
-        double twoDimDistance = Math.sqrt(directDistance * directDistance - HEIGHT_FROM_CAM_TO_ATAG * HEIGHT_FROM_CAM_TO_ATAG);
-
-        // crude approximation - works when parallel to goal
+        double twoDimDistance = Math.sqrt(
+                directDistance * directDistance
+                        - HEIGHT_FROM_CAM_TO_ATAG * HEIGHT_FROM_CAM_TO_ATAG
+        );
         double bearingCorrection = twoDimDistance * Math.cos(bearing);
 
         return bearingCorrection + TO_INSIDE_OFFSET;
@@ -77,7 +78,7 @@ public class Outtake {
         if (MANUAL) return MANUAL_VELOCITY;
 
         if (hitDistance == null) {
-            return 0;
+            return DEFAULT_VELOCITY;
         } else {
             return shooterA * Math.pow(hitDistance, 2) + shooterB * hitDistance + shooterC;
         }

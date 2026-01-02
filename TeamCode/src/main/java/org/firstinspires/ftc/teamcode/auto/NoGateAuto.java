@@ -17,40 +17,61 @@ import org.firstinspires.ftc.teamcode.subsystems.Bot;
 @Autonomous(name = "Decode No Gate Auto")
 public class NoGateAuto extends LinearOpMode {
     // Positions
-    public static Pose2d redAllianceStartPose = new Pose2d(-72 + (24 + 384.0 / 2) / 25.4, -24, 0);
-    public static Pose2d shoot = new Pose2d(-24, -24, Math.toRadians(225));
-    public static Vector2d preFirstIntake = new Vector2d(-12, -28);
-    public static Vector2d firstIntake = new Vector2d(-12, -52);
-    public static Vector2d preSecondIntake = new Vector2d(12, -28);
-    public static Vector2d secondIntake = new Vector2d(12, -56);
-    public static Vector2d preThirdIntake = new Vector2d(36, -28);
-    public static Vector2d thirdIntake = new Vector2d(36, -56);
+    public static Pose2d redAllianceStartPose = new Pose2d(60, -48, Math.toRadians(-45));
+    public static Pose2d shoot = new Pose2d(30, -30, Math.toRadians(-45));
+    public static Vector2d preFirstIntake = new Vector2d(14, -34);
+    public static Vector2d firstIntake = new Vector2d(14, -56);
+    public static Vector2d preSecondIntake = new Vector2d(-10, -34);
+    public static Vector2d secondIntake = new Vector2d(-10, -60);
 
     public void runOpMode() throws InterruptedException {
         Bot bot = Bot.getInstance(this);
-        MecanumDrive drive = bot.drive;
 
         GamepadEx gp1 = new GamepadEx(gamepad1);
 
-        while (!isStarted() && !isStopRequested()) {
+        Bot.alliance = Bot.Alliance.RED;
+
+        while (opModeInInit() && !isStarted() && !isStopRequested()) {
             telemetry.addData("Bot Alliance", (Bot.alliance == Bot.Alliance.RED) ? "Red" : "Blue");
 
             if (gp1.getButton(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
                 Bot.switchAlliance();
             }
+            telemetry.update();
         }
 
+        waitForStart();
+        if (isStopRequested()) return;
+
         Pose2d startPose = (Bot.alliance == Bot.Alliance.RED) ? redAllianceStartPose : Bot.mirror(redAllianceStartPose);
+        MecanumDrive drive = new MecanumDrive(hardwareMap, startPose);
 
         Action auto = drive.actionBuilderColor(startPose, Bot.alliance == Bot.Alliance.BLUE)
                 // shoot preload
                 .afterTime(0.01, new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
-                .stopAndAdd(bot.actionShootThree())
+                .stopAndAdd(bot.actionShoot())
+
+                .afterTime(0.01, new InstantAction(() -> bot.intake.in()))
+                .strafeToLinearHeading(preFirstIntake, Math.toRadians(-85))
+                .strafeToLinearHeading(firstIntake, Math.toRadians(-85))
+                .waitSeconds(0.5)
+
+                .afterTime(0.01, new InstantAction(() -> bot.intake.store()))
+                .strafeToLinearHeading(shoot.position, shoot.heading.log())
+                .stopAndAdd(bot.actionShoot())
+
+                .afterTime(0.01, new InstantAction(() -> bot.intake.in()))
+                .strafeToLinearHeading(preSecondIntake, Math.toRadians(-85))
+                .strafeToLinearHeading(secondIntake, Math.toRadians(-85))
+                .waitSeconds(0.5)
+
+                .afterTime(0.01, new InstantAction(() -> bot.intake.store()))
+                .strafeToLinearHeading(shoot.position, shoot.heading.log())
+                .stopAndAdd(bot.actionShoot())
 
                 .build();
 
-        drive.localizer.setPose(startPose);
         Actions.runBlocking(
                 new ParallelAction( /* ends when auto ends */
                         bot.actionPeriodic(),

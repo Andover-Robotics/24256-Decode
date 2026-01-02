@@ -37,9 +37,7 @@ public class Bot {
     public Intake intake;
     public Outtake outtake;
 
-    public MecanumDrive drive;
-
-    public static double SHOOT_ONE_DELAY = 1.0;
+    public static double SHOOT_ONE_DELAY = 1.25;
     public static double GATE_DELAY = 1.0;
 
     public AprilTag aprilTag;
@@ -52,15 +50,9 @@ public class Bot {
         return new Vector2d(initial.x, -initial.y);
     }
 
-    public static Pose2d redResetPose = new Pose2d(0, 0, Math.toRadians(180));
-    public static Pose2d blueResetPose = mirror(redResetPose);
-
     private Bot(LinearOpMode opMode) { // new Bot(opMode);
         this.opMode = opMode;
         aprilTag = new AprilTag(opMode);
-
-//        drive = new MecanumDrive(opMode.hardwareMap, new Pose2d(0, 0, 0));
-        drive = null;
 
         intake = new Intake(opMode);
         outtake = new Outtake(opMode, aprilTag);
@@ -99,15 +91,7 @@ public class Bot {
         }
     }
 
-    public void setPose(Pose2d pose) {
-        drive.localizer.setPose(pose);
-    }
-
-    public Pose2d getPose() {
-        return drive.localizer.getPose();
-    }
-
-    public void driveRobotCentric(double throttle, double strafe, double turn) {
+    public void driveRobotCentric(double throttle, double strafe, double turn, double scalar) {
         double[] speeds = {
                 (throttle + strafe + turn), // Front Left
                 (throttle - strafe - turn), // Front Right
@@ -122,6 +106,9 @@ public class Bot {
             for (int i = 0; i < 4; i++) {
                 speeds[i] /= maxSpeed;
             }
+        }
+        for (int i = 0; i < 4; i++) {
+            speeds[i] *= scalar;
         }
         fl.set(speeds[0]);
         fr.set(speeds[1]);
@@ -143,7 +130,7 @@ public class Bot {
         };
     }
 
-    public Action actionShootOne() {
+    public Action actionShoot() {
         return new SequentialAction(
                 new InstantAction(() -> intake.in()),
                 new InstantAction(() -> outtake.enable()),
@@ -158,26 +145,26 @@ public class Bot {
 
     public Action actionShootThree() {
         return new SequentialAction(
-//                new InstantAction(() -> intake.in()),
-//                new InstantAction(() -> outtake.enable()),
-//
-//                new WaitUntilAction(() -> outtake.inTolerance(), MIN_GATE_TIME),
-//                new InstantAction(() -> intake.openGate()),
-//                new SleepAction(SHOOT_ONE_DELAY),
-//                new InstantAction(() -> intake.closeGate()),
-//
-//                new WaitUntilAction(() -> outtake.inTolerance(), MIN_GATE_TIME),
-//                new InstantAction(() -> intake.openGate()),
-//                new SleepAction(SHOOT_ONE_DELAY),
-//                new InstantAction(() -> intake.closeGate()),
-//
-//                new WaitUntilAction(() -> outtake.inTolerance(), MIN_GATE_TIME),
-//                new InstantAction(() -> intake.openGate()),
-//                new SleepAction(SHOOT_ONE_DELAY),
-//                new InstantAction(() -> intake.closeGate()),
-//
-//                new InstantAction(() -> intake.store()),
-//                new InstantAction(() -> outtake.disable())
+                new InstantAction(() -> intake.in()),
+                new InstantAction(() -> outtake.enable()),
+
+                new SleepAction(GATE_DELAY),
+                new InstantAction(() -> intake.openGate()),
+                new SleepAction(SHOOT_ONE_DELAY),
+                new InstantAction(() -> intake.closeGate()),
+
+                new SleepAction(GATE_DELAY),
+                new InstantAction(() -> intake.openGate()),
+                new SleepAction(SHOOT_ONE_DELAY),
+                new InstantAction(() -> intake.closeGate()),
+
+                new SleepAction(GATE_DELAY),
+                new InstantAction(() -> intake.openGate()),
+                new SleepAction(SHOOT_ONE_DELAY),
+                new InstantAction(() -> intake.closeGate()),
+
+                new InstantAction(() -> intake.store()),
+                new InstantAction(() -> outtake.disable())
         );
     }
 }
