@@ -17,8 +17,8 @@ public class AprilTag {
     private VisionPortal visionPortal;
     private AprilTagProcessor processor;
 
-    private AprilTagType obelisk = null;
-    private AprilTagResult goal = null;
+    public AprilTagType obelisk = null;
+    public AprilTagResult goal = null;
     private AprilTagType colorTarget;
 
     private ExposureControl exposureControl;
@@ -109,13 +109,5 @@ public class AprilTag {
             if (type == AprilTagType.OBELISK_GPP || type == AprilTagType.OBELISK_PGP || type == AprilTagType.OBELISK_PPG)
                 obelisk = type;
         }
-    }
-
-    public AprilTagResult getGoal() {
-        return goal;
-    }
-
-    public AprilTagType getObelisk() {
-        return obelisk;
     }
 }

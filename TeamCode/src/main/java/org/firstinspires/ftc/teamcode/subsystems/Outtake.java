@@ -58,7 +58,7 @@ public class Outtake {
     }
 
     private Double getHitDistance() {
-        AprilTag.AprilTagResult goal = aprilTag.getGoal();
+        AprilTag.AprilTagResult goal = aprilTag.goal;
         if (goal == null)
             return null;
 
