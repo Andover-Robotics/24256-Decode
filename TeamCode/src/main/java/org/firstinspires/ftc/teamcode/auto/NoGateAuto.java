@@ -23,6 +23,12 @@ public class NoGateAuto extends LinearOpMode {
     public static Vector2d firstIntake = new Vector2d(12, -56);
     public static Vector2d preSecondIntake = new Vector2d(-10, -34);
     public static Vector2d secondIntake = new Vector2d(-10, -60);
+    //Estimate for values; need to tune
+    public static Vector2d preThirdIntake = new Vector2d(-32, -34);
+    public static Vector2d thirdIntake = new Vector2d(-32, -60);
+
+    //Gate estimated value
+    public static Vector2d gatePos = new Vector2d(1, -58);
 
     public void runOpMode() throws InterruptedException {
         Bot.instance = null;
@@ -48,25 +54,37 @@ public class NoGateAuto extends LinearOpMode {
         MecanumDrive drive = new MecanumDrive(hardwareMap, startPose);
 
         Action auto = drive.actionBuilderColor(redAllianceStartPose, Bot.alliance == Bot.Alliance.BLUE)
-                // shoot preload
+                //shoot preload (1-3)
                 .afterTime(0.01, new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
                 .stopAndAdd(bot.actionShoot())
-
+                //first row
                 .afterTime(0.01, new InstantAction(() -> bot.intake.in()))
                 .strafeToLinearHeading(preFirstIntake, Math.toRadians(-85))
                 .strafeToLinearHeading(firstIntake, Math.toRadians(-85))
                 .waitSeconds(0.5)
-
+                //open gate
+                .strafeToLinearHeading(gatePos, Math.toRadians(0))
+                .waitSeconds(3)
+                //shoot 3 (4-6)
                 .afterTime(0.01, new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
                 .stopAndAdd(bot.actionShoot())
-
+                //second row
                 .afterTime(0.01, new InstantAction(() -> bot.intake.in()))
                 .strafeToLinearHeading(preSecondIntake, Math.toRadians(-85))
                 .strafeToLinearHeading(secondIntake, Math.toRadians(-85))
                 .waitSeconds(0.5)
-
+                //shoot 3 (7-9)
+                .afterTime(0.01, new InstantAction(() -> bot.intake.store()))
+                .strafeToLinearHeading(shoot.position, shoot.heading.log())
+                .stopAndAdd(bot.actionShoot())
+                //third row
+                .afterTime(0.01, new InstantAction(() -> bot.intake.in()))
+                .strafeToLinearHeading(preThirdIntake, Math.toRadians(-85))
+                .strafeToLinearHeading(thirdIntake, Math.toRadians(-85))
+                .waitSeconds(0.5)
+                //shoot 3 (10-12)
                 .afterTime(0.01, new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
                 .stopAndAdd(bot.actionShoot())
