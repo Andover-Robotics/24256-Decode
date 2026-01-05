@@ -35,22 +35,19 @@ public class MeepMeepTesting {
                         .strafeToLinearHeading(new Vector2d(-12, -24 - 4), Math.toRadians(-90))
                         .strafeToLinearHeading(new Vector2d(-12, -48 - 4), Math.toRadians(-90))
 
-                        // open gate
-                        .strafeToLinearHeading(new Vector2d(0, -56), Math.toRadians(180))
-                        .waitSeconds(3)
 
                         // shoot 1
                         .strafeToLinearHeading(new Vector2d(-24, -24), Math.toRadians(225))
 
 
                         // pickup 2 -> shoot 2
-                        .strafeToLinearHeading(new Vector2d(12, -24 - 4), Math.toRadians(-90))
+                        .strafeToLinearHeading(new Vector2d(12, -28), Math.toRadians(-90))
                         .strafeToLinearHeading(new Vector2d(12, -48), Math.toRadians(-90))
                         .strafeToLinearHeading(new Vector2d(-24, -24), Math.toRadians(225))
 
-                        .strafeToLinearHeading(new Vector2d(36, -24 - 4), Math.toRadians(-90))
-                        .strafeToLinearHeading(new Vector2d(36, -48), Math.toRadians(-90))
-                        .strafeToLinearHeading(new Vector2d(-24, -24), Math.toRadians(225))
+//                        .strafeToLinearHeading(new Vector2d(36, -24 - 4), Math.toRadians(-90))
+//                        .strafeToLinearHeading(new Vector2d(36, -48), Math.toRadians(-90))
+//                        .strafeToLinearHeading(new Vector2d(-24, -24), Math.toRadians(225))
 
                         .build()
         );

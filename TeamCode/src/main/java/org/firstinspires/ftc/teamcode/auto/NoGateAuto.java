@@ -19,12 +19,13 @@ public class NoGateAuto extends LinearOpMode {
     // Positions
     public static Pose2d redAllianceStartPose = new Pose2d(60, -48, Math.toRadians(-45));
     public static Pose2d shoot = new Pose2d(30, -30, Math.toRadians(-45));
-    public static Vector2d preFirstIntake = new Vector2d(14, -34);
-    public static Vector2d firstIntake = new Vector2d(14, -56);
+    public static Vector2d preFirstIntake = new Vector2d(12, -34);
+    public static Vector2d firstIntake = new Vector2d(12, -56);
     public static Vector2d preSecondIntake = new Vector2d(-10, -34);
     public static Vector2d secondIntake = new Vector2d(-10, -60);
 
     public void runOpMode() throws InterruptedException {
+        Bot.instance = null;
         Bot bot = Bot.getInstance(this);
 
         GamepadEx gp1 = new GamepadEx(gamepad1);
@@ -46,7 +47,7 @@ public class NoGateAuto extends LinearOpMode {
         Pose2d startPose = (Bot.alliance == Bot.Alliance.RED) ? redAllianceStartPose : Bot.mirror(redAllianceStartPose);
         MecanumDrive drive = new MecanumDrive(hardwareMap, startPose);
 
-        Action auto = drive.actionBuilderColor(startPose, Bot.alliance == Bot.Alliance.BLUE)
+        Action auto = drive.actionBuilderColor(redAllianceStartPose, Bot.alliance == Bot.Alliance.BLUE)
                 // shoot preload
                 .afterTime(0.01, new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())

@@ -24,7 +24,7 @@ public class Bot {
         BLUE
     }
 
-    public static Alliance alliance;
+    public static Alliance alliance = Alliance.RED;
 
     public static Bot instance = null;
 
@@ -43,7 +43,7 @@ public class Bot {
     public AprilTag aprilTag;
 
     public static Pose2d mirror(Pose2d initial) {
-        return new Pose2d(new Vector2d(initial.position.x, -initial.position.y), -initial.heading.log());
+        return new Pose2d(new Vector2d(initial.position.x, -initial.position.y), -initial.heading.toDouble());
     }
 
     public static Vector2d mirror(Vector2d initial) {
