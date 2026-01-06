@@ -28,6 +28,7 @@ public class Outtake {
     public static double shooterA = 0.248463;
     public static double shooterB = -9.02865;
     public static double shooterC = 3535.63289;
+    public static double IN_TOLERANCE_TIME = 0.050;
 
     public static boolean MANUAL = false;
     public static double MANUAL_VELOCITY = 0;
@@ -45,6 +46,8 @@ public class Outtake {
     private AprilTag aprilTag;
 
     public double bearing;
+
+    private double beginTs = -1.0;
 
     public Outtake(LinearOpMode opMode, AprilTag aprilTag) {
         controller = new PIDController(kP, kI, kD);
@@ -115,8 +118,21 @@ public class Outtake {
         setPower(pidOutput + ffOutput);
     }
 
+    private static double getTimeSeconds() {
+        return System.currentTimeMillis() / 1000.0;
+    }
+
     public boolean inTolerance() {
-        return Math.abs(getRealVelocity() - targetVelocity) < VELOCITY_TOLERANCE;
+        if (Math.abs(getRealVelocity() - targetVelocity) < VELOCITY_TOLERANCE) {
+            if (beginTs < 0) {
+                beginTs = getTimeSeconds();
+            }
+            double deltaTime = getTimeSeconds() - beginTs;
+            return deltaTime > IN_TOLERANCE_TIME;
+        } else {
+            beginTs = -1;
+        }
+        return false;
     }
 
     public void enable() {

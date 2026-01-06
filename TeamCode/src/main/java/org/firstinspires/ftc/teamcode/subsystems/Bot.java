@@ -134,35 +134,10 @@ public class Bot {
         return new SequentialAction(
                 new InstantAction(() -> intake.in()),
                 new InstantAction(() -> outtake.enable()),
-                new SleepAction(GATE_DELAY),
+                new WaitUntilAction(() -> outtake.inTolerance()),
                 new InstantAction(() -> intake.openGate()),
                 new SleepAction(SHOOT_ONE_DELAY),
                 new InstantAction(() -> intake.closeGate()),
-                new InstantAction(() -> intake.store()),
-                new InstantAction(() -> outtake.disable())
-        );
-    }
-
-    public Action actionShootThree() {
-        return new SequentialAction(
-                new InstantAction(() -> intake.in()),
-                new InstantAction(() -> outtake.enable()),
-
-                new SleepAction(GATE_DELAY),
-                new InstantAction(() -> intake.openGate()),
-                new SleepAction(SHOOT_ONE_DELAY),
-                new InstantAction(() -> intake.closeGate()),
-
-                new SleepAction(GATE_DELAY),
-                new InstantAction(() -> intake.openGate()),
-                new SleepAction(SHOOT_ONE_DELAY),
-                new InstantAction(() -> intake.closeGate()),
-
-                new SleepAction(GATE_DELAY),
-                new InstantAction(() -> intake.openGate()),
-                new SleepAction(SHOOT_ONE_DELAY),
-                new InstantAction(() -> intake.closeGate()),
-
                 new InstantAction(() -> intake.store()),
                 new InstantAction(() -> outtake.disable())
         );
