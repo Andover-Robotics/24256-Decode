@@ -14,8 +14,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.auto.config.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Bot;
 
-@Autonomous(name = "Decode No Gate Auto")
-public class NoGateAuto extends LinearOpMode {
+@Autonomous(name = "Decode_12 Ball_Gate_Close Side_Auto")
+public class TwelveBall_Gate_CloseSide extends LinearOpMode {
     // Positions
     public static Pose2d redAllianceStartPose = new Pose2d(60, -48, Math.toRadians(-45));
     public static Pose2d shoot = new Pose2d(30, -30, Math.toRadians(-45));
