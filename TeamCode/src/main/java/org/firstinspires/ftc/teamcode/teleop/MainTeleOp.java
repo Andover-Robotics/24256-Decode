@@ -76,6 +76,10 @@ public class MainTeleOp extends LinearOpMode {
                 bot.intake.toggleGate();
             }
 
+            if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
+                addAction(bot.intake.actionResetGate());
+            }
+
             if (!bot.outtake.isEnabled()) {
                 if (gp2.getButton(GamepadKeys.Button.A)) {
                     addAction(bot.actionShoot());

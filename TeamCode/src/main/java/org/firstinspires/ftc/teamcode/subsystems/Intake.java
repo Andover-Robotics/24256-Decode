@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.InstantAction;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @Config
@@ -20,7 +23,7 @@ public class Intake {
     public static double gateOpen = 0.74;
     public static double gateClosed = 0.60;
 
-    private double gatePosition = gateOpen;
+    private boolean gateOpenStatus = false;
 
     public Intake(LinearOpMode opMode) {
         motor = new Motor(opMode.hardwareMap, "intake");
@@ -52,16 +55,24 @@ public class Intake {
 
     public void openGate() {
         gate.setPosition(gateOpen);
-        gatePosition = gateOpen;
+        gateOpenStatus = true;
     }
 
     public void closeGate() {
         gate.setPosition(gateClosed);
-        gatePosition = gateClosed;
+        gateOpenStatus = false;
+    }
+
+    public Action actionResetGate() {
+        return new SequentialAction(
+                new InstantAction(() -> gate.getController().pwmDisable()),
+                new SleepAction(0.25),
+                new InstantAction(() -> gate.getController().pwmEnable())
+        );
     }
 
     public void toggleGate() {
-        if (gatePosition == gateOpen) {
+        if (gateOpenStatus) {
             closeGate();
         } else {
             openGate();
