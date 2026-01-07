@@ -25,9 +25,9 @@ public class Outtake {
     private static double VELOCITY_TOLERANCE = 50;
 
     // aim
-    public static double shooterA = 0.248463;
-    public static double shooterB = -9.02865;
-    public static double shooterC = 3535.63289;
+    public static double SHOOTER_A = 0.248463;
+    public static double SHOOTER_B = -9.02865;
+    public static double SHOOTER_C = 3535.63289;
     public static double IN_TOLERANCE_TIME = 0.050;
 
     public static boolean MANUAL = false;
@@ -36,8 +36,9 @@ public class Outtake {
 
     public static boolean enabled = false;
 
-    public static double HEIGHT_FROM_CAM_TO_ATAG = 15;
-    public static double TO_INSIDE_OFFSET = 0;
+    public static double CAMERA_ANGLE = Math.toRadians(70);
+    public static double ATAG_HEIGHT = 0;
+    public static double CAMERA_HEIGHT = 0;
 
     public Double hitDistance = null;
 
@@ -65,16 +66,13 @@ public class Outtake {
         if (goal == null)
             return null;
 
+        double elevation = Math.toRadians(goal.ftcPose.elevation) + CAMERA_ANGLE;
+        double atagDistance = (ATAG_HEIGHT - CAMERA_HEIGHT) / Math.tan(elevation);
+
         bearing = Math.toRadians(goal.ftcPose.bearing);
-        double directDistance = goal.ftcPose.range;
+        double goalDistance = atagDistance * Math.cos(bearing);
 
-        double twoDimDistance = Math.sqrt(
-                directDistance * directDistance
-                        - HEIGHT_FROM_CAM_TO_ATAG * HEIGHT_FROM_CAM_TO_ATAG
-        );
-        double bearingCorrection = twoDimDistance * Math.cos(bearing);
-
-        return bearingCorrection + TO_INSIDE_OFFSET;
+        return goalDistance;
     }
 
     public double getRegressionVelocity() {
@@ -83,7 +81,7 @@ public class Outtake {
         if (hitDistance == null) {
             return DEFAULT_VELOCITY;
         } else {
-            return shooterA * Math.pow(hitDistance, 2) + shooterB * hitDistance + shooterC;
+            return SHOOTER_A * hitDistance * hitDistance + SHOOTER_B * hitDistance + SHOOTER_C;
         }
     }
 
