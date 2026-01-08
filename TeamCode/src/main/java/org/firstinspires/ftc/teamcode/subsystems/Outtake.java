@@ -47,6 +47,7 @@ public class Outtake {
     private AprilTag aprilTag;
 
     public double bearing;
+    public double yaw;
 
     private double beginTs = -1.0;
 
@@ -70,9 +71,9 @@ public class Outtake {
         double atagDistance = (ATAG_HEIGHT - CAMERA_HEIGHT) / Math.tan(elevation);
 
         bearing = Math.toRadians(goal.ftcPose.bearing);
-        double goalDistance = atagDistance * Math.cos(bearing);
+        yaw = Math.toRadians(goal.ftcPose.yaw);
 
-        return goalDistance;
+        return atagDistance * Math.cos(bearing) + atagDistance * Math.sin(bearing) * Math.tan(yaw);
     }
 
     public double getRegressionVelocity() {
