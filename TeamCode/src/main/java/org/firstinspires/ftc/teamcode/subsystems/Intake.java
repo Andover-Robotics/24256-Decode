@@ -5,48 +5,55 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
-import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 @Config
 public class Intake {
-    private Motor motor;
+    private DcMotorEx motor;
     private Servo gate;
 
+    private double beginCurrentTs = -1.0;
+    private double current;
+    private boolean ballInIntake;
+
     // intake configuration
-    public static double inPower = 1.0;
-    public static double outPower = -1.0;
-    public static double storePower = 0.3;
+    public static double IN_POWER = 1.0;
+    public static double OUT_POWER = -1.0;
+    public static double STORE_POWER = 0.3;
 
     // gate configuration
-    public static double gateOpen = 0.74;
-    public static double gateClosed = 0.60;
+    public static double GATE_OPEN = 0.74;
+    public static double GATE_CLOSED = 0.60;
+
+    public static double CURRENT_THRESHOLD = 1000; // mA
+    public static double MIN_CURRENT_TIME = 0.050; // sec
 
     private boolean gateOpenStatus = false;
 
     public Intake(LinearOpMode opMode) {
-        motor = new Motor(opMode.hardwareMap, "intake");
-        motor.setRunMode(Motor.RunMode.RawPower);
+        motor = opMode.hardwareMap.get(DcMotorEx.class, "intake");
         gate = opMode.hardwareMap.get(Servo.class, "gate");
 
         closeGate();
     }
 
     public void setPower(double power) {
-        motor.set(power);
+        motor.setPower(power);
     }
 
     public void in() {
-        setPower(inPower);
+        setPower(IN_POWER);
     }
 
     public void out() {
-        setPower(outPower);
+        setPower(OUT_POWER);
     }
 
     public void store() {
-        setPower(storePower);
+        setPower(STORE_POWER);
     }
 
     public void stop() {
@@ -54,12 +61,12 @@ public class Intake {
     }
 
     public void openGate() {
-        gate.setPosition(gateOpen);
+        gate.setPosition(GATE_OPEN);
         gateOpenStatus = true;
     }
 
     public void closeGate() {
-        gate.setPosition(gateClosed);
+        gate.setPosition(GATE_CLOSED);
         gateOpenStatus = false;
     }
 
@@ -67,7 +74,9 @@ public class Intake {
         return new SequentialAction(
                 new InstantAction(() -> gate.getController().pwmDisable()),
                 new SleepAction(0.25),
-                new InstantAction(() -> gate.getController().pwmEnable())
+                new InstantAction(() -> gate.getController().pwmEnable()),
+                new SleepAction(0.25),
+                new InstantAction(this::closeGate)
         );
     }
 
@@ -76,6 +85,41 @@ public class Intake {
             closeGate();
         } else {
             openGate();
+        }
+    }
+
+    public double getCurrent() {
+        return current;
+    }
+
+    public boolean ballInIntake() {
+        return ballInIntake;
+    }
+
+    private static double getTs() {
+        return System.currentTimeMillis() / 1000.0;
+    }
+
+    public void periodic() {
+        // don't update state if we aren't intaking
+        if (motor.getPower() == 0) {
+            return;
+        }
+
+        current = motor.getCurrent(CurrentUnit.MILLIAMPS);
+
+        if (current > CURRENT_THRESHOLD) {
+            if (beginCurrentTs < 0) {
+                beginCurrentTs = getTs();
+            }
+            double deltaTime = getTs() - beginCurrentTs;
+
+            if (deltaTime > MIN_CURRENT_TIME) {
+                ballInIntake = true;
+            }
+        } else {
+            beginCurrentTs = -1.0;
+            ballInIntake = false;
         }
     }
 }

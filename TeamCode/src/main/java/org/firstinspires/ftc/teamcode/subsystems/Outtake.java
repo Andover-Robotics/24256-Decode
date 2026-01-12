@@ -70,10 +70,7 @@ public class Outtake {
         double elevation = Math.toRadians(goal.ftcPose.elevation) + CAMERA_ANGLE;
         double atagDistance = (ATAG_HEIGHT - CAMERA_HEIGHT) / Math.tan(elevation);
 
-        bearing = Math.toRadians(goal.ftcPose.bearing);
-        yaw = Math.toRadians(goal.ftcPose.yaw);
-
-        return atagDistance * Math.cos(bearing) + atagDistance * Math.sin(bearing) * Math.tan(yaw);
+        return atagDistance * Math.cos(bearing); // decent approximation for when we face the goal
     }
 
     public double getRegressionVelocity() {

@@ -14,7 +14,6 @@ import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.auto.config.MecanumDrive;
 import org.firstinspires.ftc.teamcode.util.WaitUntilAction;
 
 @Config
@@ -117,6 +116,7 @@ public class Bot {
     }
 
     public void periodic() {
+        intake.periodic();
         outtake.periodic();
     }
 

@@ -4,14 +4,12 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystems.Bot;
-import org.firstinspires.ftc.teamcode.subsystems.Outtake;
 
 import java.util.ArrayList;
 
@@ -86,11 +84,11 @@ public class MainTeleOp extends LinearOpMode {
                 }
             }
 
-//            if (gp2.getButton(GamepadKeys.Button.A)) {
-//                bot.outtake.setPower(1.0);
-//            } else {
-//                bot.outtake.setPower(0.0);
-//            }
+            if (bot.intake.ballInIntake()) {
+                gamepad1.setLedColor(0, 255, 0, 10);
+            } else {
+                gamepad1.setLedColor(255, 0, 0, 10);
+            }
 
             if (gp1.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
                 Bot.switchAlliance();
@@ -99,7 +97,8 @@ public class MainTeleOp extends LinearOpMode {
             handleActions(packet);
 
             telemetry.addData("Bot Alliance", (Bot.alliance == Bot.Alliance.RED) ? "Red" : "Blue");
-            telemetry.addData("Flywheel Target Velocity", bot.outtake.getTargetVelocity());
+            telemetry.addData("\nIntake Current", bot.intake.getCurrent());
+            telemetry.addData("\nFlywheel Target Velocity", bot.outtake.getTargetVelocity());
             telemetry.addData("Flywheel Velocity", bot.outtake.getRealVelocity());
             if (bot.outtake.hitDistance != null) {
                 telemetry.addData("\nHit Distance", bot.outtake.hitDistance);
@@ -107,7 +106,6 @@ public class MainTeleOp extends LinearOpMode {
             }
             telemetry.addData("\nController #1 Left Stick", gp1.getLeftY());
             telemetry.addData("Controller #2 Left Stick", gp2.getLeftY());
-
 
             dashboard.sendTelemetryPacket(packet);
             telemetry.update();
