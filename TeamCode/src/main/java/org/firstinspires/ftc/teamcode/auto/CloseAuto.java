@@ -85,7 +85,8 @@ public class CloseAuto extends LinearOpMode {
                 .stopAndAdd(new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
                 .stopAndAdd(bot.actionShoot())
-
+                // gate
+                .strafeToLinearHeading(gate, Math.toRadians(0))
                 .build();
 
         Actions.runBlocking(
