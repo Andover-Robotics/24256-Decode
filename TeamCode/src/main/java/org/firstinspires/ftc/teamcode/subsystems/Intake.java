@@ -29,7 +29,7 @@ public class Intake {
     public static double GATE_CLOSED = 0.60;
 
     public static double CURRENT_THRESHOLD = 1000; // mA
-    public static double MIN_CURRENT_TIME = 0.050; // sec
+    public static double MIN_CURRENT_TIME = 0.050 * 1000; // sec
 
     private boolean gateOpenStatus = false;
 
@@ -96,13 +96,9 @@ public class Intake {
         return ballInIntake;
     }
 
-    private static double getTs() {
-        return System.currentTimeMillis() / 1000.0;
-    }
-
     public void periodic() {
         // don't update state if we aren't intaking
-        if (motor.getPower() == 0) {
+        if (motor.getPower() != IN_POWER) {
             return;
         }
 
@@ -110,9 +106,9 @@ public class Intake {
 
         if (current > CURRENT_THRESHOLD) {
             if (beginCurrentTs < 0) {
-                beginCurrentTs = getTs();
+                beginCurrentTs = System.currentTimeMillis();
             }
-            double deltaTime = getTs() - beginCurrentTs;
+            double deltaTime = System.currentTimeMillis() - beginCurrentTs;
 
             if (deltaTime > MIN_CURRENT_TIME) {
                 ballInIntake = true;

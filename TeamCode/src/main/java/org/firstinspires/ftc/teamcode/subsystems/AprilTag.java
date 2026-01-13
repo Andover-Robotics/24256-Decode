@@ -24,13 +24,18 @@ public class AprilTag {
     private ExposureControl exposureControl;
     private GainControl gainControl;
 
+    public static double CAMERA_TIMEOUT = 2.0 * 1000;
+
     public AprilTag(LinearOpMode opMode) {
         processor = new AprilTagProcessor.Builder()
                 .setTagLibrary(AprilTagGameDatabase.getDecodeTagLibrary())
                 .build();
         visionPortal = VisionPortal.easyCreateWithDefaults(opMode.hardwareMap.get(WebcamName.class, "webcam"), processor);
 
-        while (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+        opMode.telemetry.addLine("Calibrating camera...");
+        double beginTs = System.currentTimeMillis();
+        while (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING
+                && System.currentTimeMillis() - beginTs < CAMERA_TIMEOUT) {
             opMode.sleep(1);
         }
 
@@ -39,6 +44,7 @@ public class AprilTag {
         exposureControl.setMode(ExposureControl.Mode.Manual);
         exposureControl.setExposure(3, TimeUnit.MILLISECONDS);
         gainControl.setGain((int) (gainControl.getMaxGain() * 0.6));
+        opMode.telemetry.clearAll();
     }
 
     public AprilTagType getColorTarget() {

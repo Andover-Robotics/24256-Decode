@@ -28,7 +28,7 @@ public class Outtake {
     public static double SHOOTER_A = 0.248463;
     public static double SHOOTER_B = -9.02865;
     public static double SHOOTER_C = 3535.63289;
-    public static double IN_TOLERANCE_TIME = 0.050;
+    public static double IN_TOLERANCE_TIME = 0.050 * 1000;
 
     public static boolean MANUAL = false;
     public static double MANUAL_VELOCITY = 0;
@@ -113,17 +113,12 @@ public class Outtake {
 
         setPower(pidOutput + ffOutput);
     }
-
-    private static double getTimeSeconds() {
-        return System.currentTimeMillis() / 1000.0;
-    }
-
     public boolean inTolerance() {
         if (Math.abs(getRealVelocity() - targetVelocity) < VELOCITY_TOLERANCE) {
             if (beginTs < 0) {
-                beginTs = getTimeSeconds();
+                beginTs = System.currentTimeMillis();
             }
-            double deltaTime = getTimeSeconds() - beginTs;
+            double deltaTime = System.currentTimeMillis() - beginTs;
             return deltaTime > IN_TOLERANCE_TIME;
         } else {
             beginTs = -1;
