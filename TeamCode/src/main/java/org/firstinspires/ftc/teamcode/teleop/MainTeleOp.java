@@ -54,22 +54,22 @@ public class MainTeleOp extends LinearOpMode {
             double turn = gp1.getRightX();
 
             double scalar = 1.0;
-            if (gp1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2) {
+            if (gp1.getButton(GamepadKeys.Button.LEFT_BUMPER)) {
                 scalar = 0.6;
             }
 
             bot.driveRobotCentric(throttle, strafe, turn, scalar);
             bot.periodic();
 
-            gp2.readButtons();
-            if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2) {
+            if (gp1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2) {
                 bot.intake.in();
-            } else if (gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.2) {
+            } else if (gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.2) {
                 bot.intake.out();
             } else {
                 bot.intake.store();
             }
 
+            gp2.readButtons();
             if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
                 bot.intake.toggleGate();
             }
