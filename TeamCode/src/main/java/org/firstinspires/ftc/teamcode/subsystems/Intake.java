@@ -25,8 +25,8 @@ public class Intake {
     public static double STORE_POWER = 0.3;
 
     // gate configuration
-    public static double GATE_OPEN = 0.74;
-    public static double GATE_CLOSED = 0.60;
+    public static double GATE_OPEN = 0.71;
+    public static double GATE_CLOSED = 0.61;
 
     public static double CURRENT_THRESHOLD = 1000; // mA
     public static double MIN_CURRENT_TIME = 0.050 * 1000; // sec
