@@ -54,25 +54,23 @@ public class FarAuto extends LinearOpMode {
                 // preload
                 .stopAndAdd(new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
-                .stopAndAdd(bot.actionShoot())
+                .stopAndAdd(bot.actionShootThree())
                 // spike 1
                 .stopAndAdd(new InstantAction(() -> bot.intake.in()))
                 .strafeToLinearHeading(preFirstIntake, Math.toRadians(-90))
                 .strafeToLinearHeading(firstIntake, Math.toRadians(-90))
-                .waitSeconds(0.5)
                 // shoot
                 .stopAndAdd(new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
-                .stopAndAdd(bot.actionShoot())
+                .stopAndAdd(bot.actionShootThree())
                 // spike 2
                 .stopAndAdd(new InstantAction(() -> bot.intake.in()))
                 .strafeToLinearHeading(preSecondIntake, Math.toRadians(-90))
                 .strafeToLinearHeading(secondIntake, Math.toRadians(-90))
-                .waitSeconds(0.5)
                 // shoot
                 .stopAndAdd(new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
-                .stopAndAdd(bot.actionShoot())
+                .stopAndAdd(bot.actionShootThree())
                 // gate
                 .strafeToLinearHeading(gate.position, gate.heading.log())
                 .build();

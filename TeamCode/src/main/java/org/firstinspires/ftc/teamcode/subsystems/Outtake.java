@@ -32,7 +32,6 @@ public class Outtake {
 
     public static boolean MANUAL = false;
     public static double MANUAL_VELOCITY = 0;
-    public static double DEFAULT_VELOCITY = 3900;
 
     public static boolean enabled = false;
 
@@ -77,7 +76,7 @@ public class Outtake {
         if (MANUAL) return MANUAL_VELOCITY;
 
         if (hitDistance == null) {
-            return DEFAULT_VELOCITY;
+            return targetVelocity; // preserve old target velocity
         } else {
             return SHOOTER_A * hitDistance * hitDistance + SHOOTER_B * hitDistance + SHOOTER_C;
         }
@@ -113,6 +112,7 @@ public class Outtake {
 
         setPower(pidOutput + ffOutput);
     }
+
     public boolean inTolerance() {
         if (Math.abs(getRealVelocity() - targetVelocity) < VELOCITY_TOLERANCE) {
             if (beginTs < 0) {

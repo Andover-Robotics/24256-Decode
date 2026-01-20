@@ -36,8 +36,8 @@ public class Bot {
     public Intake intake;
     public Outtake outtake;
 
-    public static double SHOOT_ONE_DELAY = 1.25;
-    public static double GATE_DELAY = 1.0;
+    public static double SHOOT_ONE_DELAY = 0.3;
+    public static double SHOOT_THREE_QUICKFIRE_DELAY = 1.25;
 
     public AprilTag aprilTag;
 
@@ -130,13 +130,21 @@ public class Bot {
         };
     }
 
-    public Action actionShoot() {
+    public Action actionShootThree() {
+        return actionShoot(SHOOT_THREE_QUICKFIRE_DELAY);
+    }
+
+    public Action actionShootOne() {
+        return actionShoot(SHOOT_ONE_DELAY);
+    }
+
+    public Action actionShoot(double time) {
         return new SequentialAction(
                 new InstantAction(() -> intake.in()),
                 new InstantAction(() -> outtake.enable()),
                 new WaitUntilAction(() -> outtake.inTolerance()),
                 new InstantAction(() -> intake.openGate()),
-                new SleepAction(SHOOT_ONE_DELAY),
+                new SleepAction(time),
                 new InstantAction(() -> intake.closeGate()),
                 new InstantAction(() -> intake.store()),
                 new InstantAction(() -> outtake.disable())
