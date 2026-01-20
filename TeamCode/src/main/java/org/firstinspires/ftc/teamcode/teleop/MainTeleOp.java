@@ -45,6 +45,8 @@ public class MainTeleOp extends LinearOpMode {
 
         waitForStart();
 
+        bot.outtake.disable();
+
         while (opModeIsActive() && !isStopRequested()) {
             TelemetryPacket packet = new TelemetryPacket();
 
