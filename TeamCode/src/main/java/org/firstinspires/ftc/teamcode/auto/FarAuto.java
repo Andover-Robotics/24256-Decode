@@ -17,12 +17,12 @@ import org.firstinspires.ftc.teamcode.subsystems.Bot;
 @Autonomous(name = "Decode Far Auto")
 
 public class FarAuto extends LinearOpMode {
-    //Whether shooting from close zone or far zone
-    public static String =
-
     //Estimate values
     public static Pose2d redAllianceStartPose = new Pose2d(-55,-11, Math.toRadians(-24.5));
-    public static Pose2d shoot = new Pose2d(-50, -15, Math.toRadians(-24.5));
+    //far shooting zone value
+    //public static Pose2d shoot = new Pose2d(-50, -15, Math.toRadians(-24.5));
+    //close shooting zone value
+    public static Pose2d shoot = new Pose2d(30, -30, Math.toRadians(-45));
     //corner balls
     public static Vector2d firstIntake = new Vector2d(-55, -65);
     //backup
@@ -59,7 +59,7 @@ public class FarAuto extends LinearOpMode {
                 //shoot preload (1-3)
                 .afterTime(0.01, new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
-                .stopAndAdd(bot.actionShoot())
+                .stopAndAdd(bot.actionShootThree())
 
                 //first row (corner balls)
                 .afterTime(0.01, new InstantAction(() -> bot.intake.in()))
@@ -71,7 +71,7 @@ public class FarAuto extends LinearOpMode {
                 //shoot first row (4-6)
                 .afterTime(0.01, new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
-                .stopAndAdd(bot.actionShoot())
+                .stopAndAdd(bot.actionShootThree())
 
                 //second row
                 .afterTime(0.01, new InstantAction(() -> bot.intake.in()))
@@ -82,7 +82,7 @@ public class FarAuto extends LinearOpMode {
                 //shoot 3 (7-9)
                 .afterTime(0.01, new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
-                .stopAndAdd(bot.actionShoot())
+                .stopAndAdd(bot.actionShootThree())
 
                 .build();
 
