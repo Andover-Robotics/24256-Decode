@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
+import com.acmerobotics.roadrunner.NullAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -40,6 +41,8 @@ public class Bot {
     public static double SHOOT_THREE_QUICKFIRE_DELAY = 1.25;
 
     public AprilTag aprilTag;
+
+    private boolean inShootingMode = false;
 
     public static Pose2d mirror(Pose2d initial) {
         return new Pose2d(new Vector2d(initial.position.x, -initial.position.y), -initial.heading.toDouble());
@@ -139,7 +142,11 @@ public class Bot {
     }
 
     public Action actionShoot(double time) {
+        if (inShootingMode) {
+            return new NullAction();
+        }
         return new SequentialAction(
+                new InstantAction(() -> inShootingMode = true),
                 new InstantAction(() -> intake.in()),
                 new InstantAction(() -> outtake.enable()),
                 new WaitUntilAction(() -> outtake.inTolerance()),
@@ -147,7 +154,8 @@ public class Bot {
                 new SleepAction(time),
                 new InstantAction(() -> intake.closeGate()),
                 new InstantAction(() -> intake.store()),
-                new InstantAction(() -> outtake.disable())
+                new InstantAction(() -> outtake.disable()),
+                new InstantAction(() -> inShootingMode = false)
         );
     }
 }

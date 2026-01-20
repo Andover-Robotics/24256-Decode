@@ -78,12 +78,10 @@ public class MainTeleOp extends LinearOpMode {
                 addAction(bot.intake.actionResetGate());
             }
 
-            if (!bot.outtake.isEnabled()) {
-                if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2) {
-                    addAction(bot.actionShootThree());
-                } else if (gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.2) {
-                    addAction(bot.actionShootOne());
-                }
+            if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2) {
+                addAction(bot.actionShootThree());
+            } else if (gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.2) {
+                addAction(bot.actionShootOne());
             }
 
             if (gp2.getButton(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
