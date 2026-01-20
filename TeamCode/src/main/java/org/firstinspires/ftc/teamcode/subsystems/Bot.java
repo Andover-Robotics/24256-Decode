@@ -37,7 +37,7 @@ public class Bot {
     public Intake intake;
     public Outtake outtake;
 
-    public static double SHOOT_ONE_DELAY = 0.3;
+    public static double SHOOT_ONE_DELAY = 0.2;
     public static double SHOOT_THREE_QUICKFIRE_DELAY = 1.25;
 
     public AprilTag aprilTag;
@@ -158,4 +158,5 @@ public class Bot {
                 new InstantAction(() -> inShootingMode = false)
         );
     }
+    public boolean inShootingMode() { return inShootingMode; }
 }

@@ -22,13 +22,13 @@ public class Outtake {
 
     // flywheel calculations
     private static double FLYWHEEL_GEAR_RATIO = 1.0;
-    private static double VELOCITY_TOLERANCE = 50;
+    private static double VELOCITY_TOLERANCE = 150;
 
     // aim
     public static double SHOOTER_A = 0.248463;
     public static double SHOOTER_B = -9.02865;
     public static double SHOOTER_C = 3535.63289;
-    public static double IN_TOLERANCE_TIME = 0.050 * 1000;
+    public static double IN_TOLERANCE_TIME = 0.750 * 1000;
 
     public static boolean MANUAL = false;
     public static double MANUAL_VELOCITY = 0;
