@@ -25,9 +25,9 @@ public class Outtake {
     private static double VELOCITY_TOLERANCE = 150;
 
     // aim
-    public static double SHOOTER_A = 0.248463;
-    public static double SHOOTER_B = -9.02865;
-    public static double SHOOTER_C = 3535.63289;
+    public static double SHOOTER_A = 0.0693751;
+    public static double SHOOTER_B = 9.69308;
+    public static double SHOOTER_C = 3223.10467;
     public static double IN_TOLERANCE_TIME = 0.750 * 1000;
 
     public static boolean MANUAL = false;
@@ -35,8 +35,8 @@ public class Outtake {
 
     public static boolean enabled = false;
 
-    public static double ATAG_HEIGHT = 0;
-    public static double CAMERA_HEIGHT = 0;
+    public static double ATAG_HEIGHT = 29.5;
+    public static double CAMERA_HEIGHT = 13.5;
 
     public Double hitDistance = null;
 
@@ -66,6 +66,8 @@ public class Outtake {
             return null;
 
         double ftcPoseRange = goal.ftcPose.range;
+        bearing = Math.toRadians(goal.ftcPose.bearing);
+
         double heightDifference = ATAG_HEIGHT - CAMERA_HEIGHT;
         double atagDistance = Math.sqrt(ftcPoseRange * ftcPoseRange - heightDifference * heightDifference);
 

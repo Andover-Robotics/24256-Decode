@@ -12,15 +12,17 @@ public class WaitUntilAction implements Action {
 
     private ConditionalFunction f;
     private double minTime;
+    private double maxTime;
     private double beginTs = -1.0;
 
-    public WaitUntilAction(ConditionalFunction f, double minTime) {
+    public WaitUntilAction(ConditionalFunction f, double minTime, double maxTime) {
         this.f = f;
         this.minTime = minTime;
+        this.maxTime = maxTime;
     }
 
     public WaitUntilAction(ConditionalFunction f) {
-        this(f, 0.0);
+        this(f, 0.0, Double.POSITIVE_INFINITY);
     }
 
     private static double getTimeSeconds() {
@@ -37,6 +39,7 @@ public class WaitUntilAction implements Action {
         }
 
         if (deltaTs < minTime) return true;
+        if (deltaTs > maxTime) return false;
 
         return !f.condition();
     }

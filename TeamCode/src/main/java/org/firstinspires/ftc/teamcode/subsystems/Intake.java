@@ -28,7 +28,7 @@ public class Intake {
     public static double GATE_OPEN = 0.77;
     public static double GATE_CLOSED = 0.67;
 
-    public static double CURRENT_THRESHOLD = 1000; // mA
+    public static double CURRENT_THRESHOLD = 2000; // mA
     public static double MIN_CURRENT_TIME = 0.050 * 1000; // sec
 
     private boolean gateOpenStatus = false;

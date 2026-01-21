@@ -160,7 +160,7 @@ public class Bot {
                 new InstantAction(() -> inShootingMode = true),
                 new InstantAction(() -> intake.in()),
                 new InstantAction(() -> outtake.enable()),
-                new WaitUntilAction(() -> outtake.inTolerance()),
+                new WaitUntilAction(() -> outtake.inTolerance(), 0, 3),
                 new InstantAction(() -> intake.openGate()),
                 new SleepAction(time),
                 new InstantAction(() -> intake.closeGate()),
