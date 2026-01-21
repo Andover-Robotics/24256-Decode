@@ -12,11 +12,11 @@ public class Outtake {
     private MotorEx motor2;
 
     // PID constants
-    public static double kP = 0.0004;
+    public static double kP = 0.00065;
     public static double kI = 0;
     public static double kD = 0;
     public static double kStatic = 0;
-    public static double kV = 0.000185;
+    public static double kV = 0.000195;
 
     public PIDController controller;
 
@@ -35,7 +35,6 @@ public class Outtake {
 
     public static boolean enabled = false;
 
-    public static double CAMERA_ANGLE = Math.toRadians(70);
     public static double ATAG_HEIGHT = 0;
     public static double CAMERA_HEIGHT = 0;
 
@@ -66,8 +65,9 @@ public class Outtake {
         if (goal == null)
             return null;
 
-        double elevation = Math.toRadians(goal.ftcPose.elevation) + CAMERA_ANGLE;
-        double atagDistance = (ATAG_HEIGHT - CAMERA_HEIGHT) / Math.tan(elevation);
+        double ftcPoseRange = goal.ftcPose.range;
+        double heightDifference = ATAG_HEIGHT - CAMERA_HEIGHT;
+        double atagDistance = Math.sqrt(ftcPoseRange * ftcPoseRange - heightDifference * heightDifference);
 
         return atagDistance * Math.cos(bearing); // decent approximation for when we face the goal
     }
