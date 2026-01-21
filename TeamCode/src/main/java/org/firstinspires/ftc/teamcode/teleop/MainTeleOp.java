@@ -45,6 +45,8 @@ public class MainTeleOp extends LinearOpMode {
 
         waitForStart();
 
+        bot.outtake.disable();
+
         while (opModeIsActive() && !isStopRequested()) {
             TelemetryPacket packet = new TelemetryPacket();
 
@@ -61,12 +63,14 @@ public class MainTeleOp extends LinearOpMode {
             bot.driveRobotCentric(throttle, strafe, turn, scalar);
             bot.periodic();
 
-            if (gp1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2) {
-                bot.intake.in();
-            } else if (gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.2) {
-                bot.intake.out();
-            } else {
-                bot.intake.store();
+            if (!bot.inShootingMode()) {
+                if (gp1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2) {
+                    bot.intake.in();
+                } else if (gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.2) {
+                    bot.intake.out();
+                } else {
+                    bot.intake.store();
+                }
             }
 
             gp2.readButtons();
