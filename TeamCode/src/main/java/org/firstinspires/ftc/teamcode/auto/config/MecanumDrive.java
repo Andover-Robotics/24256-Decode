@@ -45,6 +45,7 @@ import org.firstinspires.ftc.teamcode.auto.messages.DriveCommandMessage;
 import org.firstinspires.ftc.teamcode.auto.messages.MecanumCommandMessage;
 import org.firstinspires.ftc.teamcode.auto.messages.MecanumLocalizerInputsMessage;
 import org.firstinspires.ftc.teamcode.auto.messages.PoseMessage;
+import org.firstinspires.ftc.teamcode.subsystems.Bot;
 
 import java.lang.Math;
 import java.util.Arrays;
@@ -504,8 +505,7 @@ public final class MecanumDrive {
                 beginPose, 0.0,
                 defaultTurnConstraints,
                 defaultVelConstraint, defaultAccelConstraint,
-                (mirror) ? pose-> new Pose2dDual<>(
-                        pose.position.x, pose.position.y.unaryMinus(), pose.heading.inverse()) : new IdentityPoseMap()
+                (mirror) ? Bot::mirror : new IdentityPoseMap()
         );
     }
 }

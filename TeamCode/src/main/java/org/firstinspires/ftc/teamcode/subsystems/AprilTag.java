@@ -24,7 +24,7 @@ public class AprilTag {
     private ExposureControl exposureControl;
     private GainControl gainControl;
 
-    public static double CAMERA_TIMEOUT = 2.0 * 1000;
+    public static double CAMERA_TIMEOUT = 5.0 * 1000;
 
     public AprilTag(LinearOpMode opMode) {
         processor = new AprilTagProcessor.Builder()

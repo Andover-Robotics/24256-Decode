@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.auto;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.ParallelAction;
@@ -15,7 +16,7 @@ import org.firstinspires.ftc.teamcode.auto.config.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Bot;
 
 @Autonomous(name = "Decode Far Auto")
-
+@Config
 public class FarAuto extends LinearOpMode {
     public static Pose2d redAllianceStartPose = new Pose2d(0, 0, 0);
     public static Pose2d shoot = new Pose2d(0, 0, 0);
@@ -47,8 +48,10 @@ public class FarAuto extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
 
+        MecanumDrive drive = bot.drive;
+
         Pose2d startPose = (Bot.alliance == Bot.Alliance.RED) ? redAllianceStartPose : Bot.mirror(redAllianceStartPose);
-        MecanumDrive drive = new MecanumDrive(hardwareMap, startPose);
+        drive.localizer.setPose(startPose);
 
         Action auto = drive.actionBuilderColor(redAllianceStartPose, Bot.alliance == Bot.Alliance.BLUE)
                 // preload
