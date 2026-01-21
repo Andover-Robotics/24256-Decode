@@ -18,15 +18,20 @@ import org.firstinspires.ftc.teamcode.subsystems.Bot;
 @Autonomous(name = "Decode Far Auto")
 @Config
 public class FarAuto extends LinearOpMode {
-    public static Pose2d redAllianceStartPose = new Pose2d(0, 0, 0);
-    public static Pose2d shoot = new Pose2d(0, 0, 0);
-
-    public static Vector2d preFirstIntake = new Vector2d(0, 0);
-
-    public static Vector2d firstIntake = new Vector2d(0, 0);
-    public static Vector2d preSecondIntake = new Vector2d(0, 0);
-    public static Vector2d secondIntake = new Vector2d(0, 0);
-    public static Pose2d gate = new Pose2d(0, 0, 0);
+    //Estimate values
+    public static Pose2d redAllianceStartPose = new Pose2d(-55,-11, Math.toRadians(-24.5));
+    //far shooting zone value
+    //public static Pose2d shoot = new Pose2d(-50, -15, Math.toRadians(-24.5));
+    //close shooting zone value
+    public static Pose2d shoot = new Pose2d(30, -30, Math.toRadians(-45));
+    //corner balls
+    public static Vector2d firstIntake = new Vector2d(-55, -65);
+    //backup
+    public static Vector2d firstIntakeBackup = new Vector2d(-55, -65);
+    //ram balls again into wall
+    public static Vector2d firstIntakeRam = new Vector2d(-55, -75);
+    public static Vector2d preSecondIntake = new Vector2d(-32, -34);
+    public static Vector2d secondIntake = new Vector2d(-32, -60);
 
     public void runOpMode() throws InterruptedException {
         Bot.instance = null;
@@ -54,28 +59,34 @@ public class FarAuto extends LinearOpMode {
         drive.localizer.setPose(startPose);
 
         Action auto = drive.actionBuilderColor(redAllianceStartPose, Bot.alliance == Bot.Alliance.BLUE)
-                // preload
-                .stopAndAdd(new InstantAction(() -> bot.intake.store()))
+                //shoot preload (1-3)
+                .afterTime(0.01, new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
                 .stopAndAdd(bot.actionShootThree())
-                // spike 1
-                .stopAndAdd(new InstantAction(() -> bot.intake.in()))
-                .strafeToLinearHeading(preFirstIntake, Math.toRadians(-90))
-                .strafeToLinearHeading(firstIntake, Math.toRadians(-90))
-                // shoot
-                .stopAndAdd(new InstantAction(() -> bot.intake.store()))
+
+                //first row (corner balls)
+                .afterTime(0.01, new InstantAction(() -> bot.intake.in()))
+                .strafeToLinearHeading(firstIntake, Math.toRadians(-95))
+                .strafeToLinearHeading(firstIntakeBackup, Math.toRadians(-90))
+                .strafeToLinearHeading(firstIntakeRam, Math.toRadians(-90))
+                .waitSeconds(0.5)
+
+                //shoot first row (4-6)
+                .afterTime(0.01, new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
                 .stopAndAdd(bot.actionShootThree())
-                // spike 2
-                .stopAndAdd(new InstantAction(() -> bot.intake.in()))
-                .strafeToLinearHeading(preSecondIntake, Math.toRadians(-90))
-                .strafeToLinearHeading(secondIntake, Math.toRadians(-90))
-                // shoot
-                .stopAndAdd(new InstantAction(() -> bot.intake.store()))
+
+                //second row
+                .afterTime(0.01, new InstantAction(() -> bot.intake.in()))
+                .strafeToLinearHeading(preSecondIntake, Math.toRadians(-85))
+                .strafeToLinearHeading(secondIntake, Math.toRadians(-85))
+                .waitSeconds(0.5)
+
+                //shoot 3 (7-9)
+                .afterTime(0.01, new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
                 .stopAndAdd(bot.actionShootThree())
-                // gate
-                .strafeToLinearHeading(gate.position, gate.heading.log())
+
                 .build();
 
         Actions.runBlocking(
