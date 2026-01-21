@@ -19,8 +19,9 @@ import org.firstinspires.ftc.teamcode.subsystems.Bot;
 @Config
 public class CloseAuto extends LinearOpMode {
     // Positions
-    public static Pose2d redAllianceStartPose = new Pose2d(60, -48, Math.toRadians(-45));
-    public static Pose2d shoot = new Pose2d(30, -30, Math.toRadians(-45));
+    public static double SHOOT_HEADING = -45;
+    public static Pose2d redAllianceStartPose = new Pose2d(60, -48, Math.toRadians(SHOOT_HEADING));
+    public static Pose2d shoot = new Pose2d(30, -30, Math.toRadians(SHOOT_HEADING));
     public static Vector2d preFirstIntake = new Vector2d(12, -34);
     public static Vector2d firstIntake = new Vector2d(12, -56);
     public static Vector2d preSecondIntake = new Vector2d(-12, -34);
