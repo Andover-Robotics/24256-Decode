@@ -18,14 +18,17 @@ import org.firstinspires.ftc.teamcode.subsystems.Bot;
 @Autonomous(name = "Decode Far Auto")
 @Config
 public class FarAuto extends LinearOpMode {
-    public static Pose2d redAllianceStartPose = new Pose2d(0, 0, 0);
-    public static Pose2d shoot = new Pose2d(0, 0, 0);
-
-    public static Vector2d preFirstIntake = new Vector2d(0, 0);
-
-    public static Vector2d firstIntake = new Vector2d(0, 0);
-    public static Vector2d preSecondIntake = new Vector2d(0, 0);
-    public static Vector2d secondIntake = new Vector2d(0, 0);
+    //Estimate values
+    public static Pose2d redAllianceStartPose = new Pose2d(-55, -10, Math.toRadians(0));
+    public static Pose2d shoot = new Pose2d(-8, -8, Math.toRadians(-45));
+    //corner balls
+    public static Vector2d firstIntake = new Vector2d(-55, -65);
+    //backup
+    public static Vector2d firstIntakeBackup = new Vector2d(-55, -65);
+    //ram balls again into wall
+    public static Vector2d firstIntakeRam = new Vector2d(-55, -75);
+    public static Vector2d preSecondIntake = new Vector2d(-32, -34);
+    public static Vector2d secondIntake = new Vector2d(-32, -60);
     public static Pose2d gate = new Pose2d(0, 0, 0);
 
     public void runOpMode() throws InterruptedException {
