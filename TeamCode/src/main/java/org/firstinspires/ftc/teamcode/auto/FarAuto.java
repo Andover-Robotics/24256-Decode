@@ -18,17 +18,17 @@ import org.firstinspires.ftc.teamcode.subsystems.Bot;
 @Autonomous(name = "Decode Far Auto")
 @Config
 public class FarAuto extends LinearOpMode {
-    //Estimate values
-    public static Pose2d redAllianceStartPose = new Pose2d(-55, -10, Math.toRadians(0));
+    public static Pose2d redAllianceStartPose = new Pose2d(-62.5, -8, Math.toRadians(0));
     public static Pose2d shoot = new Pose2d(-8, -8, Math.toRadians(-45));
+    //third spike
+    public static Vector2d preFirstIntake = new Vector2d(-32, -34);
+    public static Vector2d firstIntake = new Vector2d(-32, -60);
     //corner balls
-    public static Vector2d firstIntake = new Vector2d(-55, -65);
-    //backup
-    public static Vector2d firstIntakeBackup = new Vector2d(-55, -65);
-    //ram balls again into wall
-    public static Vector2d firstIntakeRam = new Vector2d(-55, -75);
-    public static Vector2d preSecondIntake = new Vector2d(-32, -34);
-    public static Vector2d secondIntake = new Vector2d(-32, -60);
+    //before balls
+    public static Vector2d preSecondIntake = new Vector2d(-55, -50);
+    //ram wall
+    public static Vector2d secondIntake = new Vector2d(-55, -65);
+    //prob no gate; leave blank for now
     public static Pose2d gate = new Pose2d(0, 0, 0);
 
     public void runOpMode() throws InterruptedException {
@@ -61,7 +61,7 @@ public class FarAuto extends LinearOpMode {
                 .stopAndAdd(new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
                 .stopAndAdd(bot.actionShootThree())
-                // spike 1
+                //spike 3
                 .stopAndAdd(new InstantAction(() -> bot.intake.in()))
                 .strafeToLinearHeading(preFirstIntake, Math.toRadians(-90))
                 .strafeToLinearHeading(firstIntake, Math.toRadians(-90))
@@ -69,8 +69,10 @@ public class FarAuto extends LinearOpMode {
                 .stopAndAdd(new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
                 .stopAndAdd(bot.actionShootThree())
-                // spike 2
+                //corner balls
                 .stopAndAdd(new InstantAction(() -> bot.intake.in()))
+                .strafeToLinearHeading(preSecondIntake, Math.toRadians(-90))
+                .strafeToLinearHeading(secondIntake, Math.toRadians(-90))
                 .strafeToLinearHeading(preSecondIntake, Math.toRadians(-90))
                 .strafeToLinearHeading(secondIntake, Math.toRadians(-90))
                 // shoot
@@ -78,7 +80,7 @@ public class FarAuto extends LinearOpMode {
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
                 .stopAndAdd(bot.actionShootThree())
                 // gate
-                .strafeToLinearHeading(gate.position, gate.heading.log())
+                //.strafeToLinearHeading(gate.position, gate.heading.log())
                 .build();
 
         Actions.runBlocking(
