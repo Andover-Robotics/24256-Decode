@@ -165,7 +165,6 @@ public class Bot {
                 new SleepAction(time),
                 new InstantAction(() -> intake.closeGate()),
                 new InstantAction(() -> intake.store()),
-                new InstantAction(() -> outtake.disable()),
                 new InstantAction(() -> inShootingMode = false)
         );
     }
