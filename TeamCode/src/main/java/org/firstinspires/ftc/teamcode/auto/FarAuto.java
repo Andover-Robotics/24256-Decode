@@ -56,7 +56,7 @@ public class FarAuto extends LinearOpMode {
         Pose2d startPose = (Bot.alliance == Bot.Alliance.RED) ? redAllianceStartPose : Bot.mirror(redAllianceStartPose);
         drive.localizer.setPose(startPose);
 
-        Action auto = drive.actionBuilderColor(redAllianceStartPose, Bot.alliance == Bot.Alliance.BLUE)
+        Action auto = drive.actionBuilderColor(startPose, Bot.alliance == Bot.Alliance.BLUE)
                 // preload
                 .stopAndAdd(new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
