@@ -5,6 +5,8 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.ProfileAccelConstraint;
+import com.acmerobotics.roadrunner.TurnConstraints;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
@@ -19,16 +21,16 @@ import org.firstinspires.ftc.teamcode.subsystems.Bot;
 @Config
 public class CloseAuto extends LinearOpMode {
     // Positions
-    public static double SHOOT_HEADING = -45;
+    public static double SHOOT_HEADING = -52;
     public static Pose2d redAllianceStartPose = new Pose2d(60, -48, Math.toRadians(SHOOT_HEADING));
     public static Pose2d shoot = new Pose2d(30, -30, Math.toRadians(SHOOT_HEADING));
-    public static Vector2d preFirstIntake = new Vector2d(12, -34);
-    public static Vector2d firstIntake = new Vector2d(12, -56);
-    public static Vector2d preSecondIntake = new Vector2d(-12, -34);
-    public static Vector2d secondIntake = new Vector2d(-12, -60);
-    public static Vector2d preThirdIntake = new Vector2d(-24, -34);
-    public static Vector2d thirdIntake = new Vector2d(-24, -60);
-    public static Vector2d gate = new Vector2d(1, -58);
+    public static Vector2d preFirstIntake = new Vector2d(14, -28);
+    public static Vector2d firstIntake = new Vector2d(14, -52);
+    public static Vector2d preSecondIntake = new Vector2d(-10, -28);
+    public static Vector2d secondIntake = new Vector2d(-10, -56);
+    public static Vector2d preThirdIntake = new Vector2d(-32, -28);
+    public static Vector2d thirdIntake = new Vector2d(-32, -60);
+    public static Vector2d gate = new Vector2d(3, -62);
 
     public void runOpMode() throws InterruptedException {
         Bot.instance = null;
@@ -59,6 +61,8 @@ public class CloseAuto extends LinearOpMode {
                 // preload
                 .stopAndAdd(new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
+                .waitSeconds(0.01)
+                .strafeToLinearHeading(shoot.position, shoot.heading.log()) // geeks without ts?? help
                 .stopAndAdd(bot.actionShootThree())
                 // spike 1
                 .stopAndAdd(new InstantAction(() -> bot.intake.in()))
@@ -76,6 +80,7 @@ public class CloseAuto extends LinearOpMode {
                 .strafeToLinearHeading(preSecondIntake, Math.toRadians(-90))
                 .strafeToLinearHeading(secondIntake, Math.toRadians(-90))
                 // shoot
+                .strafeToLinearHeading(new Vector2d(secondIntake.x, secondIntake.y + 5), Math.toRadians(-90))
                 .stopAndAdd(new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
                 .stopAndAdd(bot.actionShootThree())
@@ -87,8 +92,8 @@ public class CloseAuto extends LinearOpMode {
                 .stopAndAdd(new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
                 .stopAndAdd(bot.actionShootThree())
-                // gate
-                .strafeToLinearHeading(gate, Math.toRadians(0))
+//                // gate
+                .strafeToLinearHeading(new Vector2d(gate.x, gate.y + 15), Math.toRadians(0))
                 .build();
 
         Actions.runBlocking(
