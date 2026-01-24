@@ -61,8 +61,7 @@ public class CloseAuto extends LinearOpMode {
                 // preload
                 .stopAndAdd(new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
-                .waitSeconds(0.01)
-                .strafeToLinearHeading(shoot.position, shoot.heading.log()) // geeks without ts?? help
+                .turnTo(shoot.heading.log() + Math.toRadians(0.0001)) // ensure that shooting heading is fully corrected here
                 .stopAndAdd(bot.actionShootThree())
                 // spike 1
                 .stopAndAdd(new InstantAction(() -> bot.intake.in()))
