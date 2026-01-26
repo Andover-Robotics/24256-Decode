@@ -48,6 +48,8 @@ public class MainTeleOp extends LinearOpMode {
 
         bot.outtake.disable();
 
+        boolean intakeVibrated = false;
+
         while (opModeIsActive() && !isStopRequested()) {
             TelemetryPacket packet = new TelemetryPacket();
 
@@ -97,8 +99,13 @@ public class MainTeleOp extends LinearOpMode {
 
             if (bot.intake.ballInIntake()) {
                 gamepad1.setLedColor(0, 255, 0, Gamepad.LED_DURATION_CONTINUOUS);
+                if (!intakeVibrated) {
+                    gamepad1.rumble(50);
+                    intakeVibrated = true;
+                }
             } else {
                 gamepad1.setLedColor(255, 0, 0, Gamepad.LED_DURATION_CONTINUOUS);
+                intakeVibrated = false;
             }
 
             if (gp1.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
