@@ -5,8 +5,6 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.ProfileAccelConstraint;
-import com.acmerobotics.roadrunner.TurnConstraints;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
@@ -24,13 +22,13 @@ public class CloseAuto extends LinearOpMode {
     public static double SHOOT_HEADING = -52;
     public static Pose2d redAllianceStartPose = new Pose2d(60, -48, Math.toRadians(SHOOT_HEADING));
     public static Pose2d shoot = new Pose2d(30, -30, Math.toRadians(SHOOT_HEADING));
-    public static Vector2d preFirstIntake = new Vector2d(14, -28);
-    public static Vector2d firstIntake = new Vector2d(14, -52);
-    public static Vector2d preSecondIntake = new Vector2d(-10, -28);
-    public static Vector2d secondIntake = new Vector2d(-10, -56);
-    public static Vector2d preThirdIntake = new Vector2d(-32, -28);
-    public static Vector2d thirdIntake = new Vector2d(-32, -60);
-    public static Vector2d gate = new Vector2d(3, -62);
+    public static SimplePosition preFirstIntake = new SimplePosition(14, -28);
+    public static SimplePosition firstIntake = new SimplePosition(14, -52);
+    public static SimplePosition preSecondIntake = new SimplePosition(-10, -28);
+    public static SimplePosition secondIntake = new SimplePosition(-10, -56);
+    public static SimplePosition preThirdIntake = new SimplePosition(-32, -28);
+    public static SimplePosition thirdIntake = new SimplePosition(-32, -60);
+    public static SimplePosition gate = new SimplePosition(3, -62);
 
     public void runOpMode() throws InterruptedException {
         Bot.instance = null;
@@ -64,10 +62,10 @@ public class CloseAuto extends LinearOpMode {
                 .stopAndAdd(bot.actionShootThree())
                 // spike 1
                 .stopAndAdd(new InstantAction(() -> bot.intake.in()))
-                .strafeToLinearHeading(preFirstIntake, Math.toRadians(-90))
-                .strafeToLinearHeading(firstIntake, Math.toRadians(-90))
+                .strafeToLinearHeading(preFirstIntake.toVector(), Math.toRadians(-90))
+                .strafeToLinearHeading(firstIntake.toVector(), Math.toRadians(-90))
                 // gate
-                .strafeToLinearHeading(gate, Math.toRadians(0))
+                .strafeToLinearHeading(gate.toVector(), Math.toRadians(0))
                 .waitSeconds(1)
                 // shoot
                 .stopAndAdd(new InstantAction(() -> bot.intake.store()))
@@ -75,22 +73,21 @@ public class CloseAuto extends LinearOpMode {
                 .stopAndAdd(bot.actionShootThree())
                 // spike 2
                 .stopAndAdd(new InstantAction(() -> bot.intake.in()))
-                .strafeToLinearHeading(preSecondIntake, Math.toRadians(-90))
-                .strafeToLinearHeading(secondIntake, Math.toRadians(-90))
+                .strafeToLinearHeading(preSecondIntake.toVector(), Math.toRadians(-90))
+                .strafeToLinearHeading(secondIntake.toVector(), Math.toRadians(-90))
                 // shoot
-                .strafeToLinearHeading(new Vector2d(secondIntake.x, secondIntake.y + 5), Math.toRadians(-90))
                 .stopAndAdd(new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
                 .stopAndAdd(bot.actionShootThree())
                 // spike 3
                 .stopAndAdd(new InstantAction(() -> bot.intake.in()))
-                .strafeToLinearHeading(preThirdIntake, Math.toRadians(-90))
-                .strafeToLinearHeading(thirdIntake, Math.toRadians(-90))
+                .strafeToLinearHeading(preThirdIntake.toVector(), Math.toRadians(-90))
+                .strafeToLinearHeading(thirdIntake.toVector(), Math.toRadians(-90))
                 // shoot
                 .stopAndAdd(new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
                 .stopAndAdd(bot.actionShootThree())
-//                // gate
+                // gate
                 .strafeToLinearHeading(new Vector2d(gate.x, gate.y + 15), Math.toRadians(0))
                 .build();
 
