@@ -33,6 +33,13 @@ public class MainTeleOp extends LinearOpMode {
         runningActions = newActions;
     }
 
+    public static double DEADZONE_SIZE = 0.3;
+
+    public static double deadzone(double x) {
+        if (Math.abs(x) < DEADZONE_SIZE) return 0;
+        return x;
+    }
+
     @Override
     public void runOpMode() throws InterruptedException {
         Bot.instance = null;
@@ -54,9 +61,9 @@ public class MainTeleOp extends LinearOpMode {
             TelemetryPacket packet = new TelemetryPacket();
 
             gp1.readButtons();
-            double throttle = gp1.getLeftY();
-            double strafe = gp1.getLeftX();
-            double turn = gp1.getRightX();
+            double throttle = deadzone(gp1.getLeftY());
+            double strafe = deadzone(gp1.getLeftX());
+            double turn = deadzone(gp1.getRightX());
 
             double scalar = 1.0;
             if (gp1.getButton(GamepadKeys.Button.LEFT_BUMPER)) {
@@ -100,7 +107,7 @@ public class MainTeleOp extends LinearOpMode {
             if (bot.intake.ballInIntake()) {
                 gamepad1.setLedColor(0, 255, 0, Gamepad.LED_DURATION_CONTINUOUS);
                 if (!intakeVibrated) {
-                    gamepad1.rumble(50);
+                    gamepad1.rumble(500);
                     intakeVibrated = true;
                 }
             } else {
