@@ -25,7 +25,7 @@ public class CloseAuto extends LinearOpMode {
     public static Vector2d preFirstIntake = new Vector2d(14, -24);
     public static Vector2d firstIntake = new Vector2d(14, -52);
     public static Vector2d preSecondIntake = new Vector2d(-10, -24);
-    public static Vector2d secondIntake = new Vector2d(-10, -56);
+    public static Vector2d secondIntake = new Vector2d(-10, -52);
     public static Vector2d preThirdIntake = new Vector2d(-34, -24);
     public static Vector2d thirdIntake = new Vector2d(-34, -60);
     public static Vector2d gate = new Vector2d(7, -62);
@@ -33,6 +33,7 @@ public class CloseAuto extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Bot.instance = null;
         Bot bot = Bot.getInstance(this);
+        bot.intake.store();
 
         GamepadEx gp1 = new GamepadEx(gamepad1);
 
@@ -71,18 +72,21 @@ public class CloseAuto extends LinearOpMode {
                 .strafeToLinearHeading(gate, Math.toRadians(0))
                 .waitSeconds(1)
                 // shoot
+                .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = true))
                 .stopAndAdd(new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
                 .stopAndAdd(bot.actionShootThree())
+                .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = false))
                 // spike 2
                 .stopAndAdd(new InstantAction(() -> bot.intake.in()))
                 .strafeToLinearHeading(preSecondIntake, Math.toRadians(-90))
                 .strafeToLinearHeading(secondIntake, Math.toRadians(-90))
                 // shoot
-                .strafeToLinearHeading(new Vector2d(secondIntake.x, secondIntake.y + 10), Math.toRadians(-90)) // gets caught on gate
+                .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = true))
                 .stopAndAdd(new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
                 .stopAndAdd(bot.actionShootThree())
+                .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = false))
                 // spike 3
                 .stopAndAdd(new InstantAction(() -> bot.intake.in()))
                 .strafeToLinearHeading(preThirdIntake, Math.toRadians(-90))

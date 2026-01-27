@@ -33,7 +33,7 @@ public class MainTeleOp extends LinearOpMode {
         runningActions = newActions;
     }
 
-    public static double DEADZONE_SIZE = 0.3;
+    public static double DEADZONE_SIZE = 0.1;
 
     public static double deadzone(double x) {
         if (Math.abs(x) < DEADZONE_SIZE) return 0;

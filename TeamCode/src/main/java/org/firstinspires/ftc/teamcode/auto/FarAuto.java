@@ -18,22 +18,18 @@ import org.firstinspires.ftc.teamcode.subsystems.Bot;
 @Autonomous(name = "Decode Far Auto")
 @Config
 public class FarAuto extends LinearOpMode {
-    public static Pose2d redAllianceStartPose = new Pose2d(-62.5, -8, Math.toRadians(0));
-    public static Pose2d shoot = new Pose2d(-8, -8, Math.toRadians(-45));
-    //third spike
-    public static Vector2d preFirstIntake = new Vector2d(-32, -34);
-    public static Vector2d firstIntake = new Vector2d(-32, -60);
-    //corner balls
-    //before balls
-    public static Vector2d preSecondIntake = new Vector2d(-55, -50);
-    //ram wall
-    public static Vector2d secondIntake = new Vector2d(-55, -65);
-    //prob no gate; leave blank for now
-    public static Pose2d gate = new Pose2d(0, 0, 0);
+    public static Pose2d redAllianceStartPose = new Pose2d(-62, -24, Math.toRadians(0));
+    public static Pose2d shoot = new Pose2d(27, -27, Math.toRadians(-52));
+    public static Vector2d preFirstIntake = new Vector2d(12, -24);
+    public static Vector2d firstIntake = new Vector2d(12, -52);
+    public static Vector2d preSecondIntake = new Vector2d(-12, -24);
+    public static Vector2d secondIntake = new Vector2d(-12, -52);
+    public static Vector2d gate = new Vector2d(7, -62);
 
     public void runOpMode() throws InterruptedException {
         Bot.instance = null;
         Bot bot = Bot.getInstance(this);
+        bot.intake.store();
 
         GamepadEx gp1 = new GamepadEx(gamepad1);
 
@@ -58,29 +54,33 @@ public class FarAuto extends LinearOpMode {
 
         Action auto = drive.actionBuilderColor(redAllianceStartPose, Bot.alliance == Bot.Alliance.BLUE)
                 // preload
+                .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = true))
                 .stopAndAdd(new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
                 .stopAndAdd(bot.actionShootThree())
-                //spike 3
+                .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = false))
+                // spike 2
                 .stopAndAdd(new InstantAction(() -> bot.intake.in()))
                 .strafeToLinearHeading(preFirstIntake, Math.toRadians(-90))
                 .strafeToLinearHeading(firstIntake, Math.toRadians(-90))
                 // shoot
+                .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = true))
                 .stopAndAdd(new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
                 .stopAndAdd(bot.actionShootThree())
-                //corner balls
+                .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = false))
+                // spike 3
                 .stopAndAdd(new InstantAction(() -> bot.intake.in()))
                 .strafeToLinearHeading(preSecondIntake, Math.toRadians(-90))
                 .strafeToLinearHeading(secondIntake, Math.toRadians(-90))
-                .strafeToLinearHeading(preSecondIntake, Math.toRadians(-90))
-                .strafeToLinearHeading(secondIntake, Math.toRadians(-90))
                 // shoot
+                .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = true))
                 .stopAndAdd(new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
                 .stopAndAdd(bot.actionShootThree())
+                .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = false))
                 // gate
-                //.strafeToLinearHeading(gate.position, gate.heading.log())
+                .strafeToLinearHeading(new Vector2d(gate.x, gate.y + 15), Math.toRadians(0))
                 .build();
 
         Actions.runBlocking(
