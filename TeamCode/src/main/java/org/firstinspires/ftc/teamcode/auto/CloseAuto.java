@@ -21,14 +21,14 @@ public class CloseAuto extends LinearOpMode {
     // Positions
     public static double SHOOT_HEADING = -52;
     public static Pose2d redAllianceStartPose = new Pose2d(60, -48, Math.toRadians(SHOOT_HEADING));
-    public static Pose2d shoot = new Pose2d(30, -30, Math.toRadians(SHOOT_HEADING));
-    public static Vector2d preFirstIntake = new Vector2d(14, -28);
+    public static Pose2d shoot = new Pose2d(27, -27, Math.toRadians(SHOOT_HEADING));
+    public static Vector2d preFirstIntake = new Vector2d(14, -24);
     public static Vector2d firstIntake = new Vector2d(14, -52);
-    public static Vector2d preSecondIntake = new Vector2d(-10, -28);
+    public static Vector2d preSecondIntake = new Vector2d(-10, -24);
     public static Vector2d secondIntake = new Vector2d(-10, -56);
-    public static Vector2d preThirdIntake = new Vector2d(-32, -28);
-    public static Vector2d thirdIntake = new Vector2d(-32, -60);
-    public static Vector2d gate = new Vector2d(3, -62);
+    public static Vector2d preThirdIntake = new Vector2d(-34, -24);
+    public static Vector2d thirdIntake = new Vector2d(-34, -60);
+    public static Vector2d gate = new Vector2d(7, -62);
 
     public void runOpMode() throws InterruptedException {
         Bot.instance = null;
@@ -56,10 +56,13 @@ public class CloseAuto extends LinearOpMode {
         drive.localizer.setPose(startPose);
 
         Action auto = drive.actionBuilderColor(redAllianceStartPose, Bot.alliance == Bot.Alliance.BLUE)
+                .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = true))
+                .stopAndAdd(new InstantAction(() -> bot.outtake.enable()))
                 // preload
                 .stopAndAdd(new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
                 .stopAndAdd(bot.actionShootThree())
+                .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = false))
                 // spike 1
                 .stopAndAdd(new InstantAction(() -> bot.intake.in()))
                 .strafeToLinearHeading(preFirstIntake, Math.toRadians(-90))
@@ -76,6 +79,7 @@ public class CloseAuto extends LinearOpMode {
                 .strafeToLinearHeading(preSecondIntake, Math.toRadians(-90))
                 .strafeToLinearHeading(secondIntake, Math.toRadians(-90))
                 // shoot
+                .strafeToLinearHeading(new Vector2d(secondIntake.x, secondIntake.y + 10), Math.toRadians(-90)) // gets caught on gate
                 .stopAndAdd(new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
                 .stopAndAdd(bot.actionShootThree())

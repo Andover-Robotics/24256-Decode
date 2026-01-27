@@ -63,27 +63,27 @@ public final class MecanumDrive {
 
         // drive model parameters
         public double inPerTick = 0.001998945;
-        public double lateralInPerTick = inPerTick;
-        public double trackWidthTicks = 7369.973452442589;
+        public double lateralInPerTick = 0.0013678355869203274;
+        public double trackWidthTicks = 7267.004071115835;
 
         // feedforward parameters (in tick units)
-        public double kS = 1.0534794191130312;
-        public double kV = 0.00025507814286391167;
+        public double kS = 1.0741301185010972;
+        public double kV = 0.00025832904452153323;
         public double kA = 0.00004;
 
         // path profile parameters (in inches)
-        public double maxWheelVel = 50;
-        public double minProfileAccel = -30;
-        public double maxProfileAccel = 50;
+        public double maxWheelVel = 60;
+        public double minProfileAccel = -40;
+        public double maxProfileAccel = 60;
 
         // turn profile parameters (in radians)
         public double maxAngVel = Math.PI; // shared with path
         public double maxAngAccel = Math.PI;
 
         // path controller gains
-        public double axialGain = 2.75;
+        public double axialGain = 2;
         public double lateralGain = 4;
-        public double headingGain = 7.5; // shared with turn
+        public double headingGain = 7; // shared with turn
 
         public double axialVelGain = 0.0;
         public double lateralVelGain = 0.0;
@@ -262,6 +262,8 @@ public final class MecanumDrive {
         rightFront.setPower(wheelVels.rightFront.get(0) / maxPowerMag);
     }
 
+    public static boolean enablePreciseShooting = false;
+
     public final class FollowTrajectoryAction implements Action {
         public final TimeTrajectory timeTrajectory;
         private double beginTs = -1;
@@ -291,15 +293,6 @@ public final class MecanumDrive {
                 t = 0;
             } else {
                 t = Actions.now() - beginTs;
-            }
-
-            if (t >= timeTrajectory.duration) {
-                leftFront.setPower(0);
-                leftBack.setPower(0);
-                rightBack.setPower(0);
-                rightFront.setPower(0);
-
-                return false;
             }
 
             Pose2dDual<Time> txWorldTarget = timeTrajectory.get(t);
@@ -354,6 +347,26 @@ public final class MecanumDrive {
             c.setStroke("#4CAF50FF");
             c.setStrokeWidth(1);
             c.strokePolyline(xPoints, yPoints);
+
+            if (!enablePreciseShooting) {
+                if (t >= timeTrajectory.duration) {
+                    leftFront.setPower(0);
+                    leftBack.setPower(0);
+                    rightBack.setPower(0);
+                    rightFront.setPower(0);
+
+                    return false;
+                }
+            } else {
+                if ((t >= timeTrajectory.duration && Math.abs(Math.toDegrees(error.heading.toDouble()))< 2) || t >= timeTrajectory.duration + 1) {
+                    leftFront.setPower(0);
+                    leftBack.setPower(0);
+                    rightBack.setPower(0);
+                    rightFront.setPower(0);
+
+                    return false;
+                }
+            }
 
             return true;
         }
