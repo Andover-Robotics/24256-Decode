@@ -19,9 +19,8 @@ import org.firstinspires.ftc.teamcode.subsystems.Bot;
 @Config
 public class CloseAuto extends LinearOpMode {
     // Positions
-    public static double SHOOT_HEADING = -52;
-    public static Pose2d redAllianceStartPose = new Pose2d(60, -48, Math.toRadians(SHOOT_HEADING));
-    public static Pose2d shoot = new Pose2d(27, -27, Math.toRadians(SHOOT_HEADING));
+    public static Pose2d redAllianceStartPose = new Pose2d(60, -48, Math.toRadians(-52));
+    public static Pose2d shoot = new Pose2d(32, -32, Math.toRadians(-49));
     public static Vector2d preFirstIntake = new Vector2d(14, -24);
     public static Vector2d firstIntake = new Vector2d(14, -52);
     public static Vector2d preSecondIntake = new Vector2d(-10, -24);
@@ -58,14 +57,12 @@ public class CloseAuto extends LinearOpMode {
 
         Action auto = drive.actionBuilderColor(redAllianceStartPose, Bot.alliance == Bot.Alliance.BLUE)
                 .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = true))
-                .stopAndAdd(new InstantAction(() -> bot.outtake.enable()))
                 // preload
-                .stopAndAdd(new InstantAction(() -> bot.intake.store()))
-                .strafeToLinearHeading(shoot.position, shoot.heading.log())
+                .stopAndAdd(new InstantAction(() -> bot.intake.in()))
+                .strafeToSplineHeading(shoot.position, shoot.heading.log())
                 .stopAndAdd(bot.actionShootThree())
                 .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = false))
                 // spike 1
-                .stopAndAdd(new InstantAction(() -> bot.intake.in()))
                 .strafeToLinearHeading(preFirstIntake, Math.toRadians(-90))
                 .strafeToLinearHeading(firstIntake, Math.toRadians(-90))
                 // gate
@@ -73,27 +70,22 @@ public class CloseAuto extends LinearOpMode {
                 .waitSeconds(1)
                 // shoot
                 .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = true))
-                .stopAndAdd(new InstantAction(() -> bot.intake.store()))
-                .strafeToLinearHeading(shoot.position, shoot.heading.log())
+                .strafeToSplineHeading(shoot.position, shoot.heading.log())
                 .stopAndAdd(bot.actionShootThree())
                 .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = false))
                 // spike 2
-                .stopAndAdd(new InstantAction(() -> bot.intake.in()))
                 .strafeToLinearHeading(preSecondIntake, Math.toRadians(-90))
                 .strafeToLinearHeading(secondIntake, Math.toRadians(-90))
                 // shoot
                 .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = true))
-                .stopAndAdd(new InstantAction(() -> bot.intake.store()))
-                .strafeToLinearHeading(shoot.position, shoot.heading.log())
+                .strafeToSplineHeading(shoot.position, shoot.heading.log())
                 .stopAndAdd(bot.actionShootThree())
                 .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = false))
                 // spike 3
-                .stopAndAdd(new InstantAction(() -> bot.intake.in()))
                 .strafeToLinearHeading(preThirdIntake, Math.toRadians(-90))
                 .strafeToLinearHeading(thirdIntake, Math.toRadians(-90))
                 // shoot
-                .stopAndAdd(new InstantAction(() -> bot.intake.store()))
-                .strafeToLinearHeading(shoot.position, shoot.heading.log())
+                .strafeToSplineHeading(shoot.position, shoot.heading.log())
                 .stopAndAdd(bot.actionShootThree())
                 // gate
                 .strafeToLinearHeading(new Vector2d(gate.x, gate.y + 15), Math.toRadians(0))

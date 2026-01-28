@@ -358,7 +358,7 @@ public final class MecanumDrive {
                     return false;
                 }
             } else {
-                if ((t >= timeTrajectory.duration && Math.abs(Math.toDegrees(error.heading.toDouble()))< 2) || t >= timeTrajectory.duration + 1) {
+                if ((t >= timeTrajectory.duration && Math.abs(Math.toDegrees(error.heading.toDouble())) < 2) || t >= timeTrajectory.duration + 1) {
                     leftFront.setPower(0);
                     leftBack.setPower(0);
                     rightBack.setPower(0);

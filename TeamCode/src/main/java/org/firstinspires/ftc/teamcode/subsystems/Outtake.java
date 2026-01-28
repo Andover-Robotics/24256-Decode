@@ -24,6 +24,8 @@ public class Outtake {
     private static double FLYWHEEL_GEAR_RATIO = 1.0;
     private static double VELOCITY_TOLERANCE = 150;
 
+    public static double DEFAULT_VELOCITY = 3600;
+
     // aim
     public static double SHOOTER_A = 0.0693751;
     public static double SHOOTER_B = 9.69308;
@@ -78,7 +80,11 @@ public class Outtake {
         if (MANUAL) return MANUAL_VELOCITY;
 
         if (hitDistance == null) {
-            return targetVelocity; // preserve old target velocity
+            if (targetVelocity == 0) {
+                return DEFAULT_VELOCITY;
+            } else {
+                return targetVelocity;
+            }
         } else {
             return SHOOTER_A * hitDistance * hitDistance + SHOOTER_B * hitDistance + SHOOTER_C;
         }
