@@ -20,10 +20,10 @@ import org.firstinspires.ftc.teamcode.subsystems.Bot;
 public class FarAuto extends LinearOpMode {
     public static Pose2d redAllianceStartPose = new Pose2d(-62, -24, Math.toRadians(0));
     public static Pose2d shoot = new Pose2d(27, -27, Math.toRadians(-52));
-    public static Vector2d preFirstIntake = new Vector2d(12, -24);
-    public static Vector2d firstIntake = new Vector2d(12, -52);
     public static Vector2d preSecondIntake = new Vector2d(-12, -24);
     public static Vector2d secondIntake = new Vector2d(-12, -52);
+    public static Vector2d preThirdIntake = new Vector2d(-36, -24);
+    public static Vector2d thirdIntake = new Vector2d(-36, -60);
     public static Vector2d gate = new Vector2d(7, -62);
 
     public void runOpMode() throws InterruptedException {
@@ -61,8 +61,8 @@ public class FarAuto extends LinearOpMode {
                 .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = false))
                 // spike 3
                 .stopAndAdd(new InstantAction(() -> bot.intake.in()))
-                .strafeToLinearHeading(preSecondIntake, Math.toRadians(-90))
-                .strafeToLinearHeading(secondIntake, Math.toRadians(-90))
+                .strafeToLinearHeading(preThirdIntake, Math.toRadians(-90))
+                .strafeToLinearHeading(thirdIntake, Math.toRadians(-90))
                 // shoot
                 .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = true))
                 .stopAndAdd(new InstantAction(() -> bot.intake.store()))
@@ -71,8 +71,8 @@ public class FarAuto extends LinearOpMode {
                 .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = false))
                 // spike 2
                 .stopAndAdd(new InstantAction(() -> bot.intake.in()))
-                .strafeToLinearHeading(preFirstIntake, Math.toRadians(-90))
-                .strafeToLinearHeading(firstIntake, Math.toRadians(-90))
+                .strafeToLinearHeading(preSecondIntake, Math.toRadians(-90))
+                .strafeToLinearHeading(secondIntake, Math.toRadians(-90))
                 // shoot
                 .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = true))
                 .stopAndAdd(new InstantAction(() -> bot.intake.store()))
