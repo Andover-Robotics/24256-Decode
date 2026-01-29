@@ -63,7 +63,7 @@ public class MainTeleOp extends LinearOpMode {
             gp1.readButtons();
             double throttle = deadzone(gp1.getLeftY());
             double strafe = deadzone(gp1.getLeftX());
-            double turn = deadzone(gp1.getRightX());
+            double turn = deadzone(gp1.getRightX()) * 0.7;
 
             double scalar = 1.0;
             if (gp1.getButton(GamepadKeys.Button.LEFT_BUMPER)) {

@@ -19,12 +19,12 @@ import org.firstinspires.ftc.teamcode.subsystems.Bot;
 @Config
 public class FarAuto extends LinearOpMode {
     public static Pose2d redAllianceStartPose = new Pose2d(-62, -24, Math.toRadians(0));
-    public static Pose2d shoot = new Pose2d(27, -27, Math.toRadians(-52));
-    public static Vector2d preFirstIntake = new Vector2d(12, -24);
-    public static Vector2d firstIntake = new Vector2d(12, -52);
+    public static Pose2d shoot = new Pose2d(11, -11, Math.toRadians(-47));
     public static Vector2d preSecondIntake = new Vector2d(-12, -24);
     public static Vector2d secondIntake = new Vector2d(-12, -52);
-    public static Vector2d gate = new Vector2d(7, -62);
+    public static Vector2d preThirdIntake = new Vector2d(-36, -24);
+    public static Vector2d thirdIntake = new Vector2d(-36, -60);
+    public static Vector2d end = new Vector2d(-48, -24);
 
     public void runOpMode() throws InterruptedException {
         Bot.instance = null;
@@ -61,9 +61,10 @@ public class FarAuto extends LinearOpMode {
                 .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = false))
                 // spike 2
                 .stopAndAdd(new InstantAction(() -> bot.intake.in()))
-                .strafeToLinearHeading(preFirstIntake, Math.toRadians(-90))
-                .strafeToLinearHeading(firstIntake, Math.toRadians(-90))
+                .strafeToLinearHeading(preThirdIntake, Math.toRadians(-90))
+                .strafeToLinearHeading(thirdIntake, Math.toRadians(-90))
                 // shoot
+                .strafeToLinearHeading(new Vector2d(thirdIntake.x, thirdIntake.y + 20), Math.toRadians(-90))
                 .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = true))
                 .stopAndAdd(new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
@@ -80,7 +81,7 @@ public class FarAuto extends LinearOpMode {
                 .stopAndAdd(bot.actionShootThree())
                 .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = false))
                 // gate
-                .strafeToLinearHeading(new Vector2d(gate.x, gate.y + 15), Math.toRadians(0))
+                .strafeToLinearHeading(end, Math.toRadians(0))
                 .build();
 
         Actions.runBlocking(
