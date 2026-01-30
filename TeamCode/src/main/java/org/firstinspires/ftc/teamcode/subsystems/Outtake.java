@@ -5,13 +5,13 @@ import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import java.util.TreeMap;
 
 @Config
 public class Outtake {
     private MotorEx motor1;
     private MotorEx motor2;
 
-    // PID constants
     public static double kP = 0.00065;
     public static double kI = 0;
     public static double kD = 0;
@@ -20,17 +20,34 @@ public class Outtake {
 
     public PIDController controller;
 
-    // flywheel calculations
     private static double FLYWHEEL_GEAR_RATIO = 1.0;
     private static double VELOCITY_TOLERANCE = 150;
 
     public static double DEFAULT_VELOCITY = 3600;
 
-    // aim
-    public static double SHOOTER_A = 0.0693751;
-    public static double SHOOTER_B = 9.69308;
-    public static double SHOOTER_C = 3223.10467;
-    public static double IN_TOLERANCE_TIME = 0.750 * 1000;
+    private static final TreeMap<Double, Double> VELOCITY_LOOKUP_TABLE = new TreeMap<>();
+
+    static {
+        VELOCITY_LOOKUP_TABLE.put(25.0, 3550.0);
+        VELOCITY_LOOKUP_TABLE.put(28.0, 3550.0);
+        VELOCITY_LOOKUP_TABLE.put(31.0, 3550.0);
+        VELOCITY_LOOKUP_TABLE.put(34.0, 3600.0);
+        VELOCITY_LOOKUP_TABLE.put(37.0, 3600.0);
+        VELOCITY_LOOKUP_TABLE.put(40.0, 3650.0);
+        VELOCITY_LOOKUP_TABLE.put(43.0, 3800.0);
+        VELOCITY_LOOKUP_TABLE.put(46.0, 3900.0);
+        VELOCITY_LOOKUP_TABLE.put(49.0, 3900.0);
+        VELOCITY_LOOKUP_TABLE.put(52.0, 3950.0);
+        VELOCITY_LOOKUP_TABLE.put(55.0, 3950.0);
+        VELOCITY_LOOKUP_TABLE.put(58.0, 4000.0);
+        VELOCITY_LOOKUP_TABLE.put(61.0, 4050.0);
+    }
+
+    public static double SHOOTER_A = 0.0638251;
+    public static double SHOOTER_B = 10.53669;
+    public static double SHOOTER_C = 3193.94494;
+
+    public static double IN_TOLERANCE_TIME = 0.400 * 1000;
 
     public static boolean MANUAL = false;
     public static double MANUAL_VELOCITY = 0;
@@ -63,9 +80,14 @@ public class Outtake {
     }
 
     private Double getHitDistance() {
-        AprilTag.AprilTagResult goal = aprilTag.goal;
-        if (goal == null)
+        if (aprilTag == null || aprilTag.goal == null) {
             return null;
+        }
+
+        AprilTag.AprilTagResult goal = aprilTag.goal;
+        if (goal.ftcPose == null) {
+            return null;
+        }
 
         double ftcPoseRange = goal.ftcPose.range;
         bearing = Math.toRadians(goal.ftcPose.bearing);
@@ -73,11 +95,45 @@ public class Outtake {
         double heightDifference = ATAG_HEIGHT - CAMERA_HEIGHT;
         double atagDistance = Math.sqrt(ftcPoseRange * ftcPoseRange - heightDifference * heightDifference);
 
-        return atagDistance * Math.cos(bearing); // decent approximation for when we face the goal
+        return atagDistance * Math.cos(bearing);
+    }
+
+    private double getRegressionFallback(double distance) {
+        return SHOOTER_A * distance * distance + SHOOTER_B * distance + SHOOTER_C;
+    }
+
+    private double interpolateVelocity(double distance) {
+        if (VELOCITY_LOOKUP_TABLE.isEmpty()) {
+            return getRegressionFallback(distance);
+        }
+
+        Double lowerKey = VELOCITY_LOOKUP_TABLE.floorKey(distance);
+        Double upperKey = VELOCITY_LOOKUP_TABLE.ceilingKey(distance);
+
+        if (lowerKey == null || upperKey == null) {
+            return getRegressionFallback(distance);
+        }
+
+        if (lowerKey.equals(upperKey)) {
+            Double velocity = VELOCITY_LOOKUP_TABLE.get(lowerKey);
+            return velocity != null ? velocity : getRegressionFallback(distance);
+        }
+
+        Double lowerVelocity = VELOCITY_LOOKUP_TABLE.get(lowerKey);
+        Double upperVelocity = VELOCITY_LOOKUP_TABLE.get(upperKey);
+
+        if (lowerVelocity == null || upperVelocity == null) {
+            return getRegressionFallback(distance);
+        }
+
+        double ratio = (distance - lowerKey) / (upperKey - lowerKey);
+        return lowerVelocity + ratio * (upperVelocity - lowerVelocity);
     }
 
     public double getRegressionVelocity() {
-        if (MANUAL) return MANUAL_VELOCITY;
+        if (MANUAL) {
+            return MANUAL_VELOCITY;
+        }
 
         if (hitDistance == null) {
             if (targetVelocity == 0) {
@@ -86,7 +142,7 @@ public class Outtake {
                 return targetVelocity;
             }
         } else {
-            return SHOOTER_A * hitDistance * hitDistance + SHOOTER_B * hitDistance + SHOOTER_C;
+            return interpolateVelocity(hitDistance);
         }
     }
 
@@ -139,7 +195,6 @@ public class Outtake {
     }
 
     public void disable() {
-        controller.reset();
         enabled = false;
     }
 

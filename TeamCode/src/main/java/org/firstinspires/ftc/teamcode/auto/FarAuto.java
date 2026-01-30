@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Bot;
 @Config
 public class FarAuto extends LinearOpMode {
     public static Pose2d redAllianceStartPose = new Pose2d(-62, -24, Math.toRadians(0));
-    public static Pose2d shoot = new Pose2d(11, -11, Math.toRadians(-47));
+    public static Pose2d shoot = new Pose2d(16, -16, Math.toRadians(-47));
     public static Vector2d preSecondIntake = new Vector2d(-12, -24);
     public static Vector2d secondIntake = new Vector2d(-12, -52);
     public static Vector2d preThirdIntake = new Vector2d(-36, -24);
@@ -29,7 +29,6 @@ public class FarAuto extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Bot.instance = null;
         Bot bot = Bot.getInstance(this);
-        bot.intake.store();
 
         GamepadEx gp1 = new GamepadEx(gamepad1);
 
@@ -53,6 +52,7 @@ public class FarAuto extends LinearOpMode {
         drive.localizer.setPose(startPose);
 
         Action auto = drive.actionBuilderColor(redAllianceStartPose, Bot.alliance == Bot.Alliance.BLUE)
+                .stopAndAdd(new InstantAction(() -> bot.outtake.enable()))
                 // preload
                 .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = true))
                 .stopAndAdd(new InstantAction(() -> bot.intake.store()))
@@ -64,7 +64,7 @@ public class FarAuto extends LinearOpMode {
                 .strafeToLinearHeading(preThirdIntake, Math.toRadians(-90))
                 .strafeToLinearHeading(thirdIntake, Math.toRadians(-90))
                 // shoot
-                .strafeToLinearHeading(new Vector2d(thirdIntake.x, thirdIntake.y + 20), Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(thirdIntake.x, thirdIntake.y + 30), Math.toRadians(-90))
                 .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = true))
                 .stopAndAdd(new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
@@ -75,6 +75,7 @@ public class FarAuto extends LinearOpMode {
                 .strafeToLinearHeading(preSecondIntake, Math.toRadians(-90))
                 .strafeToLinearHeading(secondIntake, Math.toRadians(-90))
                 // shoot
+                .strafeToLinearHeading(new Vector2d(secondIntake.x, secondIntake.y + 15), Math.toRadians(-90))
                 .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = true))
                 .stopAndAdd(new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())

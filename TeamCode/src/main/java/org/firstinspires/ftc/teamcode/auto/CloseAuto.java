@@ -32,7 +32,6 @@ public class CloseAuto extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Bot.instance = null;
         Bot bot = Bot.getInstance(this);
-        bot.intake.store();
 
         GamepadEx gp1 = new GamepadEx(gamepad1);
 
@@ -56,6 +55,7 @@ public class CloseAuto extends LinearOpMode {
         drive.localizer.setPose(startPose);
 
         Action auto = drive.actionBuilderColor(redAllianceStartPose, Bot.alliance == Bot.Alliance.BLUE)
+                .stopAndAdd(new InstantAction(() -> bot.outtake.enable()))
                 .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = true))
                 // preload
                 .stopAndAdd(new InstantAction(() -> bot.intake.in()))
