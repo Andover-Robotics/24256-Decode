@@ -26,6 +26,8 @@ public class AprilTag {
 
     public static double CAMERA_TIMEOUT = 5.0 * 1000;
 
+    private boolean cameraActive = true;
+
     public AprilTag(LinearOpMode opMode) {
         processor = new AprilTagProcessor.Builder()
                 .setTagLibrary(AprilTagGameDatabase.getDecodeTagLibrary())
@@ -37,6 +39,11 @@ public class AprilTag {
         while (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING
                 && System.currentTimeMillis() - beginTs < CAMERA_TIMEOUT) {
             opMode.sleep(1);
+        }
+
+        if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+            cameraActive = false;
+            return;
         }
 
         exposureControl = visionPortal.getCameraControl(ExposureControl.class);
@@ -95,6 +102,10 @@ public class AprilTag {
             colorTarget = AprilTagType.GOAL_RED;
         } else if (Bot.alliance == Bot.Alliance.BLUE) {
             colorTarget = AprilTagType.GOAL_BLUE;
+        }
+
+        if (!cameraActive) {
+            return;
         }
 
         goal = null;
