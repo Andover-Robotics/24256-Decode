@@ -57,9 +57,11 @@ public class FarAuto extends LinearOpMode {
                 .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = true))
                 .stopAndAdd(new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
-                .stopAndAdd(bot.actionShootThree())
+                .stopAndAdd(bot.actionShootOne())
+                .stopAndAdd(bot.actionShootOne())
+                .stopAndAdd(bot.actionShootOne())
                 .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = false))
-                // spike 2
+                // spike 3
                 .stopAndAdd(new InstantAction(() -> bot.intake.in()))
                 .strafeToLinearHeading(preThirdIntake, Math.toRadians(-90))
                 .strafeToLinearHeading(thirdIntake, Math.toRadians(-90))
@@ -68,7 +70,9 @@ public class FarAuto extends LinearOpMode {
                 .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = true))
                 .stopAndAdd(new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
-                .stopAndAdd(bot.actionShootThree())
+                .stopAndAdd(bot.actionShootOne())
+                .stopAndAdd(bot.actionShootOne())
+                .stopAndAdd(bot.actionShootOne())
                 .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = false))
                 // spike 3
                 .stopAndAdd(new InstantAction(() -> bot.intake.in()))
@@ -79,9 +83,11 @@ public class FarAuto extends LinearOpMode {
                 .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = true))
                 .stopAndAdd(new InstantAction(() -> bot.intake.store()))
                 .strafeToLinearHeading(shoot.position, shoot.heading.log())
-                .stopAndAdd(bot.actionShootThree())
+                .stopAndAdd(bot.actionShootOne())
+                .stopAndAdd(bot.actionShootOne())
+                .stopAndAdd(bot.actionShootOne())
                 .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = false))
-                // gate
+                // end
                 .strafeToLinearHeading(end, Math.toRadians(0))
                 .build();
 

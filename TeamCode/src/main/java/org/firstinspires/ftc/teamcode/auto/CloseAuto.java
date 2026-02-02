@@ -21,13 +21,13 @@ public class CloseAuto extends LinearOpMode {
     // Positions
     public static Pose2d redAllianceStartPose = new Pose2d(60, -48, Math.toRadians(-52));
     public static Pose2d shoot = new Pose2d(32, -32, Math.toRadians(-49));
-    public static Vector2d preFirstIntake = new Vector2d(14, -24);
+    public static Vector2d preFirstIntake = new Vector2d(14, -20);
     public static Vector2d firstIntake = new Vector2d(14, -52);
-    public static Vector2d preSecondIntake = new Vector2d(-10, -24);
-    public static Vector2d secondIntake = new Vector2d(-10, -52);
-    public static Vector2d preThirdIntake = new Vector2d(-34, -24);
+    public static Vector2d preSecondIntake = new Vector2d(-10, -20);
+    public static Vector2d secondIntake = new Vector2d(-10, -46);
+    public static Vector2d preThirdIntake = new Vector2d(-34, -20);
     public static Vector2d thirdIntake = new Vector2d(-34, -60);
-    public static Vector2d gate = new Vector2d(7, -62);
+    public static Vector2d gate = new Vector2d(7, -64);
 
     public void runOpMode() throws InterruptedException {
         Bot.instance = null;
@@ -84,6 +84,7 @@ public class CloseAuto extends LinearOpMode {
                 // spike 3
                 .strafeToLinearHeading(preThirdIntake, Math.toRadians(-90))
                 .strafeToLinearHeading(thirdIntake, Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(thirdIntake.x, thirdIntake.y + 15), Math.toRadians(-90))
                 // shoot
                 .strafeToSplineHeading(shoot.position, shoot.heading.log())
                 .stopAndAdd(bot.actionShootThree())
