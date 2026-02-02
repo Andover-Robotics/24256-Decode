@@ -7,17 +7,15 @@ import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
+
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 @Config
 public class Intake {
     private DcMotorEx motor;
     private Servo gate;
-
-    private double beginCurrentTs = -1.0;
-    private double current;
-    private boolean ballInIntake;
 
     // intake configuration
     public static double IN_POWER = 1.0;
@@ -28,8 +26,9 @@ public class Intake {
     public static double GATE_OPEN = 0.77;
     public static double GATE_CLOSED = 0.67;
 
-    public static double CURRENT_THRESHOLD = 2100; // mA
-    public static double MIN_CURRENT_TIME = 0.300 * 1000; // sec
+    private DigitalChannel topBB;
+    private DigitalChannel middleBB;
+    private DigitalChannel bottomBB;
 
     private boolean gateOpenStatus = false;
 
@@ -88,34 +87,15 @@ public class Intake {
         }
     }
 
-    public double getCurrent() {
-        return current;
-    }
+    public boolean getTopBBStatus() { return topBB.getState(); }
+    public boolean getMiddleBBStatus() { return middleBB.getState(); }
+    public boolean getBottomBBStatus() { return bottomBB.getState(); }
 
-    public boolean ballInIntake() {
-        return ballInIntake;
-    }
-
-    public void periodic() {
-        // don't update state if we aren't intaking
-        if (motor.getPower() != IN_POWER) {
-            return;
-        }
-
-        current = motor.getCurrent(CurrentUnit.MILLIAMPS);
-
-        if (current > CURRENT_THRESHOLD) {
-            if (beginCurrentTs < 0) {
-                beginCurrentTs = System.currentTimeMillis();
-            }
-            double deltaTime = System.currentTimeMillis() - beginCurrentTs;
-
-            if (deltaTime > MIN_CURRENT_TIME) {
-                ballInIntake = true;
-            }
-        } else {
-            beginCurrentTs = -1.0;
-            ballInIntake = false;
-        }
+    public int countBalls() {
+        int count = 0;
+        if (getTopBBStatus()) count++;
+        if (getMiddleBBStatus()) count++;
+        if (getBottomBBStatus()) count++;
+        return count;
     }
 }

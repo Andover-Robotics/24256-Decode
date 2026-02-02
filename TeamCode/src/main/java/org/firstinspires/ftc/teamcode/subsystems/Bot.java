@@ -130,7 +130,6 @@ public class Bot {
     }
 
     public void periodic() {
-        intake.periodic();
         outtake.periodic();
     }
 
