@@ -127,10 +127,8 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("\nBall Count", intakeBallCount);
             telemetry.addData("\nFlywheel Target Velocity", bot.outtake.getTargetVelocity());
             telemetry.addData("Flywheel Velocity", bot.outtake.getRealVelocity());
-            if (bot.outtake.hitDistance != null) {
-                telemetry.addData("\nHit Distance", bot.outtake.hitDistance);
-                telemetry.addData("\nBearing", Math.toDegrees(bot.outtake.bearing));
-            }
+            telemetry.addData("\nGoal Distance", bot.turret.getDistanceToGoal());
+            telemetry.addData("\nTurret Angle", bot.turret.getAngleToGoal());
             telemetry.addData("\nController #1 Left Stick", gp1.getLeftY());
             telemetry.addData("Controller #2 Left Stick", gp2.getLeftY());
 

@@ -40,12 +40,11 @@ public class Bot {
 
     // other subsystems
     public Intake intake;
+    public Turret turret;
     public Outtake outtake;
 
     public static double SHOOT_ONE_DELAY = 0.2;
     public static double SHOOT_THREE_QUICKFIRE_DELAY = 1.25;
-
-    public AprilTag aprilTag;
 
     private boolean inShootingMode = false;
 
@@ -63,10 +62,12 @@ public class Bot {
 
     private Bot(LinearOpMode opMode) { // new Bot(opMode);
         this.opMode = opMode;
-        aprilTag = new AprilTag(opMode);
+
+        drive = new MecanumDrive(opMode.hardwareMap, new Pose2d(0, 0, 0));
 
         intake = new Intake(opMode);
-        outtake = new Outtake(opMode, aprilTag);
+        outtake = new Outtake(opMode);
+        turret = new Turret(opMode.hardwareMap, drive.localizer);
 
         // make sure to set the direction of the motors
         fl = new Motor(opMode.hardwareMap, "fl");
@@ -84,8 +85,6 @@ public class Bot {
         fr.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         bl.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         br.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-
-        drive = new MecanumDrive(opMode.hardwareMap, new Pose2d(0, 0, 0));
     }
 
     public static Bot getInstance(LinearOpMode opMode) {
@@ -130,6 +129,8 @@ public class Bot {
     }
 
     public void periodic() {
+        turret.periodic();
+        outtake.setDistanceToGoal(turret.getDistanceToGoal());
         outtake.periodic();
     }
 
