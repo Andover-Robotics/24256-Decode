@@ -67,7 +67,7 @@ public class Bot {
 
         intake = new Intake(opMode);
         outtake = new Outtake(opMode);
-        turret = new Turret(opMode.hardwareMap, drive.localizer);
+        turret = new Turret(opMode.hardwareMap, drive);
 
         // make sure to set the direction of the motors
         fl = new Motor(opMode.hardwareMap, "fl");

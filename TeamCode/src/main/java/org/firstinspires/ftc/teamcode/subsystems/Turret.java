@@ -1,21 +1,20 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Rotation2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.auto.config.Localizer;
+import org.firstinspires.ftc.teamcode.auto.config.MecanumDrive;
 
 
 public class Turret {
     public static Vector2d shooterTransform = new Vector2d(0, 0);
     public static Vector2d aimPoint = new Vector2d(0, 0);
 
-    private Localizer localizer;
+    private MecanumDrive drive;
     private double distanceToGoal;
     private double angleToGoal;
     private double targetEncoderPosition;
@@ -36,8 +35,8 @@ public class Turret {
 
     private static double ENCODER_TICKS_PER_REV = 360.0 / (141.5 * 104 / 24);
 
-    public Turret(HardwareMap hardwareMap, Localizer localizer) {
-        this.localizer = localizer;
+    public Turret(HardwareMap hardwareMap, MecanumDrive drive) {
+        this.drive = drive;
         this.motor = new MotorEx(hardwareMap, "turret", Motor.GoBILDA.RPM_1150);
     }
 
@@ -67,7 +66,8 @@ public class Turret {
     }
 
     public void aimTowardsTargetPoint() {
-        Pose2d pose = localizer.getPose();
+        drive.updatePoseEstimate();
+        Pose2d pose = drive.localizer.getPose();
 
         Vector2d robotPosition = pose.position;
         double robotHeading = pose.heading.log();
