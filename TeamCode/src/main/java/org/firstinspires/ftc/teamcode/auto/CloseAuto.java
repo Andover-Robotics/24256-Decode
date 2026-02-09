@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
@@ -58,6 +59,7 @@ public class CloseAuto extends LinearOpMode {
 
         // preload
         builder = builder
+                .stopAndAdd(new InstantAction(() -> bot.intake.in()))
                 .setTangent(Math.toRadians(90))
                 .strafeToSplineHeading(shoot.position, shoot.heading.log())
                 .stopAndAdd(bot.actionShootThree());

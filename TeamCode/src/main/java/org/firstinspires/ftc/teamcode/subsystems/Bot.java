@@ -168,5 +168,16 @@ public class Bot {
                 new InstantAction(() -> inShootingMode = false)
         );
     }
-    public boolean inShootingMode() { return inShootingMode; }
+
+    public Action actionShootThreeFar() {
+        return new SequentialAction(
+                actionShootOne(),
+                actionShootOne(),
+                actionShootOne()
+        );
+    }
+
+    public boolean inShootingMode() {
+        return inShootingMode;
+    }
 }

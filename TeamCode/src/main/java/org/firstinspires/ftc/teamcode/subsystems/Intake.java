@@ -87,15 +87,26 @@ public class Intake {
         }
     }
 
-    public boolean getTopBBStatus() { return topBB.getState(); }
-    public boolean getMiddleBBStatus() { return middleBB.getState(); }
-    public boolean getBottomBBStatus() { return bottomBB.getState(); }
+    public boolean getTopBBStatus() {
+        return topBB.getState();
+    }
+
+    public boolean getMiddleBBStatus() {
+        return middleBB.getState();
+    }
+
+    public boolean getBottomBBStatus() {
+        return bottomBB.getState();
+    }
 
     public int countBalls() {
         int count = 0;
-        if (getTopBBStatus()) count++;
-        if (getMiddleBBStatus()) count++;
-        if (getBottomBBStatus()) count++;
+        if (getTopBBStatus())
+            count++;
+        if (getMiddleBBStatus())
+            count++;
+        if (getBottomBBStatus())
+            count++;
         return count;
     }
 }

@@ -86,8 +86,10 @@ public class Turret {
 
         targetEncoderPosition = Math.toDegrees(turretHeading);
 
-        if (targetEncoderPosition > HIGH_LIMIT) targetEncoderPosition -= 360;
-        if (targetEncoderPosition < LOW_LIMIT) targetEncoderPosition += 360;
+        if (targetEncoderPosition > HIGH_LIMIT)
+            targetEncoderPosition -= 360;
+        if (targetEncoderPosition < LOW_LIMIT)
+            targetEncoderPosition += 360;
     }
 
     public void updateEncoderPosition() {
