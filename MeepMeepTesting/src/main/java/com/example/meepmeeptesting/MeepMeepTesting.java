@@ -31,18 +31,20 @@ public class MeepMeepTesting {
                         // starting load
                         .strafeToLinearHeading(new Vector2d(-8, -8), Math.toRadians(225))
                         //pickup 3rd spike
-                        .strafeToLinearHeading(new Vector2d(32, -34), Math.toRadians(-90))
-                        .strafeToLinearHeading(new Vector2d(32, -60), Math.toRadians(-90))
+                        .setTangent(0)
+                        .splineToLinearHeading(new Pose2d(32, -34, Math.toRadians(-90)), Math.toRadians(-90))
+                        .splineToLinearHeading(new Pose2d(32, -60, Math.toRadians(-90)), Math.toRadians(-90))
                         //shoot
-                        .strafeToLinearHeading(new Vector2d(-8, -8), Math.toRadians(225))
-                        //goto corner -> pre-intake -> ram
-                        .strafeToLinearHeading(new Vector2d(55, -50), Math.toRadians(-90))
-                        .strafeToLinearHeading(new Vector2d(55, -65), Math.toRadians(-90))
-                        .strafeToLinearHeading(new Vector2d(55, -50), Math.toRadians(-90))
-                        .strafeToLinearHeading(new Vector2d(55, -65), Math.toRadians(-90))
-                        .strafeToLinearHeading(new Vector2d(55, -75), Math.toRadians(-90))
-                        // shoot
-                        .strafeToLinearHeading(new Vector2d(-8, -8), Math.toRadians(225))
+                        .setTangent(Math.toRadians(90))
+                        .splineToSplineHeading(new Pose2d(-8, -8, Math.toRadians(225)), Math.toRadians(180))
+//                        //goto corner -> pre-intake -> ram
+//                        .strafeToLinearHeading(new Vector2d(55, -50), Math.toRadians(-90))
+//                        .strafeToLinearHeading(new Vector2d(55, -65), Math.toRadians(-90))
+//                        .strafeToLinearHeading(new Vector2d(55, -50), Math.toRadians(-90))
+//                        .strafeToLinearHeading(new Vector2d(55, -65), Math.toRadians(-90))
+//                        .strafeToLinearHeading(new Vector2d(55, -75), Math.toRadians(-90))
+//                        // shoot
+//                        .strafeToLinearHeading(new Vector2d(-8, -8), Math.toRadians(225))
 
 //                        .strafeToLinearHeading(new Vector2d(36, -24 - 4), Math.toRadians(-90))
 //                        .strafeToLinearHeading(new Vector2d(36, -48), Math.toRadians(-90))

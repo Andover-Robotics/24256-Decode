@@ -2,10 +2,9 @@ package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -14,24 +13,89 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.auto.config.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Bot;
+import org.firstinspires.ftc.teamcode.util.WaitUntilAction;
 
 @Autonomous(name = "Decode Close Auto")
 @Config
 public class CloseAuto extends LinearOpMode {
     // Positions
-    public static Pose2d redAllianceStartPose = new Pose2d(60, -48, Math.toRadians(-52));
-    public static Pose2d shoot = new Pose2d(32, -32, Math.toRadians(-49));
-    public static Vector2d preFirstIntake = new Vector2d(14, -20);
-    public static Vector2d firstIntake = new Vector2d(14, -52);
-    public static Vector2d preSecondIntake = new Vector2d(-10, -20);
-    public static Vector2d secondIntake = new Vector2d(-10, -46);
-    public static Vector2d preThirdIntake = new Vector2d(-34, -20);
-    public static Vector2d thirdIntake = new Vector2d(-34, -60);
-    public static Vector2d gate = new Vector2d(7, -64);
+    public static Pose2d startCloseRed = new Pose2d(0, 0, Math.toRadians(0));
+    public static Pose2d startFarRed = new Pose2d(0, 0, Math.toRadians(0));
+    public static Pose2d preSpike2 = new Pose2d(0, 0, Math.toRadians(-90));
+    public static Pose2d spike2 = new Pose2d(0, 0, Math.toRadians(-90));
+    public static Pose2d preSpike1 = new Pose2d(0, 0, Math.toRadians(-90));
+    public static Pose2d spike1 = new Pose2d(0, 0, Math.toRadians(-90));
+    public static Pose2d shoot = new Pose2d(0, 0, Math.toRadians(-90));
+    public static Pose2d finalShoot = new Pose2d(0, 0, Math.toRadians(-90));
+    public static Pose2d gate = new Pose2d(0, 0, 0);
+
+    public Bot bot;
+
+    // auto configurations
+    public boolean startClose = true;
+    public int numCycles = 2;
+
+    public Action builtAuto = null;
+
+    public void buildAuto() {
+        MecanumDrive drive = bot.drive;
+
+        if (startClose) {
+            if (Bot.alliance == Bot.Alliance.RED) {
+                drive.localizer.setPose(startCloseRed);
+            } else {
+                drive.localizer.setPose(Bot.mirror(startCloseRed));
+            }
+        } else {
+            if (Bot.alliance == Bot.Alliance.RED) {
+                drive.localizer.setPose(startFarRed);
+            } else {
+                drive.localizer.setPose(Bot.mirror(startFarRed));
+            }
+        }
+
+        TrajectoryActionBuilder builder = drive.actionBuilderColor(startClose ? startCloseRed : startFarRed, Bot.alliance == Bot.Alliance.BLUE);
+
+        // preload
+        builder = builder
+                .setTangent(Math.toRadians(90))
+                .strafeToSplineHeading(shoot.position, shoot.heading.log())
+                .stopAndAdd(bot.actionShootThree());
+
+        // spike 2
+        builder = builder
+                .setTangent(Math.toRadians(0))
+                .splineToSplineHeading(preSpike2, Math.toRadians(-90))
+                .splineToSplineHeading(spike2, Math.toRadians(-90))
+                .setTangent(Math.toRadians(90))
+                .splineToSplineHeading(shoot, Math.toRadians(180))
+                .stopAndAdd(bot.actionShootThree());
+
+        for (int i = 0; i < numCycles; i++) {
+            builder = builder
+                    .setTangent(Math.toRadians(0))
+                    .splineToSplineHeading(gate, Math.toRadians(-90))
+                    .stopAndAdd(new WaitUntilAction(() -> bot.intake.countBalls() == 3, 0, 3))
+                    .setTangent(Math.toRadians(90))
+                    .splineToSplineHeading(shoot, Math.toRadians(180))
+                    .stopAndAdd(bot.actionShootThree());
+        }
+
+        // spike 1
+        builder = builder
+                .setTangent(Math.toRadians(0))
+                .splineToSplineHeading(preSpike1, Math.toRadians(-90))
+                .splineToSplineHeading(spike1, Math.toRadians(-90))
+                .setTangent(Math.toRadians(90))
+                .splineToSplineHeading(finalShoot, Math.toRadians(180))
+                .stopAndAdd(bot.actionShootThree());
+
+        builtAuto = builder.build();
+    }
 
     public void runOpMode() throws InterruptedException {
         Bot.instance = null;
-        Bot bot = Bot.getInstance(this);
+        bot = Bot.getInstance(this);
 
         GamepadEx gp1 = new GamepadEx(gamepad1);
 
@@ -39,63 +103,27 @@ public class CloseAuto extends LinearOpMode {
 
         while (opModeInInit() && !isStarted() && !isStopRequested()) {
             telemetry.addData("Bot Alliance", (Bot.alliance == Bot.Alliance.RED) ? "Red" : "Blue");
+            telemetry.addData("Auto Built", (builtAuto == null) ? "no" : "yes");
 
-            if (gp1.getButton(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
+            if (gp1.getButton(GamepadKeys.Button.LEFT_BUMPER)) {
                 Bot.switchAlliance();
+                builtAuto = null;
             }
+
+            if (gp1.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
+                buildAuto();
+            }
+
             telemetry.update();
         }
 
         waitForStart();
         if (isStopRequested()) return;
 
-        MecanumDrive drive = bot.drive;
-
-        Pose2d startPose = (Bot.alliance == Bot.Alliance.RED) ? redAllianceStartPose : Bot.mirror(redAllianceStartPose);
-        drive.localizer.setPose(startPose);
-
-        Action auto = drive.actionBuilderColor(redAllianceStartPose, Bot.alliance == Bot.Alliance.BLUE)
-                .stopAndAdd(new InstantAction(() -> bot.outtake.enable()))
-                .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = true))
-                // preload
-                .stopAndAdd(new InstantAction(() -> bot.intake.in()))
-                .strafeToSplineHeading(shoot.position, shoot.heading.log())
-                .stopAndAdd(bot.actionShootThree())
-                .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = false))
-                // spike 1
-                .strafeToLinearHeading(preFirstIntake, Math.toRadians(-90))
-                .strafeToLinearHeading(firstIntake, Math.toRadians(-90))
-                // gate
-                .strafeToLinearHeading(gate, Math.toRadians(0))
-                .waitSeconds(1)
-                // shoot
-                .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = true))
-                .strafeToSplineHeading(shoot.position, shoot.heading.log())
-                .stopAndAdd(bot.actionShootThree())
-                .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = false))
-                // spike 2
-                .strafeToLinearHeading(preSecondIntake, Math.toRadians(-90))
-                .strafeToLinearHeading(secondIntake, Math.toRadians(-90))
-                // shoot
-                .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = true))
-                .strafeToSplineHeading(shoot.position, shoot.heading.log())
-                .stopAndAdd(bot.actionShootThree())
-                .stopAndAdd(new InstantAction(() -> MecanumDrive.enablePreciseShooting = false))
-                // spike 3
-                .strafeToLinearHeading(preThirdIntake, Math.toRadians(-90))
-                .strafeToLinearHeading(thirdIntake, Math.toRadians(-90))
-                .strafeToLinearHeading(new Vector2d(thirdIntake.x, thirdIntake.y + 15), Math.toRadians(-90))
-                // shoot
-                .strafeToSplineHeading(shoot.position, shoot.heading.log())
-                .stopAndAdd(bot.actionShootThree())
-                // gate
-                .strafeToLinearHeading(new Vector2d(gate.x, gate.y + 15), Math.toRadians(0))
-                .build();
-
         Actions.runBlocking(
                 new ParallelAction(
                         bot.actionPeriodic(),
-                        auto
+                        builtAuto
                 )
         );
     }
