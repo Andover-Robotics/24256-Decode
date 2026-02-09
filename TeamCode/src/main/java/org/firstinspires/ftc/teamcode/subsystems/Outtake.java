@@ -5,6 +5,9 @@ import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import org.firstinspires.ftc.teamcode.util.TriggeredTimer;
+
 import java.util.TreeMap;
 
 @Config
@@ -55,10 +58,10 @@ public class Outtake {
     public static boolean enabled = false;
 
     private double targetVelocity = 0;
-
     private double distanceToGoal;
 
-    private double beginTs = -1.0;
+    private boolean inTolerance;
+    private TriggeredTimer shooterPIDFSettled;
 
     public Outtake(LinearOpMode opMode) {
         controller = new PIDController(kP, kI, kD);
@@ -67,6 +70,8 @@ public class Outtake {
         motor2 = new MotorEx(opMode.hardwareMap, "outtake2", MotorEx.GoBILDA.BARE);
         motor2.setRunMode(Motor.RunMode.RawPower);
         motor2.setInverted(true);
+
+        shooterPIDFSettled = new TriggeredTimer(IN_TOLERANCE_TIME);
     }
 
     public void setDistanceToGoal(double distanceToGoal) {
@@ -136,19 +141,12 @@ public class Outtake {
         double ffOutput = kStatic + kV * targetVelocity;
 
         setPower(pidOutput + ffOutput);
+
+        inTolerance = shooterPIDFSettled.periodic(Math.abs(targetVelocity - getRealVelocity()) < VELOCITY_TOLERANCE);
     }
 
     public boolean inTolerance() {
-        if (Math.abs(getRealVelocity() - targetVelocity) < VELOCITY_TOLERANCE) {
-            if (beginTs < 0) {
-                beginTs = System.currentTimeMillis();
-            }
-            double deltaTime = System.currentTimeMillis() - beginTs;
-            return deltaTime > IN_TOLERANCE_TIME;
-        } else {
-            beginTs = -1;
-        }
-        return false;
+        return inTolerance;
     }
 
     public void enable() {
