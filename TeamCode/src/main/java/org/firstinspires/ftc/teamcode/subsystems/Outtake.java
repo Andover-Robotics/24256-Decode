@@ -23,9 +23,6 @@ public class Outtake {
 
     public PIDController controller;
 
-    private static double FLYWHEEL_GEAR_RATIO = 1.0;
-    private static double VELOCITY_TOLERANCE = 100;
-
     public static double DEFAULT_VELOCITY = 3600;
 
     private static final TreeMap<Double, Double> VELOCITY_LOOKUP_TABLE = new TreeMap<>();
@@ -50,6 +47,7 @@ public class Outtake {
     public static double SHOOTER_B = 10.53669;
     public static double SHOOTER_C = 3193.94494;
 
+    private static double VELOCITY_TOLERANCE = 100;
     public static double IN_TOLERANCE_TIME = 0.200 * 1000;
 
     public static boolean MANUAL = false;
@@ -61,7 +59,7 @@ public class Outtake {
     private double distanceToGoal;
 
     private boolean inTolerance;
-    private TriggeredTimer shooterPIDFSettled;
+    private TriggeredTimer inToleranceTimer;
 
     public Outtake(LinearOpMode opMode) {
         controller = new PIDController(kP, kI, kD);
@@ -71,7 +69,7 @@ public class Outtake {
         motor2.setRunMode(Motor.RunMode.RawPower);
         motor2.setInverted(true);
 
-        shooterPIDFSettled = new TriggeredTimer(IN_TOLERANCE_TIME);
+        inToleranceTimer = new TriggeredTimer(IN_TOLERANCE_TIME);
     }
 
     public void setDistanceToGoal(double distanceToGoal) {
@@ -119,7 +117,7 @@ public class Outtake {
     }
 
     public double getRealVelocity() {
-        return motor1.getVelocity() / 28.0 / FLYWHEEL_GEAR_RATIO * 60;
+        return motor1.getVelocity() / 28.0 * 60;
     }
 
     public void setPower(double power) {
@@ -142,7 +140,7 @@ public class Outtake {
 
         setPower(pidOutput + ffOutput);
 
-        inTolerance = shooterPIDFSettled.periodic(Math.abs(targetVelocity - getRealVelocity()) < VELOCITY_TOLERANCE);
+        inTolerance = inToleranceTimer.periodic(Math.abs(targetVelocity - getRealVelocity()) < VELOCITY_TOLERANCE);
     }
 
     public boolean inTolerance() {

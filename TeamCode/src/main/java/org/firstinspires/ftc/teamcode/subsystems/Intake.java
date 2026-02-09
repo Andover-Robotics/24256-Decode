@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.util.TriggeredTimer;
 
 @Config
 public class Intake {
@@ -32,15 +33,28 @@ public class Intake {
 
     private boolean gateOpenStatus = false;
 
+    public static double MIN_CURRENT = 3500;
+    public static double CURRENT_PULL_TIME = 0.200 * 1000;
+    private TriggeredTimer overPossessionTimer;
+    private static double REVERSAL_TIME = 0.100 * 1000;
+    private boolean shouldReverse = false;
+    private TriggeredTimer reversalTimer;
+
+    private boolean overPossession;
+
+    private double setPower;
+
     public Intake(LinearOpMode opMode) {
         motor = opMode.hardwareMap.get(DcMotorEx.class, "intake");
         gate = opMode.hardwareMap.get(Servo.class, "gate");
 
         closeGate();
+
+        overPossessionTimer = new TriggeredTimer(CURRENT_PULL_TIME);
     }
 
     public void setPower(double power) {
-        motor.setPower(power);
+        setPower = power;
     }
 
     public void in() {
@@ -108,5 +122,24 @@ public class Intake {
         if (getBottomBBStatus())
             count++;
         return count;
+    }
+
+    public void periodic() {
+        overPossession = overPossessionTimer.periodic(motor.getCurrent(CurrentUnit.MILLIAMPS) > MIN_CURRENT);
+
+        if (shouldReverse) {
+            reversalTimer.periodic(true);
+            motor.setPower(-1.0);
+            if (reversalTimer.getElapsedTime() > REVERSAL_TIME) {
+                shouldReverse = false;
+            }
+        }
+
+        if (overPossession) {
+            shouldReverse = true;
+            reversalTimer = new TriggeredTimer(0);
+        } else {
+            motor.setPower(setPower);
+        }
     }
 }

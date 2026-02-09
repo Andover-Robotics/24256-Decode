@@ -12,15 +12,20 @@ public class TriggeredTimer {
         return System.currentTimeMillis() / 1000.0;
     }
 
+    public double getElapsedTime() {
+        if (beginTs < 0)
+            return 0;
+
+        return getTimeSeconds() - beginTs;
+    }
+
     public boolean periodic(boolean condition) {
         if (condition) {
             if (beginTs < 0) {
                 beginTs = getTimeSeconds();
             }
 
-            double t = getTimeSeconds() - beginTs;
-
-            return t > minTimeToTrigger;
+            return getElapsedTime()  > minTimeToTrigger;
         } else {
             beginTs = -1.0;
         }

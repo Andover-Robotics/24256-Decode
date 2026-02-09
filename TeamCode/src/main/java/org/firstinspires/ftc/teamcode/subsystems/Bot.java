@@ -132,6 +132,7 @@ public class Bot {
         turret.periodic();
         outtake.setDistanceToGoal(turret.getDistanceToGoal());
         outtake.periodic();
+        intake.periodic();
     }
 
     public Action actionPeriodic() {
