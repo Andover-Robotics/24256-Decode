@@ -48,9 +48,15 @@ public class Intake {
         motor = opMode.hardwareMap.get(DcMotorEx.class, "intake");
         gate = opMode.hardwareMap.get(Servo.class, "gate");
 
+        topBB = opMode.hardwareMap.get(DigitalChannel.class, "topBB");
+        middleBB = opMode.hardwareMap.get(DigitalChannel.class, "middleBB");
+        bottomBB = opMode.hardwareMap.get(DigitalChannel.class, "bottomBB");
+
+        overPossessionTimer = new TriggeredTimer(CURRENT_PULL_TIME / 1000.0);
+        reversalTimer = new TriggeredTimer(REVERSAL_TIME / 1000.0);
+
         closeGate();
 
-        overPossessionTimer = new TriggeredTimer(CURRENT_PULL_TIME);
     }
 
     public void setPower(double power) {
@@ -125,21 +131,24 @@ public class Intake {
     }
 
     public void periodic() {
-        overPossession = overPossessionTimer.periodic(motor.getCurrent(CurrentUnit.MILLIAMPS) > MIN_CURRENT);
-
-        if (shouldReverse) {
-            reversalTimer.periodic(true);
-            motor.setPower(-1.0);
-            if (reversalTimer.getElapsedTime() > REVERSAL_TIME) {
-                shouldReverse = false;
-            }
-        }
+        //added a condition. Maybe current check is redundant if we have bb
+        overPossession = ((countBalls() == 3) || overPossessionTimer.periodic(motor.getCurrent(CurrentUnit.MILLIAMPS) > MIN_CURRENT));
 
         if (overPossession) {
             shouldReverse = true;
-            reversalTimer = new TriggeredTimer(0);
+        }
+
+        if (shouldReverse) {
+            motor.setPower(-1.0);
+            if (reversalTimer.periodic(true)) {
+                shouldReverse = false;
+                reversalTimer.periodic(false); // Reset the timer
+            }
         } else {
+            reversalTimer.periodic(false);
             motor.setPower(setPower);
         }
+
+
     }
 }
