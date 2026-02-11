@@ -23,7 +23,7 @@ public class Outtake {
 
     public PIDController controller;
 
-    public static double DEFAULT_VELOCITY = 3600;
+    public static double DEFAULT_VELOCITY = 3700;
 
     private static final TreeMap<Double, Double> VELOCITY_LOOKUP_TABLE = new TreeMap<>();
 
