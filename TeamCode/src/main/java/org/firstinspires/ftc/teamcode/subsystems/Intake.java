@@ -34,9 +34,9 @@ public class Intake {
     private boolean gateOpenStatus = false;
 
     public static double MIN_CURRENT = 3500;
-    public static double CURRENT_PULL_TIME = 0.200 * 1000;
+    public static double CURRENT_PULL_TIME = 0.200;
     private TriggeredTimer overPossessionTimer;
-    private static double REVERSAL_TIME = 0.100 * 1000;
+    private static double REVERSAL_TIME = 0.100;
     private boolean shouldReverse = false;
     private TriggeredTimer reversalTimer;
 
