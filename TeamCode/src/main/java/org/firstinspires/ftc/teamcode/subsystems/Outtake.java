@@ -48,7 +48,7 @@ public class Outtake {
     public static double SHOOTER_C = 3193.94494;
 
     private static double VELOCITY_TOLERANCE = 100;
-    public static double IN_TOLERANCE_TIME = 0.200 * 1000;
+    public static double IN_TOLERANCE_TIME = 0.200;
 
     public static boolean MANUAL = false;
     public static double MANUAL_VELOCITY = 0;

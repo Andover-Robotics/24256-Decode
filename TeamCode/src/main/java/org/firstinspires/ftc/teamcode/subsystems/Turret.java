@@ -82,7 +82,7 @@ public class Turret {
         double fieldAngleToGoal = Math.atan2(delta.y, delta.x);
 
         angleToGoal = normalizeAngle(fieldAngleToGoal - robotHeading);
-        double turretHeading = normalizeAngle(-angleToGoal + robotHeading);
+        double turretHeading = normalizeAngle(-angleToGoal);
 
         targetEncoderPosition = Math.toDegrees(turretHeading);
 

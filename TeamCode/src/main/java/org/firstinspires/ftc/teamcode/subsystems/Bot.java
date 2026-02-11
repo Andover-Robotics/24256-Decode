@@ -111,17 +111,17 @@ public class Bot {
                 (throttle + strafe - turn)  // Back Right
         };
         double maxSpeed = 0;
+
         for (int i = 0; i < 4; i++) {
             maxSpeed = Math.max(maxSpeed, speeds[i]);
         }
-        if (maxSpeed > 1) {
-            for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 4; i++) {
+            if (maxSpeed > 1) {
                 speeds[i] /= maxSpeed;
             }
-        }
-        for (int i = 0; i < 4; i++) {
             speeds[i] *= scalar;
         }
+
         fl.set(speeds[0]);
         fr.set(speeds[1]);
         bl.set(speeds[2]);

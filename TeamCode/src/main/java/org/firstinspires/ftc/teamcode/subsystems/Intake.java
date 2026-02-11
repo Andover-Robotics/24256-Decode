@@ -34,9 +34,9 @@ public class Intake {
     private boolean gateOpenStatus = false;
 
     public static double MIN_CURRENT = 3500;
-    public static double CURRENT_PULL_TIME = 0.200 * 1000;
+    public static double CURRENT_PULL_TIME = 0.200;
     private TriggeredTimer overPossessionTimer;
-    private static double REVERSAL_TIME = 0.100 * 1000;
+    private static double REVERSAL_TIME = 0.100;
     private boolean shouldReverse = false;
     private TriggeredTimer reversalTimer;
 
@@ -49,9 +49,15 @@ public class Intake {
         motor = opMode.hardwareMap.get(DcMotorEx.class, "intake");
         gate = opMode.hardwareMap.get(Servo.class, "gate");
 
+        topBB = opMode.hardwareMap.get(DigitalChannel.class, "topBB");
+        middleBB = opMode.hardwareMap.get(DigitalChannel.class, "middleBB");
+        bottomBB = opMode.hardwareMap.get(DigitalChannel.class, "bottomBB");
+
+        overPossessionTimer = new TriggeredTimer(CURRENT_PULL_TIME / 1000.0);
+        reversalTimer = new TriggeredTimer(REVERSAL_TIME / 1000.0);
+
         closeGate();
 
-        overPossessionTimer = new TriggeredTimer(CURRENT_PULL_TIME);
     }
 
     public void setPower(double power) {
@@ -133,18 +139,18 @@ public class Intake {
         current = motor.getCurrent(CurrentUnit.MILLIAMPS);
         overPossession = overPossessionTimer.periodic(current > MIN_CURRENT);
 
-        if (shouldReverse) {
-            reversalTimer.periodic(true);
-            motor.setPower(-1.0);
-            if (reversalTimer.getElapsedTime() > REVERSAL_TIME) {
-                shouldReverse = false;
-            }
-        }
-
         if (overPossession) {
             shouldReverse = true;
-            reversalTimer = new TriggeredTimer(0);
+        }
+
+        if (shouldReverse) {
+            motor.setPower(-1.0);
+            if (reversalTimer.periodic(true)) {
+                shouldReverse = false;
+                reversalTimer.periodic(false); // Reset the timer
+            }
         } else {
+            reversalTimer.periodic(false);
             motor.setPower(setPower);
         }
     }
