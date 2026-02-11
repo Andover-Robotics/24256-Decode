@@ -26,24 +26,27 @@ public class Intake {
     // gate configuration
     public static double GATE_OPEN = 0.77;
     public static double GATE_CLOSED = 0.67;
-
     private DigitalChannel topBB;
     private DigitalChannel middleBB;
     private DigitalChannel bottomBB;
 
+    public int intakeBallCount;
+
     private boolean gateOpenStatus = false;
 
     public static double MIN_CURRENT = 3500;
+    //are current pull time and reversal time in seconds? I will assume they are for now
     public static double CURRENT_PULL_TIME = 0.200;
     private TriggeredTimer overPossessionTimer;
     private static double REVERSAL_TIME = 0.100;
     private boolean shouldReverse = false;
     private TriggeredTimer reversalTimer;
 
-    private boolean overPossession;
+    public boolean overPossession;
+
+    private double current;
 
     private double setPower;
-    private double current;
 
     public Intake(LinearOpMode opMode) {
         motor = opMode.hardwareMap.get(DcMotorEx.class, "intake");
@@ -53,8 +56,8 @@ public class Intake {
         middleBB = opMode.hardwareMap.get(DigitalChannel.class, "middleBB");
         bottomBB = opMode.hardwareMap.get(DigitalChannel.class, "bottomBB");
 
-        overPossessionTimer = new TriggeredTimer(CURRENT_PULL_TIME / 1000.0);
-        reversalTimer = new TriggeredTimer(REVERSAL_TIME / 1000.0);
+        overPossessionTimer = new TriggeredTimer(CURRENT_PULL_TIME);
+        reversalTimer = new TriggeredTimer(REVERSAL_TIME);
 
         closeGate();
 
@@ -99,6 +102,13 @@ public class Intake {
                 new InstantAction(this::closeGate)
         );
     }
+    public Action actionAutomaticReverse() {
+        return new SequentialAction(
+                new InstantAction(() -> this.setPower(OUT_POWER)),
+                new SleepAction(REVERSAL_TIME),
+                new InstantAction(() -> this.setPower(0.0))
+        );
+    }
 
     public void toggleGate() {
         if (gateOpenStatus) {
@@ -130,28 +140,16 @@ public class Intake {
             count++;
         return count;
     }
-
     public double getCurrent() {
         return current;
     }
 
     public void periodic() {
+        intakeBallCount = countBalls();
         current = motor.getCurrent(CurrentUnit.MILLIAMPS);
-        overPossession = overPossessionTimer.periodic(current > MIN_CURRENT);
+        boolean isStalled = overPossessionTimer.periodic(current > MIN_CURRENT);
+        boolean isFull = (intakeBallCount == 3);
 
-        if (overPossession) {
-            shouldReverse = true;
-        }
-
-        if (shouldReverse) {
-            motor.setPower(-1.0);
-            if (reversalTimer.periodic(true)) {
-                shouldReverse = false;
-                reversalTimer.periodic(false); // Reset the timer
-            }
-        } else {
-            reversalTimer.periodic(false);
-            motor.setPower(setPower);
-        }
+        overPossession = (isStalled && isFull);
     }
 }
