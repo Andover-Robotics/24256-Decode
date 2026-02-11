@@ -43,6 +43,7 @@ public class Intake {
     private boolean overPossession;
 
     private double setPower;
+    private double current;
 
     public Intake(LinearOpMode opMode) {
         motor = opMode.hardwareMap.get(DcMotorEx.class, "intake");
@@ -124,8 +125,13 @@ public class Intake {
         return count;
     }
 
+    public double getCurrent() {
+        return current;
+    }
+
     public void periodic() {
-        overPossession = overPossessionTimer.periodic(motor.getCurrent(CurrentUnit.MILLIAMPS) > MIN_CURRENT);
+        current = motor.getCurrent(CurrentUnit.MILLIAMPS);
+        overPossession = overPossessionTimer.periodic(current > MIN_CURRENT);
 
         if (shouldReverse) {
             reversalTimer.periodic(true);

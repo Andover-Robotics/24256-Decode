@@ -124,7 +124,8 @@ public class MainTeleOp extends LinearOpMode {
             handleActions(packet);
 
             telemetry.addData("Bot Alliance", (Bot.alliance == Bot.Alliance.RED) ? "Red" : "Blue");
-            telemetry.addData("\nBall Count", intakeBallCount);
+            telemetry.addData("\nIntake Ball Count", intakeBallCount);
+            telemetry.addData("Intake Current", bot.intake.getCurrent());
             telemetry.addData("\nFlywheel Target Velocity", bot.outtake.getTargetVelocity());
             telemetry.addData("Flywheel Velocity", bot.outtake.getRealVelocity());
             telemetry.addData("\nGoal Distance", bot.turret.getDistanceToGoal());
