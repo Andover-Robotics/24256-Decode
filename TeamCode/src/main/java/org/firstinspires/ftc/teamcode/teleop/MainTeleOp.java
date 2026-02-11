@@ -73,6 +73,16 @@ public class MainTeleOp extends LinearOpMode {
             bot.driveRobotCentric(throttle, strafe, turn, scalar);
             bot.periodic();
 
+            if (!bot.inShootingMode()) {
+                if (gp1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2) {
+                    bot.intake.in();
+                } else if (gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.2) {
+                    bot.intake.out();
+                } else {
+                    bot.intake.store();
+                }
+            }
+
             gp2.readButtons();
             if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
                 bot.intake.toggleGate();
@@ -94,24 +104,13 @@ public class MainTeleOp extends LinearOpMode {
                 bot.outtake.disable();
             }
 
-            if (!bot.inShootingMode() && !bot.intake.overPossession) {
-                if (gp1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2) {
-                    bot.intake.in();
-                } else if (gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.2) {
-                    bot.intake.out();
-                } else {
-                    bot.intake.store();
-                }
-            }
+            int intakeBallCount = bot.intake.countBalls();
 
-            if (bot.intake.overPossession) {
+            if (intakeBallCount == 3) {
                 gamepad1.setLedColor(0, 255, 0, Gamepad.LED_DURATION_CONTINUOUS);
                 if (!intakeVibrated) {
                     gamepad1.rumble(500);
                     intakeVibrated = true;
-
-                    //automatic reversal
-                    addAction(bot.intake.actionAutomaticReverse());
                 }
             } else {
                 gamepad1.setLedColor(255, 0, 0, Gamepad.LED_DURATION_CONTINUOUS);
@@ -125,7 +124,7 @@ public class MainTeleOp extends LinearOpMode {
             handleActions(packet);
 
             telemetry.addData("Bot Alliance", (Bot.alliance == Bot.Alliance.RED) ? "Red" : "Blue");
-            telemetry.addData("\nIntake Ball Count", bot.intake.intakeBallCount);
+            telemetry.addData("\nIntake Ball Count", intakeBallCount);
             telemetry.addData("Intake Current", bot.intake.getCurrent());
             telemetry.addData("\nFlywheel Target Velocity", bot.outtake.getTargetVelocity());
             telemetry.addData("Flywheel Velocity", bot.outtake.getRealVelocity());
