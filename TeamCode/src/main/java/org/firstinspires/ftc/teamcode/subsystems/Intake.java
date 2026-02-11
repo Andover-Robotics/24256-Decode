@@ -131,8 +131,7 @@ public class Intake {
     }
 
     public void periodic() {
-        //added a condition. Maybe current check is redundant if we have bb
-        overPossession = ((countBalls() == 3) || overPossessionTimer.periodic(motor.getCurrent(CurrentUnit.MILLIAMPS) > MIN_CURRENT));
+        overPossession = overPossessionTimer.periodic(motor.getCurrent(CurrentUnit.MILLIAMPS) > MIN_CURRENT);
 
         if (overPossession) {
             shouldReverse = true;
@@ -148,7 +147,5 @@ public class Intake {
             reversalTimer.periodic(false);
             motor.setPower(setPower);
         }
-
-
     }
 }
