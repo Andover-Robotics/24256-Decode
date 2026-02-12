@@ -51,7 +51,7 @@ public class Intake {
         bottomBB = opMode.hardwareMap.get(DigitalChannel.class, "bottomBB");
 
         overPossessionTimer = new TriggeredTimer(CURRENT_PULL_TIME);
-        reversalTimer = new TriggeredTimer(REVERSAL_TIME;
+        reversalTimer = new TriggeredTimer(REVERSAL_TIME);
 
         closeGate();
     }
