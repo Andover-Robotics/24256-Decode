@@ -154,7 +154,7 @@ public class Bot {
     }
 
     public Action actionShoot(double time) {
-        if (inShootingMode) {
+        if (inShootingMode || outtake.getTargetVelocity() == 0) {
             return new NullAction();
         }
         return new SequentialAction(
