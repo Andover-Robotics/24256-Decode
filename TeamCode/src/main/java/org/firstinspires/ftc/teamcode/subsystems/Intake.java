@@ -17,7 +17,9 @@ import org.firstinspires.ftc.teamcode.util.TriggeredTimer;
 public class Intake {
     private DcMotorEx motor;
     private Servo gate;
-    private DigitalChannel topBB, middleBB, bottomBB;
+    private DigitalChannel topBB;
+    private DigitalChannel middleBB;
+    private DigitalChannel bottomBB;
 
     // intake configuration
     public static double IN_POWER = 1.0;
@@ -33,12 +35,13 @@ public class Intake {
     public static double MIN_CURRENT = 3500;
     public static double CURRENT_PULL_TIME = 0.200;
     private TriggeredTimer overPossessionTimer;
+
     private static double REVERSAL_TIME = 0.100;
     private boolean shouldReverse = false;
     private TriggeredTimer reversalTimer;
 
     private boolean overPossession;
-    private int intakeBallCount;
+    private int ballCount;
     private double setPower;
     private double current;
 
@@ -128,16 +131,20 @@ public class Intake {
         return count;
     }
 
-    public int getIntakeBallCount() {
-        return intakeBallCount;
+    public int getBallCount() {
+        return ballCount;
     }
 
     public double getCurrent() {
         return current;
     }
 
+    public boolean getOverPossession() {
+        return overPossession;
+    }
+
     public void periodic() {
-        intakeBallCount = countBalls();
+        ballCount = countBalls();
         current = motor.getCurrent(CurrentUnit.MILLIAMPS);
         overPossession = overPossessionTimer.periodic(current > MIN_CURRENT);
 

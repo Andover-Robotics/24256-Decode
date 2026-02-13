@@ -104,7 +104,7 @@ public class MainTeleOp extends LinearOpMode {
                 bot.outtake.disable();
             }
 
-            if (bot.intake.getIntakeBallCount() == 3) {
+            if (bot.intake.getBallCount() == 3) {
                 gamepad1.setLedColor(0, 255, 0, Gamepad.LED_DURATION_CONTINUOUS);
                 if (!intakeVibrated) {
                     gamepad1.rumble(500);
@@ -122,8 +122,9 @@ public class MainTeleOp extends LinearOpMode {
             handleActions(packet);
 
             telemetry.addData("Bot Alliance", (Bot.alliance == Bot.Alliance.RED) ? "Red" : "Blue");
-            telemetry.addData("\nIntake Ball Count", bot.intake.getIntakeBallCount());
+            telemetry.addData("\nIntake Ball Count", bot.intake.getBallCount());
             telemetry.addData("Intake Current", bot.intake.getCurrent());
+            telemetry.addData("Intake Over Possession", bot.intake.getOverPossession());
             telemetry.addData("\nFlywheel Target Velocity", bot.outtake.getTargetVelocity());
             telemetry.addData("Flywheel Velocity", bot.outtake.getRealVelocity());
             telemetry.addData("\nGoal Distance", bot.turret.getDistanceToGoal());

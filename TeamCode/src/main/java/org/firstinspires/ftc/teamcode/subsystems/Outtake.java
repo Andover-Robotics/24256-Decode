@@ -43,10 +43,6 @@ public class Outtake {
         VELOCITY_LOOKUP_TABLE.put(61.0, 4050.0);
     }
 
-    public static double SHOOTER_A = 0.0638251;
-    public static double SHOOTER_B = 10.53669;
-    public static double SHOOTER_C = 3193.94494;
-
     private static double VELOCITY_TOLERANCE = 100;
     public static double IN_TOLERANCE_TIME = 0.200;
 
@@ -76,36 +72,32 @@ public class Outtake {
         this.distanceToGoal = distanceToGoal;
     }
 
-    private double getRegressionFallback(double distance) {
-        return SHOOTER_A * distanceToGoal * distance + SHOOTER_B * distanceToGoal + SHOOTER_C;
-    }
-
     private double getVelocity() {
         if (MANUAL) {
             return MANUAL_VELOCITY;
         }
 
         if (VELOCITY_LOOKUP_TABLE.isEmpty()) {
-            return getRegressionFallback(distanceToGoal);
+            return 0;
         }
 
         Double lowerKey = VELOCITY_LOOKUP_TABLE.floorKey(distanceToGoal);
         Double upperKey = VELOCITY_LOOKUP_TABLE.ceilingKey(distanceToGoal);
 
         if (lowerKey == null || upperKey == null) {
-            return getRegressionFallback(distanceToGoal);
+            return 0;
         }
 
         if (lowerKey.equals(upperKey)) {
             Double velocity = VELOCITY_LOOKUP_TABLE.get(lowerKey);
-            return velocity != null ? velocity : getRegressionFallback(distanceToGoal);
+            return velocity != null ? velocity : 0;
         }
 
         Double lowerVelocity = VELOCITY_LOOKUP_TABLE.get(lowerKey);
         Double upperVelocity = VELOCITY_LOOKUP_TABLE.get(upperKey);
 
         if (lowerVelocity == null || upperVelocity == null) {
-            return getRegressionFallback(distanceToGoal);
+            return 0;
         }
 
         double ratio = (distanceToGoal - lowerKey) / (upperKey - lowerKey);
