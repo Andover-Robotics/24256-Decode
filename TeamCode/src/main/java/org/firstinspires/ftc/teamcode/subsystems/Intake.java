@@ -36,7 +36,7 @@ public class Intake {
     public static double CURRENT_PULL_TIME = 0.200;
     private TriggeredTimer overPossessionTimer;
 
-    private static double REVERSAL_TIME = 0.100;
+    public static double REVERSAL_TIME = 0.100;
     private boolean shouldReverse = false;
     private TriggeredTimer reversalTimer;
 
@@ -120,7 +120,7 @@ public class Intake {
         return bottomBB.getState();
     }
 
-    public int countBalls() {
+    private int countBalls() {
         int count = 0;
         if (getTopBBStatus())
             count++;
@@ -153,7 +153,7 @@ public class Intake {
         }
 
         if (shouldReverse) {
-            motor.setPower(-1.0);
+            motor.setPower(OUT_POWER);
             if (reversalTimer.periodic(true)) {
                 shouldReverse = false;
                 reversalTimer.periodic(false); // Reset the timer
