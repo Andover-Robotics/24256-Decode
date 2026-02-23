@@ -38,7 +38,7 @@ public class Turret {
     public Turret(HardwareMap hardwareMap, MecanumDrive drive) {
         this.drive = drive;
         this.motor = new MotorEx(hardwareMap, "turret", Motor.GoBILDA.RPM_1150);
-        this.controller = new PIDF(kP, kI, kD, kF, Double.POSITIVE_INFINITY);
+        this.controller = new PIDF(kP, kI, kD, kF, 10, true);
     }
 
     public void periodic() {

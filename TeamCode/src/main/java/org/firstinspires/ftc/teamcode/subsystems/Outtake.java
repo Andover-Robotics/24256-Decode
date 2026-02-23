@@ -57,7 +57,7 @@ public class Outtake {
     private TriggeredTimer inToleranceTimer;
 
     public Outtake(LinearOpMode opMode) {
-        controller = new PIDF(kP, kI, kD, kF, Double.POSITIVE_INFINITY);
+        controller = new PIDF(kP, kI, kD, kF);
         motor1 = new MotorEx(opMode.hardwareMap, "outtake1", MotorEx.GoBILDA.BARE);
         motor1.setRunMode(Motor.RunMode.RawPower);
         motor2 = new MotorEx(opMode.hardwareMap, "outtake2", MotorEx.GoBILDA.BARE);

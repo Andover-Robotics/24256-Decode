@@ -14,18 +14,24 @@ public class PIDF {
 
     private long lastTime;
 
-    public PIDF(double kP, double kI, double kD, double kF, double windupRange) {
+    public PIDF(double kP, double kI, double kD, double kF, double windupRange, boolean signFlipReset) {
         this.kP = kP;
         this.kI = kI;
         this.kD = kD;
         this.kF = kF;
 
         this.windupRange = windupRange;
+        this.signFlipReset = signFlipReset;
 
         this.integral = 0;
         this.previousError = 0;
         this.lastTime = System.currentTimeMillis();
     }
+
+    public PIDF(double kP, double kI, double kD, double kF) {
+        this(kP, kI, kD, kF, 0, false);
+    }
+
 
     public double calculate(double target, double current) {
         long now = System.currentTimeMillis();
