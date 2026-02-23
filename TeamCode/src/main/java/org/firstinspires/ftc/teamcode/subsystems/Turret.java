@@ -2,12 +2,12 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.auto.config.MecanumDrive;
+import org.firstinspires.ftc.teamcode.util.PIDF;
 
 
 public class Turret {
@@ -27,7 +27,7 @@ public class Turret {
     public static double kD = 0;
     public static double kF = 0;
     
-    private PIDFController controller;
+    private PIDF controller;
 
     private double encoderPosition;
 
@@ -38,17 +38,17 @@ public class Turret {
     public Turret(HardwareMap hardwareMap, MecanumDrive drive) {
         this.drive = drive;
         this.motor = new MotorEx(hardwareMap, "turret", Motor.GoBILDA.RPM_1150);
+        this.controller = new PIDF(kP, kI, kD, kF, Double.POSITIVE_INFINITY);
     }
 
     public void periodic() {
         aimTowardsTargetPoint();
         updateEncoderPosition();
 
-        controller.setPIDF(kP, kI, kD, kF);
-        controller.setSetPoint(targetEncoderPosition);
-        double p = controller.calculate(encoderPosition);
+        controller.setGains(kP, kI, kD, kF);
+        double output = controller.calculate(targetEncoderPosition, encoderPosition);
 
-        motor.set(p);
+        motor.set(output);
     }
 
     public double getDistanceToGoal() {
@@ -88,7 +88,7 @@ public class Turret {
 
         if (targetEncoderPosition > HIGH_LIMIT)
             targetEncoderPosition -= 360;
-        if (targetEncoderPosition < LOW_LIMIT)
+        else if (targetEncoderPosition < LOW_LIMIT)
             targetEncoderPosition += 360;
     }
 
