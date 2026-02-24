@@ -29,6 +29,7 @@ public class CloseAuto extends LinearOpMode {
     public static Pose2d shoot = new Pose2d(0, 0, Math.toRadians(-90));
     public static Pose2d finalShoot = new Pose2d(0, 0, Math.toRadians(-90));
     public static Pose2d gate = new Pose2d(0, 0, 0);
+    public static double GATE_TIME = 3;
 
     public Bot bot;
 
@@ -77,7 +78,7 @@ public class CloseAuto extends LinearOpMode {
             builder = builder
                     .setTangent(Math.toRadians(0))
                     .splineToSplineHeading(gate, Math.toRadians(-90))
-                    .stopAndAdd(new WaitUntilAction(() -> bot.intake.countBalls() == 3, 0, 3))
+                    .waitSeconds(GATE_TIME)
                     .setTangent(Math.toRadians(90))
                     .splineToSplineHeading(shoot, Math.toRadians(180))
                     .stopAndAdd(bot.actionShootThree());

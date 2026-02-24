@@ -21,6 +21,9 @@ public class Turret {
 
     public static double HIGH_LIMIT = 135;
     public static double LOW_LIMIT = -135;
+
+    public static boolean MANUAL = false;
+    public static double MANUAL_POSITION = 0;
     
     public static double kP = 0;
     public static double kI = 0;
@@ -43,20 +46,12 @@ public class Turret {
 
     public void periodic() {
         aimTowardsTargetPoint();
-        updateEncoderPosition();
+        encoderPosition = motor.getCurrentPosition() * ENCODER_TICKS_PER_REV;
 
         controller.setGains(kP, kI, kD, kF);
         double output = controller.calculate(targetEncoderPosition, encoderPosition);
 
         motor.set(output);
-    }
-
-    public double getDistanceToGoal() {
-        return distanceToGoal;
-    }
-
-    public double getAngleToGoal() {
-        return angleToGoal;
     }
 
     private static double normalizeAngle(double angle) {
@@ -65,7 +60,12 @@ public class Turret {
         return angle;
     }
 
-    public void aimTowardsTargetPoint() {
+    private void aimTowardsTargetPoint() {
+        if (MANUAL) {
+            targetEncoderPosition = MANUAL_POSITION;
+            return;
+        }
+
         drive.updatePoseEstimate();
         Pose2d pose = drive.localizer.getPose();
 
@@ -92,7 +92,19 @@ public class Turret {
             targetEncoderPosition += 360;
     }
 
-    public void updateEncoderPosition() {
-        encoderPosition = motor.getCurrentPosition() * ENCODER_TICKS_PER_REV;
+    public double getTargetEncoderPosition() {
+        return targetEncoderPosition;
+    }
+
+    public double getEncoderPosition() {
+        return encoderPosition;
+    }
+
+    public double getDistanceToGoal() {
+        return distanceToGoal;
+    }
+
+    public double getAngleToGoal() {
+        return angleToGoal;
     }
 }

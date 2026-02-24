@@ -50,8 +50,9 @@ public class Outtake {
 
     public static boolean enabled = false;
 
-    private double targetVelocity = 0;
+    private double targetVelocity;
     private double distanceToGoal;
+    private double realVelocity;
 
     private boolean inTolerance;
     private TriggeredTimer inToleranceTimer;
@@ -108,7 +109,7 @@ public class Outtake {
     }
 
     public double getRealVelocity() {
-        return motor1.getVelocity() / 28.0 * 60;
+        return realVelocity;
     }
 
     public void setPower(double power) {
@@ -118,6 +119,7 @@ public class Outtake {
 
     public void periodic() {
         targetVelocity = getVelocity();
+        realVelocity = motor1.getVelocity() / 28.0 * 60;
 
         if (!enabled || targetVelocity == 0) {
             setPower(0);
@@ -125,11 +127,11 @@ public class Outtake {
         }
 
         controller.setGains(kP, kI, kD, kF);
-        double output = controller.calculate(targetVelocity, getRealVelocity());
+        double output = controller.calculate(targetVelocity, realVelocity);
 
         setPower(output);
 
-        inTolerance = inToleranceTimer.periodic(Math.abs(targetVelocity - getRealVelocity()) < VELOCITY_TOLERANCE);
+        inTolerance = inToleranceTimer.periodic(Math.abs(targetVelocity - realVelocity) < VELOCITY_TOLERANCE);
     }
 
     public boolean inTolerance() {

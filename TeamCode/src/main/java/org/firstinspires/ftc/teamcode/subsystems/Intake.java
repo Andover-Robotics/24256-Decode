@@ -17,31 +17,29 @@ import org.firstinspires.ftc.teamcode.util.TriggeredTimer;
 public class Intake {
     private DcMotorEx motor;
     private Servo gate;
-    private DigitalChannel topBB;
-    private DigitalChannel middleBB;
-    private DigitalChannel bottomBB;
 
-    // intake configuration
     public static double IN_POWER = 1.0;
     public static double OUT_POWER = -1.0;
     public static double STORE_POWER = 0.3;
 
-    // gate configuration
     public static double GATE_OPEN = 0.77;
     public static double GATE_CLOSED = 0.67;
 
     private boolean gateOpenStatus = false;
 
-    public static double MIN_CURRENT = 3500;
+    public static double OVER_POSSESSION_CURRENT = 3500;
+    public static double FULL_POSSESSION_CURRENT = 2000;
     public static double CURRENT_PULL_TIME = 0.200;
+
+    private TriggeredTimer fullPossessionTimer;
     private TriggeredTimer overPossessionTimer;
 
     private static double REVERSAL_TIME = 0.100;
     private boolean shouldReverse = false;
     private TriggeredTimer reversalTimer;
 
+    private boolean fullPossession;
     private boolean overPossession;
-    private int ballCount;
     private double setPower;
     private double current;
 
@@ -49,10 +47,7 @@ public class Intake {
         motor = opMode.hardwareMap.get(DcMotorEx.class, "intake");
         gate = opMode.hardwareMap.get(Servo.class, "gate");
 
-        topBB = opMode.hardwareMap.get(DigitalChannel.class, "topBB");
-        middleBB = opMode.hardwareMap.get(DigitalChannel.class, "middleBB");
-        bottomBB = opMode.hardwareMap.get(DigitalChannel.class, "bottomBB");
-
+        fullPossessionTimer = new TriggeredTimer(CURRENT_PULL_TIME);
         overPossessionTimer = new TriggeredTimer(CURRENT_PULL_TIME);
         reversalTimer = new TriggeredTimer(REVERSAL_TIME);
 
@@ -93,9 +88,9 @@ public class Intake {
     public Action actionResetGate() {
         return new SequentialAction(
                 new InstantAction(() -> gate.getController().pwmDisable()),
-                new SleepAction(0.25),
+                new SleepAction(0.1),
                 new InstantAction(() -> gate.getController().pwmEnable()),
-                new SleepAction(0.25),
+                new SleepAction(0.1),
                 new InstantAction(this::closeGate)
         );
     }
@@ -108,35 +103,12 @@ public class Intake {
         }
     }
 
-    public boolean getTopBBStatus() {
-        return topBB.getState();
-    }
-
-    public boolean getMiddleBBStatus() {
-        return middleBB.getState();
-    }
-
-    public boolean getBottomBBStatus() {
-        return bottomBB.getState();
-    }
-
-    public int countBalls() {
-        int count = 0;
-        if (getTopBBStatus())
-            count++;
-        if (getMiddleBBStatus())
-            count++;
-        if (getBottomBBStatus())
-            count++;
-        return count;
-    }
-
-    public int getBallCount() {
-        return ballCount;
-    }
-
     public double getCurrent() {
         return current;
+    }
+
+    public boolean getFullPossession() {
+        return fullPossession;
     }
 
     public boolean getOverPossession() {
@@ -144,9 +116,9 @@ public class Intake {
     }
 
     public void periodic() {
-        ballCount = countBalls();
         current = motor.getCurrent(CurrentUnit.MILLIAMPS);
-        overPossession = overPossessionTimer.periodic(current > MIN_CURRENT);
+        fullPossession = fullPossessionTimer.periodic(current > FULL_POSSESSION_CURRENT);
+        overPossession = overPossessionTimer.periodic(current > OVER_POSSESSION_CURRENT);
 
         if (overPossession) {
             shouldReverse = true;
@@ -156,7 +128,7 @@ public class Intake {
             motor.setPower(-1.0);
             if (reversalTimer.periodic(true)) {
                 shouldReverse = false;
-                reversalTimer.periodic(false); // Reset the timer
+                reversalTimer.periodic(false);
             }
         } else {
             reversalTimer.periodic(false);
