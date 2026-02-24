@@ -11,8 +11,9 @@ import org.firstinspires.ftc.teamcode.util.PIDF;
 
 
 public class Turret {
-    public static Vector2d shooterTransform = new Vector2d(0, 0);
-    public static Vector2d aimPoint = new Vector2d(0, 0);
+    private static Vector2d shooterTransform = new Vector2d(0, 0);
+    private static Vector2d redAimPoint = new Vector2d(0, 0);
+    private static Vector2d blueAimPoint = new Vector2d(0, 0);
 
     private MecanumDrive drive;
     private double distanceToGoal;
@@ -65,6 +66,8 @@ public class Turret {
             targetEncoderPosition = MANUAL_POSITION;
             return;
         }
+
+        Vector2d aimPoint = (Bot.alliance == Bot.Alliance.RED) ? redAimPoint : blueAimPoint;
 
         drive.updatePoseEstimate();
         Pose2d pose = drive.localizer.getPose();
