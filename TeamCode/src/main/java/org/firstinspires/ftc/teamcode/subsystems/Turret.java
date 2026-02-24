@@ -93,14 +93,14 @@ public class Turret {
         Vector2d shooterFieldPos = robotPosition.plus(Rotation2d.fromDouble(robotHeading).times(shooterTransform));
 
         Vector2d delta = aimPoint.minus(shooterFieldPos);
-        distanceToGoal = delta.norm();
 
         if (VELOCITY_COMPENSATION) {
-            double time = getTimeToGoal(distanceToGoal);
+            double time = getTimeToGoal(delta.norm());
             delta = delta.minus(robotVelocity.times(time));
         }
 
-        double fieldAngleToGoal = Math.atan2(delta.y, delta.x);
+        double fieldAngleToGoal = delta.angleCast().log();
+        distanceToGoal = delta.norm();
 
         angleToGoal = normalizeAngle(fieldAngleToGoal - robotHeading);
         double turretHeading = normalizeAngle(-angleToGoal);
