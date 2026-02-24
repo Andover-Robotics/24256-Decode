@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.Rotation2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
@@ -30,7 +32,12 @@ public class Turret {
     public static double kI = 0;
     public static double kD = 0;
     public static double kF = 0;
-    
+
+    public static double G = 386.09;
+    public static double DELTA_H = 0;
+    public static double HOOD_ANGLE = 0;
+    public static boolean VELOCITY_COMPENSATION = false;
+
     private PIDF controller;
 
     private double encoderPosition;
@@ -61,6 +68,13 @@ public class Turret {
         return angle;
     }
 
+    private static double getTimeToGoal(double deltaX) {
+        double tSquared = 2 * (deltaX * Math.tan(HOOD_ANGLE) - DELTA_H) / G;
+        if (tSquared < 0)
+            return 0;
+        return Math.sqrt(tSquared);
+    }
+
     private void aimTowardsTargetPoint() {
         if (MANUAL) {
             targetEncoderPosition = MANUAL_POSITION;
@@ -69,19 +83,23 @@ public class Turret {
 
         Vector2d aimPoint = (Bot.alliance == Bot.Alliance.RED) ? redAimPoint : blueAimPoint;
 
-        drive.updatePoseEstimate();
+        PoseVelocity2d velocity = drive.updatePoseEstimate();
         Pose2d pose = drive.localizer.getPose();
 
         Vector2d robotPosition = pose.position;
         double robotHeading = pose.heading.log();
 
-        Vector2d shooterFieldPos = robotPosition.plus(new Vector2d(
-                shooterTransform.x * Math.cos(robotHeading) - shooterTransform.y * Math.sin(robotHeading),
-                shooterTransform.x * Math.sin(robotHeading) + shooterTransform.y * Math.cos(robotHeading)
-        ));
+        Vector2d robotVelocity = Rotation2d.fromDouble(pose.heading.log()).times(velocity.linearVel);
+        Vector2d shooterFieldPos = robotPosition.plus(Rotation2d.fromDouble(robotHeading).times(shooterTransform));
 
         Vector2d delta = aimPoint.minus(shooterFieldPos);
         distanceToGoal = delta.norm();
+
+        if (VELOCITY_COMPENSATION) {
+            double time = getTimeToGoal(distanceToGoal);
+            delta = delta.minus(robotVelocity.times(time));
+        }
+
         double fieldAngleToGoal = Math.atan2(delta.y, delta.x);
 
         angleToGoal = normalizeAngle(fieldAngleToGoal - robotHeading);
