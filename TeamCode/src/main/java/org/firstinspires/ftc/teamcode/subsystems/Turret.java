@@ -22,8 +22,8 @@ public class Turret {
     private double angleToGoal;
     private double targetEncoderPosition;
 
-    public static double HIGH_LIMIT = 135;
-    public static double LOW_LIMIT = -135;
+    public static double HIGH_LIMIT = Math.toRadians(135);
+    public static double LOW_LIMIT = Math.toRadians(-135);
 
     public static boolean MANUAL = false;
     public static double MANUAL_POSITION = 0;
@@ -35,7 +35,7 @@ public class Turret {
 
     public static double G = 386.09;
     public static double DELTA_H = 0;
-    public static double HOOD_ANGLE = 0;
+    public static double HOOD_ANGLE = Math.toRadians(0);
     public static boolean VELOCITY_COMPENSATION = false;
 
     private PIDF controller;
@@ -76,14 +76,14 @@ public class Turret {
     }
 
     private void aimTowardsTargetPoint() {
+        PoseVelocity2d velocity = drive.updatePoseEstimate();
+
         if (MANUAL) {
             targetEncoderPosition = MANUAL_POSITION;
             return;
         }
 
         Vector2d aimPoint = (Bot.alliance == Bot.Alliance.RED) ? redAimPoint : blueAimPoint;
-
-        PoseVelocity2d velocity = drive.updatePoseEstimate();
         Pose2d pose = drive.localizer.getPose();
 
         Vector2d robotPosition = pose.position;
@@ -95,22 +95,33 @@ public class Turret {
         Vector2d delta = aimPoint.minus(shooterFieldPos);
 
         if (VELOCITY_COMPENSATION) {
-            double time = getTimeToGoal(delta.norm());
-            delta = delta.minus(robotVelocity.times(time));
+            Vector2d compensatedDelta = delta;
+            for (int i = 0; i < 2; i++) {
+                double time = getTimeToGoal(compensatedDelta.norm());
+                compensatedDelta = delta.minus(robotVelocity.times(time));
+            }
+            delta = compensatedDelta;
         }
 
         double fieldAngleToGoal = delta.angleCast().log();
         distanceToGoal = delta.norm();
 
         angleToGoal = normalizeAngle(fieldAngleToGoal - robotHeading);
-        double turretHeading = normalizeAngle(-angleToGoal);
 
-        targetEncoderPosition = Math.toDegrees(turretHeading);
+        targetEncoderPosition = normalizeAngle(-angleToGoal);
 
-        if (targetEncoderPosition > HIGH_LIMIT)
-            targetEncoderPosition -= 360;
-        else if (targetEncoderPosition < LOW_LIMIT)
-            targetEncoderPosition += 360;
+        while (targetEncoderPosition > HIGH_LIMIT)
+            targetEncoderPosition -= 2 * Math.PI;
+        while (targetEncoderPosition < LOW_LIMIT)
+            targetEncoderPosition += 2 * Math.PI;
+
+        if (targetEncoderPosition > HIGH_LIMIT || targetEncoderPosition < LOW_LIMIT) {
+            double highDistance = Math.abs(normalizeAngle(targetEncoderPosition - HIGH_LIMIT));
+            double lowDistance = Math.abs(normalizeAngle(targetEncoderPosition - LOW_LIMIT));
+            targetEncoderPosition = (highDistance < lowDistance) ? HIGH_LIMIT : LOW_LIMIT;
+        }
+
+        targetEncoderPosition = Math.toDegrees(targetEncoderPosition);
     }
 
     public double getTargetEncoderPosition() {
