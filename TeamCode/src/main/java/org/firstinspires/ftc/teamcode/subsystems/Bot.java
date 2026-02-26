@@ -33,12 +33,10 @@ public class Bot {
 
     public OpMode opMode;
 
-    // drivetrain motors
     public Motor fl, fr, bl, br;
 
     public MecanumDrive drive;
 
-    // other subsystems
     public Intake intake;
     public Turret turret;
     public Outtake outtake;
@@ -60,7 +58,7 @@ public class Bot {
         return new Pose2dDual<>(pose.position.x, pose.position.y.unaryMinus(), pose.heading.inverse());
     }
 
-    private Bot(LinearOpMode opMode) { // new Bot(opMode);
+    private Bot(LinearOpMode opMode) {
         this.opMode = opMode;
 
         drive = new MecanumDrive(opMode.hardwareMap, new Pose2d(0, 0, 0));
@@ -69,7 +67,6 @@ public class Bot {
         outtake = new Outtake(opMode);
         turret = new Turret(opMode.hardwareMap, drive);
 
-        // make sure to set the direction of the motors
         fl = new Motor(opMode.hardwareMap, "fl");
         fr = new Motor(opMode.hardwareMap, "fr");
         bl = new Motor(opMode.hardwareMap, "bl");

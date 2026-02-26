@@ -104,7 +104,7 @@ public class MainTeleOp extends LinearOpMode {
                 bot.outtake.disable();
             }
 
-            if (bot.intake.getBallCount() == 3) {
+            if (bot.intake.getFullPossession()) {
                 gamepad1.setLedColor(0, 255, 0, Gamepad.LED_DURATION_CONTINUOUS);
                 if (!intakeVibrated) {
                     gamepad1.rumble(500);
@@ -122,15 +122,16 @@ public class MainTeleOp extends LinearOpMode {
             handleActions(packet);
 
             telemetry.addData("Bot Alliance", (Bot.alliance == Bot.Alliance.RED) ? "Red" : "Blue");
-            telemetry.addData("\nIntake Ball Count", bot.intake.getBallCount());
             telemetry.addData("Intake Current", bot.intake.getCurrent());
+            telemetry.addData("Intake Full Possession", bot.intake.getFullPossession());
             telemetry.addData("Intake Over Possession", bot.intake.getOverPossession());
             telemetry.addData("\nFlywheel Target Velocity", bot.outtake.getTargetVelocity());
             telemetry.addData("Flywheel Velocity", bot.outtake.getRealVelocity());
             telemetry.addData("\nGoal Distance", bot.turret.getDistanceToGoal());
-            telemetry.addData("\nTurret Angle", bot.turret.getAngleToGoal());
-            telemetry.addData("\nController #1 Left Stick", gp1.getLeftY());
-            telemetry.addData("Controller #2 Left Stick", gp2.getLeftY());
+            telemetry.addData("\nTurret Target Angle ", bot.turret.getTargetEncoderPosition());
+            telemetry.addData("Turret Angle ", bot.turret.getEncoderPosition());
+            telemetry.addData("Turret Distance to Goal", bot.turret.getDistanceToGoal());
+            telemetry.addData("Turret Angle to Goal", bot.turret.getAngleToGoal());
 
             dashboard.sendTelemetryPacket(packet);
             telemetry.update();

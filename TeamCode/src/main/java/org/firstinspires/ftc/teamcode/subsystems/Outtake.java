@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.util.PIDF;
 import org.firstinspires.ftc.teamcode.util.TriggeredTimer;
 
 import java.util.TreeMap;
@@ -18,10 +18,9 @@ public class Outtake {
     public static double kP = 0.00065;
     public static double kI = 0;
     public static double kD = 0;
-    public static double kStatic = 0;
-    public static double kV = 0.000195;
+    public static double kF = 0.000195;
 
-    public PIDController controller;
+    private PIDF controller;
 
     public static double DEFAULT_VELOCITY = 3650;
 
@@ -51,14 +50,15 @@ public class Outtake {
 
     public static boolean enabled = false;
 
-    private double targetVelocity = 0;
+    private double targetVelocity;
     private double distanceToGoal;
+    private double realVelocity;
 
     private boolean inTolerance;
     private TriggeredTimer inToleranceTimer;
 
     public Outtake(LinearOpMode opMode) {
-        controller = new PIDController(kP, kI, kD);
+        controller = new PIDF(kP, kI, kD, kF);
         motor1 = new MotorEx(opMode.hardwareMap, "outtake1", MotorEx.GoBILDA.BARE);
         motor1.setRunMode(Motor.RunMode.RawPower);
         motor2 = new MotorEx(opMode.hardwareMap, "outtake2", MotorEx.GoBILDA.BARE);
@@ -109,7 +109,7 @@ public class Outtake {
     }
 
     public double getRealVelocity() {
-        return motor1.getVelocity() / 28.0 * 60;
+        return realVelocity;
     }
 
     public void setPower(double power) {
@@ -119,20 +119,19 @@ public class Outtake {
 
     public void periodic() {
         targetVelocity = getVelocity();
+        realVelocity = motor1.getVelocity() / 28.0 * 60;
 
         if (!enabled || targetVelocity == 0) {
             setPower(0);
             return;
         }
 
-        controller.setPID(kP, kI, kD);
+        controller.setGains(kP, kI, kD, kF);
+        double output = controller.calculate(targetVelocity, realVelocity);
 
-        double pidOutput = controller.calculate(getRealVelocity(), targetVelocity);
-        double ffOutput = kStatic + kV * targetVelocity;
+        setPower(output);
 
-        setPower(pidOutput + ffOutput);
-
-        inTolerance = inToleranceTimer.periodic(Math.abs(targetVelocity - getRealVelocity()) < VELOCITY_TOLERANCE);
+        inTolerance = inToleranceTimer.periodic(Math.abs(targetVelocity - realVelocity) < VELOCITY_TOLERANCE);
     }
 
     public boolean inTolerance() {
