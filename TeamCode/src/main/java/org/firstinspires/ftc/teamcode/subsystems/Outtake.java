@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.util.PIDF;
 import org.firstinspires.ftc.teamcode.util.TriggeredTimer;
@@ -15,8 +14,6 @@ import java.util.TreeMap;
 public class Outtake {
     private MotorEx motor1;
     private MotorEx motor2;
-
-    private VoltageSensor voltageSensor;
 
     public static double kP = 0.00065;
     public static double kI = 0;
@@ -69,8 +66,6 @@ public class Outtake {
         motor2.setInverted(true);
 
         inToleranceTimer = new TriggeredTimer(IN_TOLERANCE_TIME);
-
-        voltageSensor = opMode.hardwareMap.voltageSensor.iterator().next();
     }
 
     public void setDistanceToGoal(double distanceToGoal) {
@@ -131,11 +126,11 @@ public class Outtake {
             return;
         }
 
-        double voltage = voltageSensor.getVoltage();
-        controller.setGains(kP, kI, kD, kF / voltage);
+        double voltage = Bot.getInstance().getBatteryVoltage();
+        controller.setGains(kP, kI, kD, kF);
         double output = controller.calculate(targetVelocity, realVelocity);
 
-        setPower(output);
+        setPower(output / voltage);
 
         inTolerance = inToleranceTimer.periodic(Math.abs(targetVelocity - realVelocity) < VELOCITY_TOLERANCE);
     }
