@@ -16,6 +16,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.auto.config.MecanumDrive;
 import org.firstinspires.ftc.teamcode.util.WaitUntilAction;
@@ -40,11 +41,13 @@ public class Bot {
     public Intake intake;
     public Turret turret;
     public Outtake outtake;
+    public VoltageSensor voltageSensor;
 
     public static double SHOOT_ONE_DELAY = 0.2;
     public static double SHOOT_THREE_QUICKFIRE_DELAY = 1.25;
 
     private boolean inShootingMode = false;
+    private double batteryVoltage;
 
     public static Pose2d mirror(Pose2d initial) {
         return new Pose2d(new Vector2d(initial.position.x, -initial.position.y), -initial.heading.toDouble());
@@ -82,14 +85,22 @@ public class Bot {
         fr.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         bl.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         br.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+
+        voltageSensor = opMode.hardwareMap.voltageSensor.iterator().next();
     }
 
     public static Bot getInstance(LinearOpMode opMode) {
         if (instance == null) {
             instance = new Bot(opMode);
         }
-        instance.opMode = opMode;
+        if (opMode != null) {
+            instance.opMode = opMode;
+        }
         return instance;
+    }
+
+    public static Bot getInstance() {
+        return getInstance(null);
     }
 
     public static void switchAlliance() {
@@ -126,6 +137,7 @@ public class Bot {
     }
 
     public void periodic() {
+        batteryVoltage = voltageSensor.getVoltage();
         turret.periodic();
         outtake.setDistanceToGoal(turret.getDistanceToGoal());
         outtake.periodic();
@@ -177,5 +189,9 @@ public class Bot {
 
     public boolean inShootingMode() {
         return inShootingMode;
+    }
+
+    public double getBatteryVoltage() {
+        return batteryVoltage;
     }
 }

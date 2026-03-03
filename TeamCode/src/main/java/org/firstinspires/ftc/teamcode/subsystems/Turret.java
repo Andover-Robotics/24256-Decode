@@ -56,10 +56,11 @@ public class Turret {
         aimTowardsTargetPoint();
         encoderPosition = motor.getCurrentPosition() * ENCODER_TICKS_PER_REV;
 
+        double voltage = Bot.getInstance().getBatteryVoltage();
         controller.setGains(kP, kI, kD, kF);
         double output = controller.calculate(targetEncoderPosition, encoderPosition);
 
-        motor.set(output);
+        motor.set(output / voltage);
     }
 
     private static double normalizeAngle(double angle) {

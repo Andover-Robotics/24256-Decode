@@ -126,10 +126,11 @@ public class Outtake {
             return;
         }
 
+        double voltage = Bot.getInstance().getBatteryVoltage();
         controller.setGains(kP, kI, kD, kF);
         double output = controller.calculate(targetVelocity, realVelocity);
 
-        setPower(output);
+        setPower(output / voltage);
 
         inTolerance = inToleranceTimer.periodic(Math.abs(targetVelocity - realVelocity) < VELOCITY_TOLERANCE);
     }
