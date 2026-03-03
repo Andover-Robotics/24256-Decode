@@ -9,7 +9,7 @@ public class TriggeredTimer {
     }
 
     private static double getTimeSeconds() {
-        return System.currentTimeMillis() / 1000.0;
+        return System.nanoTime() / 1e9;
     }
 
     public double getElapsedTime() {
@@ -27,9 +27,12 @@ public class TriggeredTimer {
 
             return getElapsedTime()  > minTimeToTrigger;
         } else {
-            beginTs = -1.0;
+            reset();
         }
-
         return false;
+    }
+
+    public void reset() {
+        beginTs = -1.0;
     }
 }

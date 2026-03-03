@@ -48,7 +48,7 @@ public class Outtake {
     public static boolean MANUAL = false;
     public static double MANUAL_VELOCITY = 0;
 
-    public static boolean enabled = false;
+    private boolean enabled = false;
 
     private double targetVelocity;
     private double distanceToGoal;
