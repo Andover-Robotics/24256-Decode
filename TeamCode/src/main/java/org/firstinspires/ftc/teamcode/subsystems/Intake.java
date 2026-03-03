@@ -34,7 +34,7 @@ public class Intake {
     private TriggeredTimer fullPossessionTimer;
     private TriggeredTimer overPossessionTimer;
 
-    private static double REVERSAL_TIME = 0.100;
+    public static double REVERSAL_TIME = 0.100;
     private boolean shouldReverse = false;
     private TriggeredTimer reversalTimer;
 

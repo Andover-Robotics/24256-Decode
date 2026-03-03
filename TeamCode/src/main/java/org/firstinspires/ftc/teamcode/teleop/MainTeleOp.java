@@ -127,7 +127,6 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("Intake Over Possession", bot.intake.getOverPossession());
             telemetry.addData("\nFlywheel Target Velocity", bot.outtake.getTargetVelocity());
             telemetry.addData("Flywheel Velocity", bot.outtake.getRealVelocity());
-            telemetry.addData("\nGoal Distance", bot.turret.getDistanceToGoal());
             telemetry.addData("\nTurret Target Angle ", bot.turret.getTargetEncoderPosition());
             telemetry.addData("Turret Angle ", bot.turret.getEncoderPosition());
             telemetry.addData("Turret Distance to Goal", bot.turret.getDistanceToGoal());

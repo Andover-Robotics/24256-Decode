@@ -77,13 +77,14 @@ public class Turret {
     }
 
     private void aimTowardsTargetPoint() {
-        PoseVelocity2d velocity = drive.updatePoseEstimate();
+
 
         if (MANUAL) {
             targetEncoderPosition = MANUAL_POSITION;
             return;
         }
 
+        PoseVelocity2d velocity = Bot.getInstance().velocity;
         Vector2d aimPoint = (Bot.alliance == Bot.Alliance.RED) ? redAimPoint : blueAimPoint;
         Pose2d pose = drive.localizer.getPose();
 

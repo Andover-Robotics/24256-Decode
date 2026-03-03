@@ -26,7 +26,7 @@ public class WaitUntilAction implements Action {
     }
 
     private static double getTimeSeconds() {
-        return System.currentTimeMillis() / 1000.0;
+        return System.nanoTime() / 1e9;
     }
 
     @Override

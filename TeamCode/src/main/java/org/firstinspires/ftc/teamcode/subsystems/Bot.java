@@ -7,6 +7,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Arclength;
 import com.acmerobotics.roadrunner.InstantAction;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.NullAction;
 import com.acmerobotics.roadrunner.Pose2dDual;
 import com.acmerobotics.roadrunner.SequentialAction;
@@ -48,6 +49,7 @@ public class Bot {
 
     private boolean inShootingMode = false;
     private double batteryVoltage;
+    public PoseVelocity2d velocity;
 
     public static Pose2d mirror(Pose2d initial) {
         return new Pose2d(new Vector2d(initial.position.x, -initial.position.y), -initial.heading.toDouble());
@@ -121,7 +123,7 @@ public class Bot {
         double maxSpeed = 0;
 
         for (int i = 0; i < 4; i++) {
-            maxSpeed = Math.max(maxSpeed, speeds[i]);
+            maxSpeed = Math.max(maxSpeed, Math.abs(speeds[i]));
         }
         for (int i = 0; i < 4; i++) {
             if (maxSpeed > 1) {
@@ -137,6 +139,7 @@ public class Bot {
     }
 
     public void periodic() {
+        velocity = drive.updatePoseEstimate();
         batteryVoltage = voltageSensor.getVoltage();
         turret.periodic();
         outtake.setDistanceToGoal(turret.getDistanceToGoal());
