@@ -49,7 +49,12 @@ public class Bot {
 
     private boolean inShootingMode = false;
     private double batteryVoltage;
-    public PoseVelocity2d velocity;
+    private PoseVelocity2d robotVelocity;
+
+    private static Pose2d storedPose = null; // preserved between op modes
+
+    public static Pose2d redResetPose = new Pose2d(0, 0, 0);
+    public static Pose2d blueResetPose = new Pose2d(0, 0, 0);
 
     public static Pose2d mirror(Pose2d initial) {
         return new Pose2d(new Vector2d(initial.position.x, -initial.position.y), -initial.heading.toDouble());
@@ -89,6 +94,10 @@ public class Bot {
         br.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
         voltageSensor = opMode.hardwareMap.voltageSensor.iterator().next();
+
+        if (storedPose != null) {
+            drive.localizer.setPose(storedPose);
+        }
     }
 
     public static Bot getInstance(LinearOpMode opMode) {
@@ -139,8 +148,10 @@ public class Bot {
     }
 
     public void periodic() {
-        velocity = drive.updatePoseEstimate();
+        robotVelocity = drive.updatePoseEstimate();
         batteryVoltage = voltageSensor.getVoltage();
+        storedPose = drive.localizer.getPose();
+
         turret.periodic();
         outtake.setDistanceToGoal(turret.getDistanceToGoal());
         outtake.periodic();
@@ -196,5 +207,17 @@ public class Bot {
 
     public double getBatteryVoltage() {
         return batteryVoltage;
+    }
+
+    public PoseVelocity2d getRobotVelocity() {
+        return robotVelocity;
+    }
+
+    public void resetLocalizerTeleOp() {
+        if (Bot.alliance == Alliance.RED) {
+            drive.localizer.setPose(redResetPose);
+        } else {
+            drive.localizer.setPose(blueResetPose);
+        }
     }
 }
