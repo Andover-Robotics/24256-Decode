@@ -115,11 +115,8 @@ public class Turret {
         while (targetEncoderPosition < LOW_LIMIT)
             targetEncoderPosition += 2 * Math.PI;
 
-        if (targetEncoderPosition > HIGH_LIMIT || targetEncoderPosition < LOW_LIMIT) {
-            double highDistance = Math.abs(normalizeAngle(targetEncoderPosition - HIGH_LIMIT));
-            double lowDistance = Math.abs(normalizeAngle(targetEncoderPosition - LOW_LIMIT));
-            targetEncoderPosition = (highDistance < lowDistance) ? HIGH_LIMIT : LOW_LIMIT;
-        }
+        if (targetEncoderPosition < LOW_LIMIT) targetEncoderPosition = LOW_LIMIT;
+        if (targetEncoderPosition > HIGH_LIMIT) targetEncoderPosition = HIGH_LIMIT;
 
         targetEncoderPosition = Math.toDegrees(targetEncoderPosition);
     }
