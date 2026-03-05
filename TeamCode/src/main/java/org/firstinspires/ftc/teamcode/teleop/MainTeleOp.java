@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -121,17 +122,19 @@ public class MainTeleOp extends LinearOpMode {
 
             handleActions(packet);
 
+            Pose2d pose = bot.drive.localizer.getPose();
+
             telemetry.addData("Bot Alliance", (Bot.alliance == Bot.Alliance.RED) ? "Red" : "Blue");
             telemetry.addData("Intake Current", bot.intake.getCurrent());
             telemetry.addData("Intake Full Possession", bot.intake.getFullPossession());
             telemetry.addData("Intake Over Possession", bot.intake.getOverPossession());
             telemetry.addData("\nFlywheel Target Velocity", bot.outtake.getTargetVelocity());
             telemetry.addData("Flywheel Velocity", bot.outtake.getRealVelocity());
-            telemetry.addData("\nGoal Distance", bot.turret.getDistanceToGoal());
             telemetry.addData("\nTurret Target Angle ", bot.turret.getTargetEncoderPosition());
             telemetry.addData("Turret Angle ", bot.turret.getEncoderPosition());
             telemetry.addData("Turret Distance to Goal", bot.turret.getDistanceToGoal());
             telemetry.addData("Turret Angle to Goal", bot.turret.getAngleToGoal());
+            telemetry.addData("Robot Pose", "%.2f %.2f %.2f", pose.position.x, pose.position.y, Math.toDegrees(pose.heading.log()));
 
             dashboard.sendTelemetryPacket(packet);
             telemetry.update();

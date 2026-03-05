@@ -56,10 +56,11 @@ public class Turret {
         aimTowardsTargetPoint();
         encoderPosition = motor.getCurrentPosition() * ENCODER_TICKS_PER_REV;
 
+        double voltage = Bot.getInstance().getBatteryVoltage();
         controller.setGains(kP, kI, kD, kF);
         double output = controller.calculate(targetEncoderPosition, encoderPosition);
 
-        motor.set(output);
+        motor.set(output / voltage);
     }
 
     private static double normalizeAngle(double angle) {
@@ -76,13 +77,14 @@ public class Turret {
     }
 
     private void aimTowardsTargetPoint() {
-        PoseVelocity2d velocity = drive.updatePoseEstimate();
+
 
         if (MANUAL) {
             targetEncoderPosition = MANUAL_POSITION;
             return;
         }
 
+        PoseVelocity2d velocity = Bot.getInstance().velocity;
         Vector2d aimPoint = (Bot.alliance == Bot.Alliance.RED) ? redAimPoint : blueAimPoint;
         Pose2d pose = drive.localizer.getPose();
 

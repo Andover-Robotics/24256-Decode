@@ -25,7 +25,7 @@ public class PIDF {
 
         this.integral = 0;
         this.previousError = 0;
-        this.lastTime = System.currentTimeMillis();
+        this.lastTime = System.nanoTime();
     }
 
     public PIDF(double kP, double kI, double kD, double kF) {
@@ -34,8 +34,8 @@ public class PIDF {
 
 
     public double calculate(double target, double current) {
-        long now = System.currentTimeMillis();
-        double dt = (now - lastTime) / 1000.0f;
+        long now = System.nanoTime();
+        double dt = (now - lastTime) / 1e9;
         lastTime = now;
 
         double error = target - current;

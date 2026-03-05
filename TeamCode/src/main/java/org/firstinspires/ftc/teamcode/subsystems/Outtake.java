@@ -48,7 +48,7 @@ public class Outtake {
     public static boolean MANUAL = false;
     public static double MANUAL_VELOCITY = 0;
 
-    public static boolean enabled = false;
+    private boolean enabled = false;
 
     private double targetVelocity;
     private double distanceToGoal;
@@ -126,10 +126,11 @@ public class Outtake {
             return;
         }
 
+        double voltage = Bot.getInstance().getBatteryVoltage();
         controller.setGains(kP, kI, kD, kF);
         double output = controller.calculate(targetVelocity, realVelocity);
 
-        setPower(output);
+        setPower(output / voltage);
 
         inTolerance = inToleranceTimer.periodic(Math.abs(targetVelocity - realVelocity) < VELOCITY_TOLERANCE);
     }

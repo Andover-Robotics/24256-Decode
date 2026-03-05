@@ -7,6 +7,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Arclength;
 import com.acmerobotics.roadrunner.InstantAction;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.NullAction;
 import com.acmerobotics.roadrunner.Pose2dDual;
 import com.acmerobotics.roadrunner.SequentialAction;
@@ -16,6 +17,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.auto.config.MecanumDrive;
 import org.firstinspires.ftc.teamcode.util.WaitUntilAction;
@@ -40,11 +42,19 @@ public class Bot {
     public Intake intake;
     public Turret turret;
     public Outtake outtake;
+    public VoltageSensor voltageSensor;
 
     public static double SHOOT_ONE_DELAY = 0.2;
     public static double SHOOT_THREE_QUICKFIRE_DELAY = 1.25;
 
     private boolean inShootingMode = false;
+    private double batteryVoltage;
+    private PoseVelocity2d robotVelocity;
+
+    private static Pose2d storedPose = null; // preserved between op modes
+
+    public static Pose2d redResetPose = new Pose2d(0, 0, 0);
+    public static Pose2d blueResetPose = new Pose2d(0, 0, 0);
 
     public static Pose2d mirror(Pose2d initial) {
         return new Pose2d(new Vector2d(initial.position.x, -initial.position.y), -initial.heading.toDouble());
@@ -82,14 +92,26 @@ public class Bot {
         fr.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         bl.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         br.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+
+        voltageSensor = opMode.hardwareMap.voltageSensor.iterator().next();
+
+        if (storedPose != null) {
+            drive.localizer.setPose(storedPose);
+        }
     }
 
     public static Bot getInstance(LinearOpMode opMode) {
         if (instance == null) {
             instance = new Bot(opMode);
         }
-        instance.opMode = opMode;
+        if (opMode != null) {
+            instance.opMode = opMode;
+        }
         return instance;
+    }
+
+    public static Bot getInstance() {
+        return getInstance(null);
     }
 
     public static void switchAlliance() {
@@ -110,7 +132,7 @@ public class Bot {
         double maxSpeed = 0;
 
         for (int i = 0; i < 4; i++) {
-            maxSpeed = Math.max(maxSpeed, speeds[i]);
+            maxSpeed = Math.max(maxSpeed, Math.abs(speeds[i]));
         }
         for (int i = 0; i < 4; i++) {
             if (maxSpeed > 1) {
@@ -126,6 +148,10 @@ public class Bot {
     }
 
     public void periodic() {
+        robotVelocity = drive.updatePoseEstimate();
+        batteryVoltage = voltageSensor.getVoltage();
+        storedPose = drive.localizer.getPose();
+
         turret.periodic();
         outtake.setDistanceToGoal(turret.getDistanceToGoal());
         outtake.periodic();
@@ -177,5 +203,21 @@ public class Bot {
 
     public boolean inShootingMode() {
         return inShootingMode;
+    }
+
+    public double getBatteryVoltage() {
+        return batteryVoltage;
+    }
+
+    public PoseVelocity2d getRobotVelocity() {
+        return robotVelocity;
+    }
+
+    public void resetLocalizerTeleOp() {
+        if (Bot.alliance == Alliance.RED) {
+            drive.localizer.setPose(redResetPose);
+        } else {
+            drive.localizer.setPose(blueResetPose);
+        }
     }
 }

@@ -34,7 +34,7 @@ public class Intake {
     private TriggeredTimer fullPossessionTimer;
     private TriggeredTimer overPossessionTimer;
 
-    private static double REVERSAL_TIME = 0.100;
+    public static double REVERSAL_TIME = 0.100;
     private boolean shouldReverse = false;
     private TriggeredTimer reversalTimer;
 
@@ -120,18 +120,19 @@ public class Intake {
         fullPossession = fullPossessionTimer.periodic(current > FULL_POSSESSION_CURRENT);
         overPossession = overPossessionTimer.periodic(current > OVER_POSSESSION_CURRENT);
 
-        if (overPossession) {
+        if (overPossession && !shouldReverse) {
             shouldReverse = true;
+            reversalTimer.reset();
         }
 
         if (shouldReverse) {
-            motor.setPower(-1.0);
+            motor.setPower(OUT_POWER);
             if (reversalTimer.periodic(true)) {
                 shouldReverse = false;
-                reversalTimer.periodic(false);
+                reversalTimer.reset();
             }
         } else {
-            reversalTimer.periodic(false);
+            reversalTimer.reset();
             motor.setPower(setPower);
         }
     }
