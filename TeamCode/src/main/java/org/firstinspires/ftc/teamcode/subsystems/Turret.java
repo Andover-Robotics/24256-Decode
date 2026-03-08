@@ -44,7 +44,7 @@ public class Turret {
 
     private MotorEx motor;
 
-    private static double ENCODER_TICKS_PER_REV = 360.0 / (141.5 * 104 / 24);
+    private static double DEGREES_PER_TICK = 360.0 / (141.5 * 104 / 24);
 
     public Turret(HardwareMap hardwareMap, MecanumDrive drive) {
         this.drive = drive;
@@ -54,7 +54,7 @@ public class Turret {
 
     public void periodic() {
         aimTowardsTargetPoint();
-        encoderPosition = motor.getCurrentPosition() * ENCODER_TICKS_PER_REV;
+        encoderPosition = motor.getCurrentPosition() * DEGREES_PER_TICK;
 
         double voltage = Bot.getInstance().getBatteryVoltage();
         controller.setGains(kP, kI, kD, kF);

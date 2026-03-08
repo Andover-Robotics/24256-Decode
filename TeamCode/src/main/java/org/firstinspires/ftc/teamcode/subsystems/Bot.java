@@ -101,7 +101,7 @@ public class Bot {
     }
 
     public static Bot getInstance(LinearOpMode opMode) {
-        if (instance == null) {
+        if (instance == null || (opMode != null && instance.opMode != opMode)) {
             instance = new Bot(opMode);
         }
         if (opMode != null) {
