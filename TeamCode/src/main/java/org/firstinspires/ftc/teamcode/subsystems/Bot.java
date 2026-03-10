@@ -74,8 +74,8 @@ public class Bot {
         drive = new MecanumDrive(opMode.hardwareMap, new Pose2d(0, 0, 0));
 
         intake = new Intake(opMode);
-        outtake = new Outtake(opMode);
-        turret = new Turret(opMode.hardwareMap, drive);
+//        outtake = new Outtake(opMode);
+//        turret = new Turret(opMode.hardwareMap, drive);
 
         fl = new Motor(opMode.hardwareMap, "fl");
         fr = new Motor(opMode.hardwareMap, "fr");
@@ -152,9 +152,9 @@ public class Bot {
         batteryVoltage = voltageSensor.getVoltage();
         storedPose = drive.localizer.getPose();
 
-        turret.periodic();
-        outtake.setDistanceToGoal(turret.getDistanceToGoal());
-        outtake.periodic();
+//        turret.periodic();
+//        outtake.setDistanceToGoal(turret.getDistanceToGoal());
+//        outtake.periodic();
         intake.periodic();
     }
 

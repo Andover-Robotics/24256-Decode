@@ -54,7 +54,7 @@ public class MainTeleOp extends LinearOpMode {
 
         waitForStart();
 
-        bot.outtake.disable();
+//        bot.outtake.disable();
 
         boolean intakeVibrated = false;
 
@@ -128,12 +128,12 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("Intake Current", bot.intake.getCurrent());
             telemetry.addData("Intake Full Possession", bot.intake.getFullPossession());
             telemetry.addData("Intake Over Possession", bot.intake.getOverPossession());
-            telemetry.addData("\nFlywheel Target Velocity", bot.outtake.getTargetVelocity());
-            telemetry.addData("Flywheel Velocity", bot.outtake.getRealVelocity());
-            telemetry.addData("\nTurret Target Angle ", bot.turret.getTargetEncoderPosition());
-            telemetry.addData("Turret Angle ", bot.turret.getEncoderPosition());
-            telemetry.addData("Turret Distance to Goal", bot.turret.getDistanceToGoal());
-            telemetry.addData("Turret Angle to Goal", bot.turret.getAngleToGoal());
+//            telemetry.addData("\nFlywheel Target Velocity", bot.outtake.getTargetVelocity());
+//            telemetry.addData("Flywheel Velocity", bot.outtake.getRealVelocity());
+//            telemetry.addData("\nTurret Target Angle ", bot.turret.getTargetEncoderPosition());
+//            telemetry.addData("Turret Angle ", bot.turret.getEncoderPosition());
+//            telemetry.addData("Turret Distance to Goal", bot.turret.getDistanceToGoal());
+//            telemetry.addData("Turret Angle to Goal", bot.turret.getAngleToGoal());
             telemetry.addData("Robot Pose", "%.2f %.2f %.2f", pose.position.x, pose.position.y, Math.toDegrees(pose.heading.log()));
 
             dashboard.sendTelemetryPacket(packet);
