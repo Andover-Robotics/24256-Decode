@@ -1,37 +1,43 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Rotation2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.auto.config.MecanumDrive;
 import org.firstinspires.ftc.teamcode.util.PIDF;
 
-
+@Config
 public class Turret {
-    private static Vector2d shooterTransform = new Vector2d(0, 0);
-    private static Vector2d redAimPoint = new Vector2d(0, 0);
-    private static Vector2d blueAimPoint = new Vector2d(0, 0);
+    // p = 0.17 d = 0.008
+    // p = 0.27 d = 0.013
+    // p = 0.41 d = 0.017
+    private static Vector2d shooterTransform = new Vector2d(-1.65, 0);
+    private static Vector2d redAimPoint = new Vector2d(72, -69);
+    private static Vector2d blueAimPoint = Bot.mirror(redAimPoint);
 
     private MecanumDrive drive;
     private double distanceToGoal;
     private double angleToGoal;
     private double targetEncoderPosition;
 
-    public static double HIGH_LIMIT = Math.toRadians(135);
-    public static double LOW_LIMIT = Math.toRadians(-135);
+    public static double HIGH_LIMIT = Math.toRadians(80);
+    public static double LOW_LIMIT = Math.toRadians(-180);
 
     public static boolean MANUAL = false;
     public static double MANUAL_POSITION = 0;
-    
-    public static double kP = 0;
-    public static double kI = 0;
-    public static double kD = 0;
+
+    public static double kP = 0.41;
+    public static double kI = 0.80;
+    public static double kD = 0.017;
     public static double kF = 0;
+    public static double windupRange = 3;
 
     public static double G = 386.09;
     public static double DELTA_H = 0;
@@ -44,17 +50,17 @@ public class Turret {
 
     private MotorEx motor;
 
-    private static double DEGREES_PER_TICK = 360.0 / (141.5 * 104 / 24);
+    private static double ENCODER_TICKS_PER_REV = 360.0 / (145.1 * 104 / 14);
 
-    public Turret(HardwareMap hardwareMap, MecanumDrive drive) {
+    public Turret(LinearOpMode opMode, MecanumDrive drive) {
         this.drive = drive;
-        this.motor = new MotorEx(hardwareMap, "turret", Motor.GoBILDA.RPM_1150);
-        this.controller = new PIDF(kP, kI, kD, kF, 10, true);
+        motor = new MotorEx(opMode.hardwareMap, "turret", Motor.GoBILDA.RPM_1150);
+        controller = new PIDF(kP, kI, kD, kF, windupRange, true);
     }
 
     public void periodic() {
         aimTowardsTargetPoint();
-        encoderPosition = motor.getCurrentPosition() * DEGREES_PER_TICK;
+        encoderPosition = motor.getCurrentPosition() * ENCODER_TICKS_PER_REV;
 
         double voltage = Bot.getInstance().getBatteryVoltage();
         controller.setGains(kP, kI, kD, kF);
@@ -135,5 +141,9 @@ public class Turret {
 
     public double getAngleToGoal() {
         return angleToGoal;
+    }
+
+    public void resetEncoder() {
+        motor.resetEncoder();
     }
 }

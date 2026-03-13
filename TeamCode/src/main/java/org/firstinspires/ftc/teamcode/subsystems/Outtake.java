@@ -15,10 +15,10 @@ public class Outtake {
     private MotorEx motor1;
     private MotorEx motor2;
 
-    public static double kP = 0.00065;
+    public static double kP = 0.006;
     public static double kI = 0;
     public static double kD = 0;
-    public static double kF = 0.000195;
+    public static double kF = 0.00240;
 
     private PIDF controller;
 
@@ -27,23 +27,11 @@ public class Outtake {
     private static final TreeMap<Double, Double> VELOCITY_LOOKUP_TABLE = new TreeMap<>();
 
     static {
-        VELOCITY_LOOKUP_TABLE.put(25.0, 3550.0);
-        VELOCITY_LOOKUP_TABLE.put(28.0, 3550.0);
-        VELOCITY_LOOKUP_TABLE.put(31.0, 3550.0);
-        VELOCITY_LOOKUP_TABLE.put(34.0, 3600.0);
-        VELOCITY_LOOKUP_TABLE.put(37.0, 3600.0);
-        VELOCITY_LOOKUP_TABLE.put(40.0, 3650.0);
-        VELOCITY_LOOKUP_TABLE.put(43.0, 3800.0);
-        VELOCITY_LOOKUP_TABLE.put(46.0, 3900.0);
-        VELOCITY_LOOKUP_TABLE.put(49.0, 3900.0);
-        VELOCITY_LOOKUP_TABLE.put(52.0, 3950.0);
-        VELOCITY_LOOKUP_TABLE.put(55.0, 3950.0);
-        VELOCITY_LOOKUP_TABLE.put(58.0, 4000.0);
-        VELOCITY_LOOKUP_TABLE.put(61.0, 4050.0);
+
     }
 
-    private static double VELOCITY_TOLERANCE = 100;
-    public static double IN_TOLERANCE_TIME = 0.200;
+    private static double VELOCITY_TOLERANCE = 75;
+    public static double IN_TOLERANCE_TIME = 0.100;
 
     public static boolean MANUAL = false;
     public static double MANUAL_VELOCITY = 0;

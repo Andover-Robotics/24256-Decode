@@ -54,8 +54,6 @@ public class MainTeleOp extends LinearOpMode {
 
         waitForStart();
 
-        bot.outtake.disable();
-
         boolean intakeVibrated = false;
 
         while (opModeIsActive() && !isStopRequested()) {
@@ -120,6 +118,18 @@ public class MainTeleOp extends LinearOpMode {
                 Bot.switchAlliance();
             }
 
+            if (gp1.wasJustPressed(GamepadKeys.Button.RIGHT_STICK_BUTTON)) {
+                bot.resetLocalizerTeleOp();
+            }
+
+            if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
+                if (Bot.alliance == Bot.Alliance.RED) {
+                    bot.resetLocalizer(Bot.autoStartRed);
+                } else {
+                    bot.resetLocalizer(Bot.autoStartBlue);
+                }
+            }
+
             handleActions(packet);
 
             Pose2d pose = bot.drive.localizer.getPose();
@@ -134,6 +144,7 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("Turret Angle ", bot.turret.getEncoderPosition());
             telemetry.addData("Turret Distance to Goal", bot.turret.getDistanceToGoal());
             telemetry.addData("Turret Angle to Goal", bot.turret.getAngleToGoal());
+            telemetry.addData("Turret Error", Math.abs(bot.turret.getTargetEncoderPosition() - bot.turret.getEncoderPosition()));
             telemetry.addData("Robot Pose", "%.2f %.2f %.2f", pose.position.x, pose.position.y, Math.toDegrees(pose.heading.log()));
 
             dashboard.sendTelemetryPacket(packet);

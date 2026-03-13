@@ -20,16 +20,16 @@ public class Intake {
 
     public static double IN_POWER = 1.0;
     public static double OUT_POWER = -1.0;
-    public static double STORE_POWER = 0.3;
+    public static double STORE_POWER = 0.2;
 
-    public static double GATE_OPEN = 0.77;
-    public static double GATE_CLOSED = 0.67;
+    public static double GATE_OPEN = 0.0400;
+    public static double GATE_CLOSED = 0.2000;
 
     private boolean gateOpenStatus = false;
 
-    public static double OVER_POSSESSION_CURRENT = 3500;
-    public static double FULL_POSSESSION_CURRENT = 2000;
-    public static double CURRENT_PULL_TIME = 0.200;
+    public static double OVER_POSSESSION_CURRENT = 7000;
+    public static double FULL_POSSESSION_CURRENT = 5000;
+    public static double CURRENT_PULL_TIME = 0.150;
 
     private TriggeredTimer fullPossessionTimer;
     private TriggeredTimer overPossessionTimer;
