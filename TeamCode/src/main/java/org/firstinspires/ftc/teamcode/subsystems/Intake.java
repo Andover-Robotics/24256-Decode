@@ -20,7 +20,7 @@ public class Intake {
 
     public static double IN_POWER = 1.0;
     public static double OUT_POWER = -1.0;
-    public static double STORE_POWER = 0.3;
+    public static double STORE_POWER = 0.2;
 
     public static double GATE_OPEN = 0.0400;
     public static double GATE_CLOSED = 0.2000;

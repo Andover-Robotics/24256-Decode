@@ -53,8 +53,11 @@ public class Bot {
 
     private static Pose2d storedPose = null; // preserved between op modes
 
-    public static Pose2d redResetPose = new Pose2d(0, 0, 0);
-    public static Pose2d blueResetPose = new Pose2d(0, 0, 0);
+    public static Pose2d redResetPose = new Pose2d(-70.28 + 15.0 / 2, 70.28 - 14.75 / 2, Math.toRadians(180));
+    public static Pose2d blueResetPose = Bot.mirror(redResetPose);
+
+    public static Pose2d autoStartRed = new Pose2d( 70.28 - 0.375 - 15.0 / 2 - 2.5, -48 + 14.75 / 2, Math.toRadians(0));
+    public static Pose2d autoStartBlue = Bot.mirror(autoStartRed);
 
     public static Pose2d mirror(Pose2d initial) {
         return new Pose2d(new Vector2d(initial.position.x, -initial.position.y), -initial.heading.toDouble());
@@ -74,8 +77,8 @@ public class Bot {
         drive = new MecanumDrive(opMode.hardwareMap, new Pose2d(0, 0, 0));
 
         intake = new Intake(opMode);
-//        outtake = new Outtake(opMode);
-//        turret = new Turret(opMode.hardwareMap, drive);
+        outtake = new Outtake(opMode);
+        turret = new Turret(opMode, drive);
 
         fl = new Motor(opMode.hardwareMap, "fl");
         fr = new Motor(opMode.hardwareMap, "fr");
@@ -152,9 +155,9 @@ public class Bot {
         batteryVoltage = voltageSensor.getVoltage();
         storedPose = drive.localizer.getPose();
 
-//        turret.periodic();
+        turret.periodic();
 //        outtake.setDistanceToGoal(turret.getDistanceToGoal());
-//        outtake.periodic();
+        outtake.periodic();
         intake.periodic();
     }
 
@@ -219,5 +222,9 @@ public class Bot {
         } else {
             drive.localizer.setPose(blueResetPose);
         }
+    }
+
+    public void resetLocalizer(Pose2d pose) {
+        drive.localizer.setPose(pose);
     }
 }
