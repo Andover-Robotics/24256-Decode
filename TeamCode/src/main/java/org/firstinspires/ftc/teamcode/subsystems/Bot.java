@@ -56,8 +56,8 @@ public class Bot {
     public static Pose2d redResetPose = new Pose2d(-70.28 + 15.0 / 2, 70.28 - 14.75 / 2, Math.toRadians(180));
     public static Pose2d blueResetPose = Bot.mirror(redResetPose);
 
-    public static Pose2d autoStartRed = new Pose2d( 70.28 - 0.375 - 15.0 / 2 - 2.5, -48 + 14.75 / 2, Math.toRadians(0));
-    public static Pose2d autoStartBlue = Bot.mirror(autoStartRed);
+    public static Pose2d autoStartRedClose = new Pose2d( 70.28 - 0.375 - 15.0 / 2 - 2.25, -48 + 14.75 / 2, Math.toRadians(0));
+    public static Pose2d autoStartBlueClose = Bot.mirror(autoStartRedClose);
 
     public static Pose2d mirror(Pose2d initial) {
         return new Pose2d(new Vector2d(initial.position.x, -initial.position.y), -initial.heading.toDouble());
@@ -172,6 +172,7 @@ public class Bot {
     }
 
     public Action actionShootThree() {
+//        return new SleepAction(1.5);
         return actionShoot(SHOOT_THREE_QUICKFIRE_DELAY);
     }
 

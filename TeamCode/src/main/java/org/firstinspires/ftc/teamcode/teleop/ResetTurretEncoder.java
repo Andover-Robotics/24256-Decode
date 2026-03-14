@@ -17,6 +17,8 @@ public class ResetTurretEncoder extends LinearOpMode {
         if (isStopRequested()) return;
 
         bot.turret.resetEncoder();
+
+        sleep(100);
     }
 }
 

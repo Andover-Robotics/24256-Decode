@@ -105,12 +105,15 @@ public class MainTeleOp extends LinearOpMode {
 
             if (bot.intake.getFullPossession()) {
                 gamepad1.setLedColor(0, 255, 0, Gamepad.LED_DURATION_CONTINUOUS);
+                gamepad2.setLedColor(0, 255, 0, Gamepad.LED_DURATION_CONTINUOUS);
                 if (!intakeVibrated) {
                     gamepad1.rumble(500);
+                    gamepad2.rumble(500);
                     intakeVibrated = true;
                 }
             } else {
                 gamepad1.setLedColor(255, 0, 0, Gamepad.LED_DURATION_CONTINUOUS);
+                gamepad2.setLedColor(255, 0, 0, Gamepad.LED_DURATION_CONTINUOUS);
                 intakeVibrated = false;
             }
 
@@ -122,11 +125,11 @@ public class MainTeleOp extends LinearOpMode {
                 bot.resetLocalizerTeleOp();
             }
 
-            if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
+            if (gp1.wasJustPressed(GamepadKeys.Button.A)) {
                 if (Bot.alliance == Bot.Alliance.RED) {
-                    bot.resetLocalizer(Bot.autoStartRed);
+                    bot.resetLocalizer(Bot.autoStartRedClose);
                 } else {
-                    bot.resetLocalizer(Bot.autoStartBlue);
+                    bot.resetLocalizer(Bot.autoStartBlueClose);
                 }
             }
 
@@ -143,7 +146,7 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("\nTurret Target Angle ", bot.turret.getTargetEncoderPosition());
             telemetry.addData("Turret Angle ", bot.turret.getEncoderPosition());
             telemetry.addData("Turret Distance to Goal", bot.turret.getDistanceToGoal());
-            telemetry.addData("Turret Angle to Goal", bot.turret.getAngleToGoal());
+            telemetry.addData("Turret Angle to Goal", Math.toDegrees(bot.turret.getAngleToGoal()));
             telemetry.addData("Turret Error", Math.abs(bot.turret.getTargetEncoderPosition() - bot.turret.getEncoderPosition()));
             telemetry.addData("Robot Pose", "%.2f %.2f %.2f", pose.position.x, pose.position.y, Math.toDegrees(pose.heading.log()));
 
