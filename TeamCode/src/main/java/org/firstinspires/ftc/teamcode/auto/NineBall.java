@@ -39,8 +39,9 @@ public class NineBall extends LinearOpMode {
         // preload
         builder = builder
                 .stopAndAdd(new InstantAction(() -> bot.intake.in()))
+                .stopAndAdd(new InstantAction(() -> bot.outtake.enable()))
                 .strafeToSplineHeading(shoot.position, shoot.heading.log())
-                .stopAndAdd(bot.actionShootThree());
+                .stopAndAdd(bot.actionShootThreeFar());
 
         // spike 2
         builder = builder
@@ -48,15 +49,17 @@ public class NineBall extends LinearOpMode {
                 .splineToSplineHeading(preSpike3, Math.toRadians(-90))
                 .splineToSplineHeading(spike3, Math.toRadians(-90))
                 .setTangent(Math.toRadians(90))
+                .stopAndAdd(new InstantAction(() -> bot.outtake.enable()))
                 .splineToSplineHeading(shoot, Math.toRadians(180))
-                .stopAndAdd(bot.actionShootThree());
+                .stopAndAdd(bot.actionShootThreeFar());
 
         builder = builder
                 .setTangent(Math.toRadians(0))
                 .splineToSplineHeading(preHp, Math.toRadians(180))
                 .splineToSplineHeading(hp, Math.toRadians(180))
+                .stopAndAdd(new InstantAction(() -> bot.outtake.enable()))
                 .strafeToSplineHeading(shoot.position, shoot.heading.log())
-                .stopAndAdd(bot.actionShootThree());
+                .stopAndAdd(bot.actionShootThreeFar());
 
         builtAuto = builder.build();
     }

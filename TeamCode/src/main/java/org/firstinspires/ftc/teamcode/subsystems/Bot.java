@@ -172,12 +172,19 @@ public class Bot {
     }
 
     public Action actionShootThree() {
-//        return new SleepAction(1.5);
         return actionShoot(SHOOT_THREE_QUICKFIRE_DELAY);
     }
 
     public Action actionShootOne() {
         return actionShoot(SHOOT_ONE_DELAY);
+    }
+
+    public Action actionShootThreeFar() {
+        return new SequentialAction(
+                actionShootOne(),
+                actionShootOne(),
+                actionShootOne()
+        );
     }
 
     public Action actionShoot(double time) {
@@ -194,14 +201,6 @@ public class Bot {
                 new InstantAction(() -> intake.closeGate()),
                 new InstantAction(() -> outtake.disable()),
                 new InstantAction(() -> inShootingMode = false)
-        );
-    }
-
-    public Action actionShootThreeFar() {
-        return new SequentialAction(
-                actionShootOne(),
-                actionShootOne(),
-                actionShootOne()
         );
     }
 

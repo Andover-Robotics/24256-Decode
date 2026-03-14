@@ -43,6 +43,7 @@ public class TwelveBall extends LinearOpMode {
         // preload
         builder = builder
                 .stopAndAdd(new InstantAction(() -> bot.intake.in()))
+                .stopAndAdd(new InstantAction(() -> bot.outtake.enable()))
                 .strafeToSplineHeading(shoot.position, shoot.heading.log())
                 .stopAndAdd(bot.actionShootThree());
 
@@ -55,6 +56,7 @@ public class TwelveBall extends LinearOpMode {
                 .strafeToSplineHeading(gate.position, gate.heading.log())
                 .stopAndAdd(new SleepAction(0.5))
                 .setTangent(Math.toRadians(90))
+                .stopAndAdd(new InstantAction(() -> bot.outtake.enable()))
                 .splineToSplineHeading(shoot, Math.toRadians(0))
                 .stopAndAdd(bot.actionShootThree());
 
@@ -64,6 +66,7 @@ public class TwelveBall extends LinearOpMode {
                 .splineToSplineHeading(preSpike2, Math.toRadians(-90))
                 .splineToSplineHeading(spike2, Math.toRadians(-90))
                 .setTangent(Math.toRadians(90))
+                .stopAndAdd(new InstantAction(() -> bot.outtake.enable()))
                 .splineToSplineHeading(shoot, Math.toRadians(0))
                 .stopAndAdd(bot.actionShootThree());
 
@@ -72,10 +75,11 @@ public class TwelveBall extends LinearOpMode {
                 .splineToSplineHeading(preSpike3, Math.toRadians(-90))
                 .splineToSplineHeading(spike3, Math.toRadians(-90))
                 .setTangent(Math.toRadians(90))
+                .stopAndAdd(new InstantAction(() -> bot.outtake.enable()))
                 .splineToSplineHeading(shoot, Math.toRadians(0))
                 .stopAndAdd(bot.actionShootThree())
                 .setTangent(Math.toRadians(180))
-                .splineToSplineHeading(end, Math.toRadians(90));
+                .splineToSplineHeading(end, Math.toRadians(-90));
 
         builtAuto = builder.build();
     }

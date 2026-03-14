@@ -22,7 +22,7 @@ public class Outtake {
 
     private PIDF controller;
 
-    public static double DEFAULT_VELOCITY = 3650;
+    public static double DEFAULT_VELOCITY = 4000;
 
     private static final TreeMap<Double, Double> VELOCITY_LOOKUP_TABLE = new TreeMap<>();
 
