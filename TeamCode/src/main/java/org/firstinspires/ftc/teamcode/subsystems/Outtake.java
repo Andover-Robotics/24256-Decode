@@ -15,14 +15,14 @@ public class Outtake {
     private MotorEx motor1;
     private MotorEx motor2;
 
-    public static double kP = 0.006;
+    public static double kP = 0.007;
     public static double kI = 0;
     public static double kD = 0;
-    public static double kF = 0.00240;
+    public static double kF = 0.00280;
 
     private PIDF controller;
 
-    public static double DEFAULT_VELOCITY = 3650;
+    public static double DEFAULT_VELOCITY = 4000;
 
     private static final TreeMap<Double, Double> VELOCITY_LOOKUP_TABLE = new TreeMap<>();
 

@@ -8,7 +8,6 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.auto.config.MecanumDrive;
 import org.firstinspires.ftc.teamcode.util.PIDF;
@@ -18,8 +17,10 @@ public class Turret {
     // p = 0.17 d = 0.008
     // p = 0.27 d = 0.013
     // p = 0.41 d = 0.017
+    public static double SHOOTER_X = 68;
+    public static double SHOOTER_Y = -68;
     private static Vector2d shooterTransform = new Vector2d(-1.65, 0);
-    private static Vector2d redAimPoint = new Vector2d(72, -69);
+    private static Vector2d redAimPoint = new Vector2d(69, -69);
     private static Vector2d blueAimPoint = Bot.mirror(redAimPoint);
 
     private MecanumDrive drive;
@@ -27,7 +28,7 @@ public class Turret {
     private double angleToGoal;
     private double targetEncoderPosition;
 
-    public static double HIGH_LIMIT = Math.toRadians(80);
+    public static double HIGH_LIMIT = Math.toRadians(45);
     public static double LOW_LIMIT = Math.toRadians(-180);
 
     public static boolean MANUAL = false;
@@ -40,9 +41,10 @@ public class Turret {
     public static double windupRange = 3;
 
     public static double G = 386.09;
-    public static double DELTA_H = 0;
-    public static double HOOD_ANGLE = Math.toRadians(0);
-    public static boolean VELOCITY_COMPENSATION = false;
+    public static double DELTA_H = 38.5;
+    public static double HOOD_ANGLE = Math.toRadians(45);
+    public static boolean VELOCITY_COMPENSATION = true;
+    public static double TORN_POSITION = 0;
 
     private PIDF controller;
 
@@ -59,8 +61,10 @@ public class Turret {
     }
 
     public void periodic() {
+        redAimPoint = new Vector2d(SHOOTER_X, SHOOTER_Y);
+        blueAimPoint = Bot.mirror(redAimPoint);
         aimTowardsTargetPoint();
-        encoderPosition = motor.getCurrentPosition() * ENCODER_TICKS_PER_REV;
+        encoderPosition = (motor.getCurrentPosition() - TORN_POSITION) * ENCODER_TICKS_PER_REV;
 
         double voltage = Bot.getInstance().getBatteryVoltage();
         controller.setGains(kP, kI, kD, kF);
@@ -121,10 +125,7 @@ public class Turret {
         while (targetEncoderPosition < LOW_LIMIT)
             targetEncoderPosition += 2 * Math.PI;
 
-        if (targetEncoderPosition < LOW_LIMIT) targetEncoderPosition = LOW_LIMIT;
-        if (targetEncoderPosition > HIGH_LIMIT) targetEncoderPosition = HIGH_LIMIT;
-
-        targetEncoderPosition = Math.toDegrees(targetEncoderPosition);
+        targetEncoderPosition = Math.toDegrees(Math.max(LOW_LIMIT, Math.min(HIGH_LIMIT, targetEncoderPosition)));
     }
 
     public double getTargetEncoderPosition() {
@@ -144,6 +145,6 @@ public class Turret {
     }
 
     public void resetEncoder() {
-        motor.resetEncoder();
+        motor.stopAndResetEncoder();
     }
 }

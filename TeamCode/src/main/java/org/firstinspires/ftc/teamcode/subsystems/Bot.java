@@ -56,8 +56,8 @@ public class Bot {
     public static Pose2d redResetPose = new Pose2d(-70.28 + 15.0 / 2, 70.28 - 14.75 / 2, Math.toRadians(180));
     public static Pose2d blueResetPose = Bot.mirror(redResetPose);
 
-    public static Pose2d autoStartRed = new Pose2d( 70.28 - 0.375 - 15.0 / 2 - 2.5, -48 + 14.75 / 2, Math.toRadians(0));
-    public static Pose2d autoStartBlue = Bot.mirror(autoStartRed);
+    public static Pose2d autoStartRedClose = new Pose2d( 70.28 - 0.375 - 15.0 / 2 - 2.25, -48 + 14.75 / 2, Math.toRadians(0));
+    public static Pose2d autoStartBlueClose = Bot.mirror(autoStartRedClose);
 
     public static Pose2d mirror(Pose2d initial) {
         return new Pose2d(new Vector2d(initial.position.x, -initial.position.y), -initial.heading.toDouble());
@@ -179,6 +179,14 @@ public class Bot {
         return actionShoot(SHOOT_ONE_DELAY);
     }
 
+    public Action actionShootThreeFar() {
+        return new SequentialAction(
+                actionShootOne(),
+                actionShootOne(),
+                actionShootOne()
+        );
+    }
+
     public Action actionShoot(double time) {
         if (inShootingMode || outtake.getTargetVelocity() == 0) {
             return new NullAction();
@@ -193,14 +201,6 @@ public class Bot {
                 new InstantAction(() -> intake.closeGate()),
                 new InstantAction(() -> outtake.disable()),
                 new InstantAction(() -> inShootingMode = false)
-        );
-    }
-
-    public Action actionShootThreeFar() {
-        return new SequentialAction(
-                actionShootOne(),
-                actionShootOne(),
-                actionShootOne()
         );
     }
 

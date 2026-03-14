@@ -30,6 +30,7 @@ public class Intake {
     public static double OVER_POSSESSION_CURRENT = 7000;
     public static double FULL_POSSESSION_CURRENT = 5000;
     public static double CURRENT_PULL_TIME = 0.150;
+    public static boolean AUTO_REVERSE = false;
 
     private TriggeredTimer fullPossessionTimer;
     private TriggeredTimer overPossessionTimer;
@@ -119,6 +120,9 @@ public class Intake {
         current = motor.getCurrent(CurrentUnit.MILLIAMPS);
         fullPossession = fullPossessionTimer.periodic(current > FULL_POSSESSION_CURRENT);
         overPossession = overPossessionTimer.periodic(current > OVER_POSSESSION_CURRENT);
+
+        if (!AUTO_REVERSE)
+            return;
 
         if (overPossession && !shouldReverse) {
             shouldReverse = true;
