@@ -15,23 +15,32 @@ public class Outtake {
     private MotorEx motor1;
     private MotorEx motor2;
 
-    public static double kP = 0.007;
+    public static double kP = 0.011;
     public static double kI = 0;
     public static double kD = 0;
-    public static double kF = 0.00280;
+    public static double kF = 0.00255;
 
     private PIDF controller;
 
-    public static double DEFAULT_VELOCITY = 4000;
+    public static double DEFAULT_VELOCITY = 3100;
 
     private static final TreeMap<Double, Double> VELOCITY_LOOKUP_TABLE = new TreeMap<>();
 
     static {
-
+        VELOCITY_LOOKUP_TABLE.put(46.0, 3050.0);
+        VELOCITY_LOOKUP_TABLE.put(50.0, 3100.0);
+        VELOCITY_LOOKUP_TABLE.put(54.0, 3150.0);
+        VELOCITY_LOOKUP_TABLE.put(59.0, 3200.0);
+        VELOCITY_LOOKUP_TABLE.put(64.0, 3350.0);
+        VELOCITY_LOOKUP_TABLE.put(68.0, 3400.0);
+        VELOCITY_LOOKUP_TABLE.put(72.0, 3400.0);
+        VELOCITY_LOOKUP_TABLE.put(76.0, 3550.0);
+        VELOCITY_LOOKUP_TABLE.put(80.0, 3650.0);
+        VELOCITY_LOOKUP_TABLE.put(84.0, 3750.0);
     }
 
-    private static double VELOCITY_TOLERANCE = 75;
-    public static double IN_TOLERANCE_TIME = 0.100;
+    public static double VELOCITY_TOLERANCE = 150;
+    public static double IN_TOLERANCE_TIME = 0.300;
 
     public static boolean MANUAL = false;
     public static double MANUAL_VELOCITY = 0;
@@ -73,7 +82,7 @@ public class Outtake {
         Double upperKey = VELOCITY_LOOKUP_TABLE.ceilingKey(distanceToGoal);
 
         if (lowerKey == null || upperKey == null) {
-            return 0;
+            return DEFAULT_VELOCITY;
         }
 
         if (lowerKey.equals(upperKey)) {
@@ -85,7 +94,7 @@ public class Outtake {
         Double upperVelocity = VELOCITY_LOOKUP_TABLE.get(upperKey);
 
         if (lowerVelocity == null || upperVelocity == null) {
-            return 0;
+            return DEFAULT_VELOCITY;
         }
 
         double ratio = (distanceToGoal - lowerKey) / (upperKey - lowerKey);
@@ -108,6 +117,7 @@ public class Outtake {
     public void periodic() {
         targetVelocity = getVelocity();
         realVelocity = motor1.getVelocity() / 28.0 * 60;
+        inTolerance = inToleranceTimer.periodic(Math.abs(targetVelocity - realVelocity) < VELOCITY_TOLERANCE);
 
         if (!enabled || targetVelocity == 0) {
             setPower(0);
@@ -119,8 +129,6 @@ public class Outtake {
         double output = controller.calculate(targetVelocity, realVelocity);
 
         setPower(output / voltage);
-
-        inTolerance = inToleranceTimer.periodic(Math.abs(targetVelocity - realVelocity) < VELOCITY_TOLERANCE);
     }
 
     public boolean inTolerance() {

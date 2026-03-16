@@ -20,6 +20,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.auto.config.MecanumDrive;
+import org.firstinspires.ftc.teamcode.auto.config.PinpointLocalizer;
 import org.firstinspires.ftc.teamcode.util.WaitUntilAction;
 
 @Config
@@ -53,10 +54,10 @@ public class Bot {
 
     private static Pose2d storedPose = null; // preserved between op modes
 
-    public static Pose2d redResetPose = new Pose2d(-70.28 + 15.0 / 2, 70.28 - 14.75 / 2, Math.toRadians(180));
+    public static Pose2d redResetPose = new Pose2d(-70.28 + 15.0 / 2 + 2.5, 70.28 - 14.75 / 2, Math.toRadians(180));
     public static Pose2d blueResetPose = Bot.mirror(redResetPose);
 
-    public static Pose2d autoStartRedClose = new Pose2d( 70.28 - 0.375 - 15.0 / 2 - 2.25, -48 + 14.75 / 2, Math.toRadians(0));
+    public static Pose2d autoStartRedClose = new Pose2d( 70.28 - 0.375 - 15.0 / 2 - 2.5, -48 + 14.75 / 2, Math.toRadians(0));
     public static Pose2d autoStartBlueClose = Bot.mirror(autoStartRedClose);
 
     public static Pose2d mirror(Pose2d initial) {
@@ -156,7 +157,7 @@ public class Bot {
         storedPose = drive.localizer.getPose();
 
         turret.periodic();
-//        outtake.setDistanceToGoal(turret.getDistanceToGoal());
+        outtake.setDistanceToGoal(turret.getDistanceToGoal());
         outtake.periodic();
         intake.periodic();
     }
@@ -188,9 +189,9 @@ public class Bot {
     }
 
     public Action actionShoot(double time) {
-        if (inShootingMode || outtake.getTargetVelocity() == 0) {
-            return new NullAction();
-        }
+//        if (inShootingMode || outtake.getTargetVelocity() == 0) {
+//            return new NullAction();
+//        }
         return new SequentialAction(
                 new InstantAction(() -> inShootingMode = true),
                 new InstantAction(() -> intake.in()),
@@ -225,6 +226,7 @@ public class Bot {
     }
 
     public void resetLocalizer(Pose2d pose) {
+        ((PinpointLocalizer) drive.localizer).calibrate();
         drive.localizer.setPose(pose);
     }
 }

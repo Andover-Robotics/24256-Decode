@@ -29,7 +29,7 @@ public class Turret {
     private double targetEncoderPosition;
 
     public static double HIGH_LIMIT = Math.toRadians(45);
-    public static double LOW_LIMIT = Math.toRadians(-180);
+    public static double LOW_LIMIT = Math.toRadians(-150);
 
     public static boolean MANUAL = false;
     public static double MANUAL_POSITION = 0;
@@ -39,6 +39,7 @@ public class Turret {
     public static double kD = 0.017;
     public static double kF = 0;
     public static double windupRange = 3;
+    private double adjustable = 0;
 
     public static double G = 386.09;
     public static double DELTA_H = 38.5;
@@ -118,7 +119,7 @@ public class Turret {
 
         angleToGoal = normalizeAngle(fieldAngleToGoal - robotHeading);
 
-        targetEncoderPosition = normalizeAngle(-angleToGoal);
+        targetEncoderPosition = normalizeAngle(-angleToGoal + adjustable);
 
         while (targetEncoderPosition > HIGH_LIMIT)
             targetEncoderPosition -= 2 * Math.PI;
@@ -146,5 +147,13 @@ public class Turret {
 
     public void resetEncoder() {
         motor.stopAndResetEncoder();
+    }
+
+    public double getAdjustable() {
+        return adjustable;
+    }
+
+    public void setAdjustable(double adjustable) {
+        this.adjustable = adjustable;
     }
 }

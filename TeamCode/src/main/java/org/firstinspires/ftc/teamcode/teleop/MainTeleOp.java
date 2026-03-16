@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.subsystems.Bot;
+import org.firstinspires.ftc.teamcode.subsystems.Outtake;
 
 import java.util.ArrayList;
 
@@ -55,6 +56,7 @@ public class MainTeleOp extends LinearOpMode {
         waitForStart();
 
         boolean intakeVibrated = false;
+        Outtake.MANUAL = false;
 
         while (opModeIsActive() && !isStopRequested()) {
             TelemetryPacket packet = new TelemetryPacket();
@@ -117,11 +119,11 @@ public class MainTeleOp extends LinearOpMode {
                 intakeVibrated = false;
             }
 
-            if (gp1.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
+            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                 Bot.switchAlliance();
             }
 
-            if (gp1.wasJustPressed(GamepadKeys.Button.RIGHT_STICK_BUTTON)) {
+            if (gp1.getButton(GamepadKeys.Button.DPAD_DOWN)) {
                 bot.resetLocalizerTeleOp();
             }
 
@@ -131,6 +133,14 @@ public class MainTeleOp extends LinearOpMode {
                 } else {
                     bot.resetLocalizer(Bot.autoStartBlueClose);
                 }
+            }
+
+            if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
+                bot.turret.setAdjustable(bot.turret.getAdjustable() + Math.toRadians(1));
+            }
+
+            if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
+                bot.turret.setAdjustable(bot.turret.getAdjustable() - Math.toRadians(1));
             }
 
             handleActions(packet);

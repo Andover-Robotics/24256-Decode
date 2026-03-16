@@ -27,15 +27,16 @@ public class Intake {
 
     private boolean gateOpenStatus = false;
 
-    public static double OVER_POSSESSION_CURRENT = 7000;
-    public static double FULL_POSSESSION_CURRENT = 5000;
+    public static double OVER_POSSESSION_CURRENT = 4500;
+    public static double FULL_POSSESSION_CURRENT = 4000;
     public static double CURRENT_PULL_TIME = 0.150;
-    public static boolean AUTO_REVERSE = false;
+    public static boolean AUTO_REVERSE = true;
 
     private TriggeredTimer fullPossessionTimer;
     private TriggeredTimer overPossessionTimer;
 
-    public static double REVERSAL_TIME = 0.100;
+    public static double REVERSAL_POWER = -0.5;
+    public static double REVERSAL_TIME = 0.150;
     private boolean shouldReverse = false;
     private TriggeredTimer reversalTimer;
 
@@ -121,6 +122,8 @@ public class Intake {
         fullPossession = fullPossessionTimer.periodic(current > FULL_POSSESSION_CURRENT);
         overPossession = overPossessionTimer.periodic(current > OVER_POSSESSION_CURRENT);
 
+        motor.setPower(setPower);
+
         if (!AUTO_REVERSE)
             return;
 
@@ -130,7 +133,7 @@ public class Intake {
         }
 
         if (shouldReverse) {
-            motor.setPower(OUT_POWER);
+            motor.setPower(REVERSAL_POWER);
             if (reversalTimer.periodic(true)) {
                 shouldReverse = false;
                 reversalTimer.reset();

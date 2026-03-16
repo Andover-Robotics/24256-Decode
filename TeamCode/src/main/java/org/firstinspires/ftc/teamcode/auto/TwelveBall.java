@@ -20,12 +20,12 @@ import org.firstinspires.ftc.teamcode.subsystems.Bot;
 @Config
 public class TwelveBall extends LinearOpMode {
     // Positions
-    public static Pose2d preSpike1 = new Pose2d(12, -39, Math.toRadians(-90));
+    public static Pose2d preSpike1 = new Pose2d(12, -28, Math.toRadians(-90));
     public static Pose2d spike1 = new Pose2d(12, -48, Math.toRadians(-90));
-    public static Pose2d preSpike2 = new Pose2d(-12, -39, Math.toRadians(-90));
+    public static Pose2d preSpike2 = new Pose2d(-12, -35, Math.toRadians(-90));
     public static Pose2d spike2 = new Pose2d(-12, -54, Math.toRadians(-90));
     public static Pose2d gate = new Pose2d(2, -60, Math.toRadians(0));
-    public static Pose2d preSpike3 = new Pose2d(-36, -39, Math.toRadians(-90));
+    public static Pose2d preSpike3 = new Pose2d(-36, -35, Math.toRadians(-90));
     public static Pose2d spike3 = new Pose2d(-36, -54, Math.toRadians(-90));
     public static Pose2d shoot = new Pose2d(30, -30, Math.toRadians(-53));
     public static Pose2d end = new Pose2d(0, -45, Math.toRadians(0));
@@ -48,15 +48,15 @@ public class TwelveBall extends LinearOpMode {
                 .stopAndAdd(bot.actionShootThree());
 
 
-        // spike 2
+        // spike 1
         builder = builder
                 .setTangent(Math.toRadians(180))
                 .splineToSplineHeading(preSpike1, Math.toRadians(-90))
                 .splineToSplineHeading(spike1, Math.toRadians(-90))
                 .strafeToSplineHeading(gate.position, gate.heading.log())
                 .stopAndAdd(new SleepAction(0.5))
-                .setTangent(Math.toRadians(90))
                 .stopAndAdd(new InstantAction(() -> bot.outtake.enable()))
+                .setTangent(Math.toRadians(90))
                 .splineToSplineHeading(shoot, Math.toRadians(0))
                 .stopAndAdd(bot.actionShootThree());
 
@@ -65,8 +65,8 @@ public class TwelveBall extends LinearOpMode {
                 .setTangent(Math.toRadians(180))
                 .splineToSplineHeading(preSpike2, Math.toRadians(-90))
                 .splineToSplineHeading(spike2, Math.toRadians(-90))
-                .setTangent(Math.toRadians(90))
                 .stopAndAdd(new InstantAction(() -> bot.outtake.enable()))
+                .setTangent(Math.toRadians(90))
                 .splineToSplineHeading(shoot, Math.toRadians(0))
                 .stopAndAdd(bot.actionShootThree());
 
@@ -74,8 +74,8 @@ public class TwelveBall extends LinearOpMode {
                 .setTangent(Math.toRadians(180))
                 .splineToSplineHeading(preSpike3, Math.toRadians(-90))
                 .splineToSplineHeading(spike3, Math.toRadians(-90))
-                .setTangent(Math.toRadians(90))
                 .stopAndAdd(new InstantAction(() -> bot.outtake.enable()))
+                .setTangent(Math.toRadians(90))
                 .splineToSplineHeading(shoot, Math.toRadians(0))
                 .stopAndAdd(bot.actionShootThree())
                 .setTangent(Math.toRadians(180))
