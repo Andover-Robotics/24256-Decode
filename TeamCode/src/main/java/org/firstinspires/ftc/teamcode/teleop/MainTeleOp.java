@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.subsystems.Bot;
+import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Outtake;
 
 import java.util.ArrayList;
@@ -105,7 +106,7 @@ public class MainTeleOp extends LinearOpMode {
                 bot.outtake.disable();
             }
 
-            if (bot.intake.getFullPossession()) {
+            if (bot.intake.getPossessionLevel() == Intake.PossessionState.THREE) {
                 gamepad1.setLedColor(0, 255, 0, Gamepad.LED_DURATION_CONTINUOUS);
                 gamepad2.setLedColor(0, 255, 0, Gamepad.LED_DURATION_CONTINUOUS);
                 if (!intakeVibrated) {
@@ -148,9 +149,8 @@ public class MainTeleOp extends LinearOpMode {
             Pose2d pose = bot.drive.localizer.getPose();
 
             telemetry.addData("Bot Alliance", (Bot.alliance == Bot.Alliance.RED) ? "Red" : "Blue");
-            telemetry.addData("Intake Current", bot.intake.getCurrent());
-            telemetry.addData("Intake Full Possession", bot.intake.getFullPossession());
-            telemetry.addData("Intake Over Possession", bot.intake.getOverPossession());
+            telemetry.addData("Intake Resistance", bot.intake.getEMFResistance());
+            telemetry.addData("Intake Possession Status", bot.intake.getPossessionLevel().toString());
             telemetry.addData("\nFlywheel Target Velocity", bot.outtake.getTargetVelocity());
             telemetry.addData("Flywheel Velocity", bot.outtake.getRealVelocity());
             telemetry.addData("\nTurret Target Angle ", bot.turret.getTargetEncoderPosition());

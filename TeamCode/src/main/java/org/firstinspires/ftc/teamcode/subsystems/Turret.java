@@ -45,7 +45,6 @@ public class Turret {
     public static double DELTA_H = 38.5;
     public static double HOOD_ANGLE = Math.toRadians(45);
     public static boolean VELOCITY_COMPENSATION = true;
-    public static double TORN_POSITION = 0;
 
     private PIDF controller;
 
@@ -65,7 +64,7 @@ public class Turret {
         redAimPoint = new Vector2d(SHOOTER_X, SHOOTER_Y);
         blueAimPoint = Bot.mirror(redAimPoint);
         aimTowardsTargetPoint();
-        encoderPosition = (motor.getCurrentPosition() - TORN_POSITION) * ENCODER_TICKS_PER_REV;
+        encoderPosition = motor.getCurrentPosition() * ENCODER_TICKS_PER_REV;
 
         double voltage = Bot.getInstance().getBatteryVoltage();
         controller.setGains(kP, kI, kD, kF);

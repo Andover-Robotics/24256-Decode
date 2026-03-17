@@ -27,30 +27,35 @@ public class Intake {
 
     private boolean gateOpenStatus = false;
 
-    public static double OVER_POSSESSION_CURRENT = 4500;
-    public static double FULL_POSSESSION_CURRENT = 4000;
-    public static double CURRENT_PULL_TIME = 0.150;
-    public static boolean AUTO_REVERSE = true;
+    public enum PossessionState {
+        NONE, ONE, TWO, THREE, OVER
+    }
 
-    private TriggeredTimer fullPossessionTimer;
-    private TriggeredTimer overPossessionTimer;
+    public static double[] EMF_THRESHOLDS = {
+        4000, 2000, 1000, 500, 250
+    };
+
+    private PossessionState proposedState = PossessionState.NONE;
+    private PossessionState realState = PossessionState.NONE;
+
+
+    public static double EMF_TIME = 0.150;
+
+    private TriggeredTimer possessionConfirmationTimer;
 
     public static double REVERSAL_POWER = -0.5;
     public static double REVERSAL_TIME = 0.150;
     private boolean shouldReverse = false;
     private TriggeredTimer reversalTimer;
 
-    private boolean fullPossession;
-    private boolean overPossession;
     private double setPower;
-    private double current;
+    private double emfResistance;
 
     public Intake(LinearOpMode opMode) {
         motor = opMode.hardwareMap.get(DcMotorEx.class, "intake");
         gate = opMode.hardwareMap.get(Servo.class, "gate");
 
-        fullPossessionTimer = new TriggeredTimer(CURRENT_PULL_TIME);
-        overPossessionTimer = new TriggeredTimer(CURRENT_PULL_TIME);
+        possessionConfirmationTimer = new TriggeredTimer(EMF_TIME);
         reversalTimer = new TriggeredTimer(REVERSAL_TIME);
 
         closeGate();
@@ -105,29 +110,40 @@ public class Intake {
         }
     }
 
-    public double getCurrent() {
-        return current;
+    public double getEMFResistance() {
+        return emfResistance;
     }
 
-    public boolean getFullPossession() {
-        return fullPossession;
+    public PossessionState getPossessionLevel() {
+        return realState;
     }
 
-    public boolean getOverPossession() {
-        return overPossession;
+    private static PossessionState classifyResistance(double resistance) {
+        PossessionState[] states = PossessionState.values();
+        for (int i = 0; i < EMF_THRESHOLDS.length; i++) {
+            if (resistance > EMF_THRESHOLDS[i]) {
+                return states[i];
+            }
+        }
+        return PossessionState.OVER;
     }
-
+    
     public void periodic() {
-        current = motor.getCurrent(CurrentUnit.MILLIAMPS);
-        fullPossession = fullPossessionTimer.periodic(current > FULL_POSSESSION_CURRENT);
-        overPossession = overPossessionTimer.periodic(current > OVER_POSSESSION_CURRENT);
+        double voltage = Bot.getInstance().getBatteryVoltage();
+        emfResistance = voltage * setPower / motor.getCurrent(CurrentUnit.AMPS);
 
-        motor.setPower(setPower);
+        PossessionState raw = classifyResistance(emfResistance);
 
-        if (!AUTO_REVERSE)
-            return;
+        if (raw != proposedState) {
+            proposedState = raw;
+            possessionConfirmationTimer.reset();
+        }
 
-        if (overPossession && !shouldReverse) {
+        if (possessionConfirmationTimer.periodic(true)) {
+            realState = proposedState;
+        }
+
+        if (realState == PossessionState.OVER && !shouldReverse) {
             shouldReverse = true;
             reversalTimer.reset();
         }
