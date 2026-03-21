@@ -26,7 +26,6 @@ public class CloseAuto extends LinearOpMode {
     public static Pose2d spike1 = new Pose2d(12, -48, Math.toRadians(-90));
     public static Pose2d preSpike2 = new Pose2d(-12, -35, Math.toRadians(-90));
     public static Pose2d spike2 = new Pose2d(-12, -54, Math.toRadians(-90));
-    public static Pose2d gate = new Pose2d(2, -60, Math.toRadians(0));
     public static Pose2d gateIntake = new Pose2d(-15, -65, Math.toRadians(-40));
     public static Pose2d preSpike3 = new Pose2d(-36, -35, Math.toRadians(-90));
     public static Pose2d spike3 = new Pose2d(-36, -54, Math.toRadians(-90));
@@ -75,8 +74,6 @@ public class CloseAuto extends LinearOpMode {
                 .setTangent(Math.toRadians(180))
                 .splineToSplineHeading(preSpike1, Math.toRadians(-90))
                 .splineToSplineHeading(spike1, Math.toRadians(-90))
-                .strafeToSplineHeading(gate.position, gate.heading.log())
-                .stopAndAdd(new SleepAction(0.5))
                 .stopAndAdd(new InstantAction(() -> bot.outtake.enable()))
                 .setTangent(Math.toRadians(90))
                 .splineToSplineHeading(shoot, Math.toRadians(0))
