@@ -14,9 +14,6 @@ import org.firstinspires.ftc.teamcode.util.PIDF;
 
 @Config
 public class Turret {
-    // p = 0.17 d = 0.008
-    // p = 0.27 d = 0.013
-    // p = 0.41 d = 0.017
     public static double SHOOTER_X = 68;
     public static double SHOOTER_Y = -68;
     private static Vector2d shooterTransform = new Vector2d(-1.65, 0);
@@ -43,7 +40,7 @@ public class Turret {
 
     public static double G = 386.09;
     public static double DELTA_H = 38.5;
-    public static double HOOD_ANGLE = Math.toRadians(45);
+    public static double HOOD_ANGLE = Math.toRadians(90 - 41);
     public static boolean VELOCITY_COMPENSATION = true;
 
     private PIDF controller;
@@ -118,7 +115,7 @@ public class Turret {
 
         angleToGoal = normalizeAngle(fieldAngleToGoal - robotHeading);
 
-        targetEncoderPosition = normalizeAngle(-angleToGoal + adjustable);
+        targetEncoderPosition = normalizeAngle(-angleToGoal + Math.toRadians(adjustable));
 
         while (targetEncoderPosition > HIGH_LIMIT)
             targetEncoderPosition -= 2 * Math.PI;

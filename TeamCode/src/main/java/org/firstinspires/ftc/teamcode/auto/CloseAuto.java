@@ -15,14 +15,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.auto.config.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Bot;
-import org.firstinspires.ftc.teamcode.util.WaitUntilAction;
+import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.util.RRActions;
 
-@Autonomous(name = "Twelve Ball Close")
+@Autonomous(name = "Close Auto")
 @Config
-public class CloseAutoCyle extends LinearOpMode {
-    // Variables
-    public static int numCycles = 5;
-    // Positions
+public class CloseAuto extends LinearOpMode {
+    public static int numCycles = 4;
     public static Pose2d preSpike1 = new Pose2d(12, -28, Math.toRadians(-90));
     public static Pose2d spike1 = new Pose2d(12, -48, Math.toRadians(-90));
     public static Pose2d preSpike2 = new Pose2d(-12, -35, Math.toRadians(-90));
@@ -63,9 +62,9 @@ public class CloseAutoCyle extends LinearOpMode {
 
         for (int i = 0; i < numCycles; i++) {
             builder = builder
-                    .setTangent(Math.toRadians(0))
-                    .splineToSplineHeading(gateIntake, Math.toRadians(-40))
-                    .stopAndAdd(new WaitUntilAction(() -> bot.intake.getPossessionLevel() == 3, 0, 2))
+                    .setTangent(Math.toRadians(180))
+                    .splineToSplineHeading(gateIntake, Math.toRadians(-90))
+                    .stopAndAdd(new RRActions.WaitUntilAction(() -> bot.intake.getPossessionLevel() == Intake.PossessionState.THREE, 0, 2))
                     .setTangent(Math.toRadians(90))
                     .splineToSplineHeading(shoot, Math.toRadians(180))
                     .stopAndAdd(bot.actionShootThree());
@@ -110,14 +109,14 @@ public class CloseAutoCyle extends LinearOpMode {
         while (opModeInInit() && !isStarted() && !isStopRequested()) {
             gp1.readButtons();
             telemetry.addData("Bot Alliance", (Bot.alliance == Bot.Alliance.RED) ? "Red" : "Blue");
-            telemetry.addData("Auto Built?", (builtAuto == null) ? "false" : "true");
+            telemetry.addData("Auto Built", (builtAuto == null) ? "false" : "true");
 
-            if (gp1.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
+            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                 Bot.switchAlliance();
                 builtAuto = null;
             }
 
-            if (gp1.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
+            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
                 buildAuto();
             }
 

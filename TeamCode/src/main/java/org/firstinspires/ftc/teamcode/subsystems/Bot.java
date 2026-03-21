@@ -8,7 +8,6 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Arclength;
 import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
-import com.acmerobotics.roadrunner.NullAction;
 import com.acmerobotics.roadrunner.Pose2dDual;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
@@ -21,7 +20,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.auto.config.MecanumDrive;
 import org.firstinspires.ftc.teamcode.auto.config.PinpointLocalizer;
-import org.firstinspires.ftc.teamcode.util.WaitUntilAction;
+import org.firstinspires.ftc.teamcode.util.RRActions;
 
 @Config
 public class Bot {
@@ -48,7 +47,6 @@ public class Bot {
     public static double SHOOT_ONE_DELAY = 0.2;
     public static double SHOOT_THREE_QUICKFIRE_DELAY = 1.25;
 
-    private boolean inShootingMode = false;
     private double batteryVoltage;
     private PoseVelocity2d robotVelocity;
 
@@ -105,7 +103,7 @@ public class Bot {
     }
 
     public static Bot getInstance(LinearOpMode opMode) {
-        if (instance == null || (opMode != null && instance.opMode != opMode)) {
+        if (instance == null) {
             instance = new Bot(opMode);
         }
         if (opMode != null) {
@@ -189,24 +187,17 @@ public class Bot {
     }
 
     public Action actionShoot(double time) {
-//        if (inShootingMode || outtake.getTargetVelocity() == 0) {
-//            return new NullAction();
-//        }
-        return new SequentialAction(
-                new InstantAction(() -> inShootingMode = true),
+        Action shootingAction = new SequentialAction(
                 new InstantAction(() -> intake.in()),
                 new InstantAction(() -> outtake.enable()),
-                new WaitUntilAction(() -> outtake.inTolerance(), 0, 3),
+                new RRActions.WaitUntilAction(() -> outtake.inTolerance(), 0, 3),
                 new InstantAction(() -> intake.openGate()),
                 new SleepAction(time),
                 new InstantAction(() -> intake.closeGate()),
-                new InstantAction(() -> outtake.disable()),
-                new InstantAction(() -> inShootingMode = false)
+                new InstantAction(() -> outtake.disable())
         );
-    }
 
-    public boolean inShootingMode() {
-        return inShootingMode;
+        return new RRActions.IfElseAction(() -> !outtake.isEnabled(), shootingAction);
     }
 
     public double getBatteryVoltage() {
