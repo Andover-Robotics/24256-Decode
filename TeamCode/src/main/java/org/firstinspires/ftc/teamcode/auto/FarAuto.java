@@ -43,8 +43,6 @@ public class FarAuto extends LinearOpMode {
                 .stopAndAdd(new InstantAction(() -> bot.intake.in()))
                 .stopAndAdd(new InstantAction(() -> bot.outtake.enable()))
                 .strafeToSplineHeading(shoot.position, shoot.heading.log())
-                .stopAndAdd(new InstantAction(() -> Outtake.MANUAL = true))
-                .stopAndAdd(new InstantAction(() -> Outtake.MANUAL_VELOCITY = 4400))
                 .stopAndAdd(bot.actionShootThreeFar());
 
         // spike 2
@@ -82,8 +80,6 @@ public class FarAuto extends LinearOpMode {
 
         while (opModeInInit() && !isStarted() && !isStopRequested()) {
             gp1.readButtons();
-            telemetry.addData("Bot Alliance", (Bot.alliance == Bot.Alliance.RED) ? "Red" : "Blue");
-            telemetry.addData("Auto Built", (builtAuto == null) ? "false" : "true");
 
             if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                 Bot.switchAlliance();
@@ -94,6 +90,8 @@ public class FarAuto extends LinearOpMode {
                 buildAuto();
             }
 
+            bot.addTelemetry();
+            telemetry.addData("Auto Built", (builtAuto != null) ? "true" : "false");
             telemetry.update();
         }
 

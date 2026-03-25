@@ -7,7 +7,6 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.NullAction;
 
 public class RRActions {
-
     private static double getTimeSeconds() {
         return System.nanoTime() / 1e9;
     }

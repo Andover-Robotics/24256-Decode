@@ -14,5 +14,15 @@ public class DisplayTester extends LinearOpMode {
         int i = 0;
 
         display.periodic(Intake.PossessionState.NONE);
+        sleep(250);
+        display.periodic(Intake.PossessionState.ONE);
+        sleep(250);
+        display.periodic(Intake.PossessionState.TWO);
+        sleep(250);
+        display.periodic(Intake.PossessionState.THREE);
+        sleep(250);
+        display.periodic(Intake.PossessionState.OVER);
+        sleep(250);
+        display.periodic(Intake.PossessionState.NONE);
     }
 }

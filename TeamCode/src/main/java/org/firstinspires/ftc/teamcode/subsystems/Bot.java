@@ -18,6 +18,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.auto.config.MecanumDrive;
 import org.firstinspires.ftc.teamcode.auto.config.PinpointLocalizer;
 import org.firstinspires.ftc.teamcode.util.RRActions;
@@ -47,6 +48,8 @@ public class Bot {
     public static double SHOOT_ONE_DELAY = 0.2;
     public static double SHOOT_THREE_QUICKFIRE_DELAY = 1.25;
 
+    private boolean inShootingAction = false;
+
     private double batteryVoltage;
     private PoseVelocity2d robotVelocity;
 
@@ -55,7 +58,7 @@ public class Bot {
     public static Pose2d redResetPose = new Pose2d(-70.28 + 15.0 / 2 + 2.5, 70.28 - 14.75 / 2, Math.toRadians(180));
     public static Pose2d blueResetPose = Bot.mirror(redResetPose);
 
-    public static Pose2d autoStartRedClose = new Pose2d( 70.28 - 0.375 - 15.0 / 2 - 2.5, -48 + 14.75 / 2, Math.toRadians(0));
+    public static Pose2d autoStartRedClose = new Pose2d(70.28 - 0.375 - 15.0 / 2 - 2.5, -48 + 14.75 / 2, Math.toRadians(0));
     public static Pose2d autoStartBlueClose = Bot.mirror(autoStartRedClose);
 
     public static Pose2d mirror(Pose2d initial) {
@@ -100,6 +103,24 @@ public class Bot {
         if (storedPose != null) {
             drive.localizer.setPose(storedPose);
         }
+    }
+
+    public void addTelemetry() {
+        Telemetry telemetry = opMode.telemetry;
+
+        Pose2d pose = drive.localizer.getPose();
+
+        telemetry.addData("Alliance", alliance.toString());
+        telemetry.addData("\nIntake Resistance", intake.getEMFResistance());
+        telemetry.addData("Intake Possession Level", intake.getPossessionLevel().toString());
+        telemetry.addData("\nFlywheel Target Velocity", outtake.getTargetVelocity());
+        telemetry.addData("Flywheel Velocity", outtake.getRealVelocity());
+        telemetry.addData("\nTurret Target Angle ", turret.getTargetEncoderPosition());
+        telemetry.addData("Turret Angle ", turret.getEncoderPosition());
+        telemetry.addData("Turret Distance to Goal", turret.getDistanceToGoal());
+        telemetry.addData("Turret Angle to Goal", Math.toDegrees(turret.getAngleToGoal()));
+        telemetry.addData("Turret Error", Math.abs(turret.getTargetEncoderPosition() - turret.getEncoderPosition()));
+        telemetry.addData("\nRobot Pose", "%.2f %.2f %.2f", pose.position.x, pose.position.y, Math.toDegrees(pose.heading.log()));
     }
 
     public static Bot getInstance(LinearOpMode opMode) {
@@ -188,16 +209,18 @@ public class Bot {
 
     public Action actionShoot(double time) {
         Action shootingAction = new SequentialAction(
+                new InstantAction(() -> inShootingAction = true),
                 new InstantAction(() -> intake.in()),
                 new InstantAction(() -> outtake.enable()),
-                new RRActions.WaitUntilAction(() -> outtake.inTolerance(), 0, 3),
+                new RRActions.WaitUntilAction(() -> outtake.inTolerance(), 0, 2),
                 new InstantAction(() -> intake.openGate()),
                 new SleepAction(time),
                 new InstantAction(() -> intake.closeGate()),
-                new InstantAction(() -> outtake.disable())
+                new InstantAction(() -> outtake.disable()),
+                new InstantAction(() -> inShootingAction = false)
         );
 
-        return new RRActions.IfElseAction(() -> !outtake.isEnabled(), shootingAction);
+        return new RRActions.IfElseAction(() -> !inShootingAction, shootingAction);
     }
 
     public double getBatteryVoltage() {

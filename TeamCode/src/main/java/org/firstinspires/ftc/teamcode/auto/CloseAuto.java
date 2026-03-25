@@ -105,8 +105,6 @@ public class CloseAuto extends LinearOpMode {
 
         while (opModeInInit() && !isStarted() && !isStopRequested()) {
             gp1.readButtons();
-            telemetry.addData("Bot Alliance", (Bot.alliance == Bot.Alliance.RED) ? "Red" : "Blue");
-            telemetry.addData("Auto Built", (builtAuto == null) ? "false" : "true");
 
             if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                 Bot.switchAlliance();
@@ -117,6 +115,8 @@ public class CloseAuto extends LinearOpMode {
                 buildAuto();
             }
 
+            bot.addTelemetry();
+            telemetry.addData("Auto Built", (builtAuto != null) ? "true" : "false");
             telemetry.update();
         }
 

@@ -49,7 +49,7 @@ public class Turret {
 
     private MotorEx motor;
 
-    private static double ENCODER_TICKS_PER_REV = 360.0 / (145.1 * 104 / 14);
+    private static double ENCODER_DEGREES_PER_REV = 360.0 / (145.1 * 104 / 14);
 
     public Turret(LinearOpMode opMode, MecanumDrive drive) {
         this.drive = drive;
@@ -61,7 +61,7 @@ public class Turret {
         redAimPoint = new Vector2d(SHOOTER_X, SHOOTER_Y);
         blueAimPoint = Bot.mirror(redAimPoint);
         aimTowardsTargetPoint();
-        encoderPosition = motor.getCurrentPosition() * ENCODER_TICKS_PER_REV;
+        encoderPosition = motor.getCurrentPosition() * ENCODER_DEGREES_PER_REV;
 
         double voltage = Bot.getInstance().getBatteryVoltage();
         controller.setGains(kP, kI, kD, kF);
@@ -96,14 +96,14 @@ public class Turret {
         Vector2d robotPosition = pose.position;
         double robotHeading = pose.heading.log();
 
-        Vector2d robotVelocity = Rotation2d.fromDouble(pose.heading.log()).times(velocity.linearVel);
+        Vector2d robotVelocity = Rotation2d.fromDouble(-pose.heading.log()).times(velocity.linearVel);
         Vector2d shooterFieldPos = robotPosition.plus(Rotation2d.fromDouble(robotHeading).times(shooterTransform));
 
         Vector2d delta = aimPoint.minus(shooterFieldPos);
 
         if (VELOCITY_COMPENSATION) {
             Vector2d compensatedDelta = delta;
-            for (int i = 0; i < 2; i++) {
+            for (int i = 0; i < 3; i++) {
                 double time = getTimeToGoal(compensatedDelta.norm());
                 compensatedDelta = delta.minus(robotVelocity.times(time));
             }

@@ -144,20 +144,7 @@ public class MainTeleOp extends LinearOpMode {
 
             handleActions(packet);
 
-            Pose2d pose = bot.drive.localizer.getPose();
-
-            telemetry.addData("Bot Alliance\n", (Bot.alliance == Bot.Alliance.RED) ? "Red" : "Blue");
-            telemetry.addData("Intake Resistance", bot.intake.getEMFResistance());
-            telemetry.addData("Intake Possession Status", bot.intake.getPossessionLevel().toString());
-            telemetry.addData("\nFlywheel Target Velocity", bot.outtake.getTargetVelocity());
-            telemetry.addData("Flywheel Velocity", bot.outtake.getRealVelocity());
-            telemetry.addData("\nTurret Target Angle ", bot.turret.getTargetEncoderPosition());
-            telemetry.addData("Turret Angle ", bot.turret.getEncoderPosition());
-            telemetry.addData("Turret Distance to Goal", bot.turret.getDistanceToGoal());
-            telemetry.addData("Turret Angle to Goal", Math.toDegrees(bot.turret.getAngleToGoal()));
-            telemetry.addData("Turret Error\n", Math.abs(bot.turret.getTargetEncoderPosition() - bot.turret.getEncoderPosition()));
-            telemetry.addData("Robot Pose", "%.2f %.2f %.2f", pose.position.x, pose.position.y, Math.toDegrees(pose.heading.log()));
-
+            bot.addTelemetry();
             dashboard.sendTelemetryPacket(packet);
             telemetry.update();
         }
