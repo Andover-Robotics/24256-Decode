@@ -17,7 +17,7 @@ public class Turret {
     public static double SHOOTER_X = 68;
     public static double SHOOTER_Y = -68;
     private static Vector2d shooterTransform = new Vector2d(-1.65, 0);
-    private static Vector2d redAimPoint = new Vector2d(69, -69);
+    private static Vector2d redAimPoint = new Vector2d(SHOOTER_X, SHOOTER_Y);
     private static Vector2d blueAimPoint = Bot.mirror(redAimPoint);
 
     private MecanumDrive drive;
@@ -35,8 +35,10 @@ public class Turret {
     public static double kI = 0.80;
     public static double kD = 0.017;
     public static double kF = 0;
+    public static double kVelocity = 0;
     public static double windupRange = 3;
     private double adjustable = 0;
+    private double previousTargetEncoderPosition = 0;
 
     public static double G = 386.09;
     public static double DELTA_H = 38.5;
@@ -65,9 +67,12 @@ public class Turret {
 
         double voltage = Bot.getInstance().getBatteryVoltage();
         controller.setGains(kP, kI, kD, kF);
-        double output = controller.calculate(targetEncoderPosition, encoderPosition);
+        double pidOutput = controller.calculate(targetEncoderPosition, encoderPosition);
 
-        motor.set(output / voltage);
+        double angularVelocityCompensation = (targetEncoderPosition - previousTargetEncoderPosition) / controller.getDt() * kVelocity;
+        previousTargetEncoderPosition = targetEncoderPosition;
+
+        motor.set((pidOutput + angularVelocityCompensation) / voltage);
     }
 
     private static double normalizeAngle(double angle) {

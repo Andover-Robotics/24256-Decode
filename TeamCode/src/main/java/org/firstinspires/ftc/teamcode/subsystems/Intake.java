@@ -25,7 +25,7 @@ public class Intake {
     public static double GATE_OPEN = 0.0400;
     public static double GATE_CLOSED = 0.2000;
 
-    private boolean gateOpenStatus = false;
+    private boolean gateOpen = false;
 
     public enum PossessionState {
         NONE, ONE, TWO, THREE, OVER
@@ -84,12 +84,12 @@ public class Intake {
 
     public void openGate() {
         gate.setPosition(GATE_OPEN);
-        gateOpenStatus = true;
+        gateOpen = true;
     }
 
     public void closeGate() {
         gate.setPosition(GATE_CLOSED);
-        gateOpenStatus = false;
+        gateOpen = false;
     }
 
     public Action actionResetGate() {
@@ -103,7 +103,7 @@ public class Intake {
     }
 
     public void toggleGate() {
-        if (gateOpenStatus) {
+        if (gateOpen) {
             closeGate();
         } else {
             openGate();
