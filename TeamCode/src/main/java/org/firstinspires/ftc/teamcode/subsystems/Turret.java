@@ -49,7 +49,7 @@ public class Turret {
 
     private MotorEx motor;
 
-    private static double ENCODER_DEGREES_PER_REV = 360.0 / (145.1 * 104 / 14);
+    private static double ENCODER_DEGREES_PER_TICK = 360.0 / (145.1 * 104 / 14);
 
     public Turret(LinearOpMode opMode, MecanumDrive drive) {
         this.drive = drive;
@@ -61,7 +61,7 @@ public class Turret {
         redAimPoint = new Vector2d(SHOOTER_X, SHOOTER_Y);
         blueAimPoint = Bot.mirror(redAimPoint);
         aimTowardsTargetPoint();
-        encoderPosition = motor.getCurrentPosition() * ENCODER_DEGREES_PER_REV;
+        encoderPosition = motor.getCurrentPosition() * ENCODER_DEGREES_PER_TICK;
 
         double voltage = Bot.getInstance().getBatteryVoltage();
         controller.setGains(kP, kI, kD, kF);

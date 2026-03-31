@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.hardware.motors.Motor;
-import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.util.PIDF;
 import org.firstinspires.ftc.teamcode.util.TriggeredTimer;
 
@@ -12,8 +13,8 @@ import java.util.TreeMap;
 
 @Config
 public class Outtake {
-    private MotorEx motor1;
-    private MotorEx motor2;
+    private DcMotorEx motor1;
+    private DcMotorEx motor2;
 
     public static double kP = 0.011;
     public static double kI = 0;
@@ -54,13 +55,17 @@ public class Outtake {
     private boolean inTolerance;
     private TriggeredTimer inToleranceTimer;
 
+    private boolean usePrimaryEncoder = true;
+    private boolean shooterMotorDisconnected = false;
+
+    private static double ENCODER_REV_PER_TICK = 1 / 28.0 * 60;
+
     public Outtake(LinearOpMode opMode) {
         controller = new PIDF(kP, kI, kD, kF);
-        motor1 = new MotorEx(opMode.hardwareMap, "outtake1", MotorEx.GoBILDA.BARE);
-        motor1.setRunMode(Motor.RunMode.RawPower);
-        motor2 = new MotorEx(opMode.hardwareMap, "outtake2", MotorEx.GoBILDA.BARE);
-        motor2.setRunMode(Motor.RunMode.RawPower);
-        motor2.setInverted(true);
+        motor1 = opMode.hardwareMap.get(DcMotorEx.class, "outtake1");
+        motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motor1 = opMode.hardwareMap.get(DcMotorEx.class, "outtake2");
+        motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         inToleranceTimer = new TriggeredTimer(IN_TOLERANCE_TIME);
     }
@@ -110,13 +115,33 @@ public class Outtake {
     }
 
     public void setPower(double power) {
-        motor1.set(power);
-        motor2.set(power);
+        motor1.setPower(power);
+        motor2.setPower(power * -1.0);
+    }
+
+    public void updateMotorData() {
+        if (usePrimaryEncoder) {
+            realVelocity = motor1.getVelocity() * ENCODER_REV_PER_TICK;
+        } else {
+            realVelocity = motor2.getVelocity() * ENCODER_REV_PER_TICK * -1.0;
+        }
+
+        if (targetVelocity == 0)
+            return;
+
+        double currentDrawOne = motor1.getCurrent(CurrentUnit.MILLIAMPS);
+        double currentDrawTwo = motor2.getCurrent(CurrentUnit.MILLIAMPS) * -1.0;
+
+        if (currentDrawOne == 0 || currentDrawTwo == 0)
+            shooterMotorDisconnected = true;
+
+        if (realVelocity == 0)
+            usePrimaryEncoder = !usePrimaryEncoder;
     }
 
     public void periodic() {
+        updateMotorData();
         targetVelocity = getVelocity();
-        realVelocity = motor1.getVelocity() / 28.0 * 60;
         inTolerance = inToleranceTimer.periodic(Math.abs(targetVelocity - realVelocity) < VELOCITY_TOLERANCE);
 
         if (!enabled || targetVelocity == 0) {
@@ -145,5 +170,9 @@ public class Outtake {
 
     public boolean isEnabled() {
         return enabled;
+    }
+
+    public boolean isShooterMotorDisconnected() {
+        return shooterMotorDisconnected;
     }
 }

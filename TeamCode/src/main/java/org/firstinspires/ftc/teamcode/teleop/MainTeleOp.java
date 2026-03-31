@@ -57,6 +57,7 @@ public class MainTeleOp extends LinearOpMode {
         waitForStart();
 
         boolean intakeVibrated = false;
+        boolean shooterDisconnectVibrated = false;
         Outtake.MANUAL = false;
 
         while (opModeIsActive() && !isStopRequested()) {
@@ -104,19 +105,29 @@ public class MainTeleOp extends LinearOpMode {
                 bot.outtake.disable();
             }
 
+            if (bot.outtake.isShooterMotorDisconnected()) {
+                gamepad2.setLedColor(255, 0, 0, Gamepad.LED_DURATION_CONTINUOUS);
+                if (!shooterDisconnectVibrated) {
+                    gamepad2.rumble(2000);
+                    shooterDisconnectVibrated = true;
+                }
+            } else {
+                gamepad2.setLedColor(0, 255, 0, Gamepad.LED_DURATION_CONTINUOUS);
+                shooterDisconnectVibrated = false;
+            }
+
             if (bot.intake.getPossessionLevel() == Intake.PossessionState.THREE) {
                 gamepad1.setLedColor(0, 255, 0, Gamepad.LED_DURATION_CONTINUOUS);
-                gamepad2.setLedColor(0, 255, 0, Gamepad.LED_DURATION_CONTINUOUS);
                 if (!intakeVibrated) {
                     gamepad1.rumble(500);
-                    gamepad2.rumble(500);
                     intakeVibrated = true;
                 }
             } else {
                 gamepad1.setLedColor(255, 0, 0, Gamepad.LED_DURATION_CONTINUOUS);
-                gamepad2.setLedColor(255, 0, 0, Gamepad.LED_DURATION_CONTINUOUS);
                 intakeVibrated = false;
             }
+
+
 
             if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                 Bot.switchAlliance();
