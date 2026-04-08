@@ -8,6 +8,7 @@ public class PIDF {
 
     private double integral;
     private double previousError;
+    private double dt;
 
     private double windupRange;
     private boolean signFlipReset = true;
@@ -35,7 +36,7 @@ public class PIDF {
 
     public double calculate(double target, double current) {
         long now = System.nanoTime();
-        double dt = (now - lastTime) / 1e9;
+        dt = (now - lastTime) / 1e9;
         lastTime = now;
 
         double error = target - current;
@@ -75,5 +76,14 @@ public class PIDF {
         integral = 0;
         previousError = 0;
         lastTime = System.currentTimeMillis();
+    }
+
+
+    public double getIntegral() {
+        return integral;
+    }
+
+    public double getDt() {
+        return dt;
     }
 }

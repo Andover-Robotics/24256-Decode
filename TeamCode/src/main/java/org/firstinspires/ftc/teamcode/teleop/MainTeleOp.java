@@ -57,6 +57,7 @@ public class MainTeleOp extends LinearOpMode {
         waitForStart();
 
         boolean intakeVibrated = false;
+        boolean shooterDisconnectVibrated = false;
         Outtake.MANUAL = false;
 
         while (opModeIsActive() && !isStopRequested()) {
@@ -75,14 +76,12 @@ public class MainTeleOp extends LinearOpMode {
             bot.driveRobotCentric(throttle, strafe, turn, scalar);
             bot.periodic();
 
-            if (!bot.inShootingMode()) {
-                if (gp1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2) {
-                    bot.intake.in();
-                } else if (gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.2) {
-                    bot.intake.out();
-                } else {
-                    bot.intake.store();
-                }
+            if (gp1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2) {
+                bot.intake.in();
+            } else if (gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.2) {
+                bot.intake.out();
+            } else {
+                bot.intake.store();
             }
 
             gp2.readButtons();
@@ -106,19 +105,29 @@ public class MainTeleOp extends LinearOpMode {
                 bot.outtake.disable();
             }
 
+            if (bot.outtake.isShooterMotorDisconnected()) {
+                gamepad2.setLedColor(255, 0, 0, Gamepad.LED_DURATION_CONTINUOUS);
+                if (!shooterDisconnectVibrated) {
+                    gamepad2.rumble(2000);
+                    shooterDisconnectVibrated = true;
+                }
+            } else {
+                gamepad2.setLedColor(0, 255, 0, Gamepad.LED_DURATION_CONTINUOUS);
+                shooterDisconnectVibrated = false;
+            }
+
             if (bot.intake.getPossessionLevel() == Intake.PossessionState.THREE) {
                 gamepad1.setLedColor(0, 255, 0, Gamepad.LED_DURATION_CONTINUOUS);
-                gamepad2.setLedColor(0, 255, 0, Gamepad.LED_DURATION_CONTINUOUS);
                 if (!intakeVibrated) {
                     gamepad1.rumble(500);
-                    gamepad2.rumble(500);
                     intakeVibrated = true;
                 }
             } else {
                 gamepad1.setLedColor(255, 0, 0, Gamepad.LED_DURATION_CONTINUOUS);
-                gamepad2.setLedColor(255, 0, 0, Gamepad.LED_DURATION_CONTINUOUS);
                 intakeVibrated = false;
             }
+
+
 
             if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                 Bot.switchAlliance();
@@ -137,29 +146,16 @@ public class MainTeleOp extends LinearOpMode {
             }
 
             if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
-                bot.turret.setAdjustable(bot.turret.getAdjustable() + Math.toRadians(1));
+                bot.turret.setAdjustable(bot.turret.getAdjustable() + 1);
             }
 
             if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-                bot.turret.setAdjustable(bot.turret.getAdjustable() - Math.toRadians(1));
+                bot.turret.setAdjustable(bot.turret.getAdjustable() - 1);
             }
 
             handleActions(packet);
 
-            Pose2d pose = bot.drive.localizer.getPose();
-
-            telemetry.addData("Bot Alliance", (Bot.alliance == Bot.Alliance.RED) ? "Red" : "Blue");
-            telemetry.addData("Intake Resistance", bot.intake.getEMFResistance());
-            telemetry.addData("Intake Possession Status", bot.intake.getPossessionLevel().toString());
-            telemetry.addData("\nFlywheel Target Velocity", bot.outtake.getTargetVelocity());
-            telemetry.addData("Flywheel Velocity", bot.outtake.getRealVelocity());
-            telemetry.addData("\nTurret Target Angle ", bot.turret.getTargetEncoderPosition());
-            telemetry.addData("Turret Angle ", bot.turret.getEncoderPosition());
-            telemetry.addData("Turret Distance to Goal", bot.turret.getDistanceToGoal());
-            telemetry.addData("Turret Angle to Goal", Math.toDegrees(bot.turret.getAngleToGoal()));
-            telemetry.addData("Turret Error", Math.abs(bot.turret.getTargetEncoderPosition() - bot.turret.getEncoderPosition()));
-            telemetry.addData("Robot Pose", "%.2f %.2f %.2f", pose.position.x, pose.position.y, Math.toDegrees(pose.heading.log()));
-
+            bot.addTelemetry();
             dashboard.sendTelemetryPacket(packet);
             telemetry.update();
         }

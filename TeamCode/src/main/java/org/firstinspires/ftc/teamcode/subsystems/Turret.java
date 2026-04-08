@@ -14,13 +14,10 @@ import org.firstinspires.ftc.teamcode.util.PIDF;
 
 @Config
 public class Turret {
-    // p = 0.17 d = 0.008
-    // p = 0.27 d = 0.013
-    // p = 0.41 d = 0.017
     public static double SHOOTER_X = 68;
     public static double SHOOTER_Y = -68;
     private static Vector2d shooterTransform = new Vector2d(-1.65, 0);
-    private static Vector2d redAimPoint = new Vector2d(69, -69);
+    private static Vector2d redAimPoint = new Vector2d(SHOOTER_X, SHOOTER_Y);
     private static Vector2d blueAimPoint = Bot.mirror(redAimPoint);
 
     private MecanumDrive drive;
@@ -38,12 +35,14 @@ public class Turret {
     public static double kI = 0.80;
     public static double kD = 0.017;
     public static double kF = 0;
+    public static double kVelocity = 0;
     public static double windupRange = 3;
     private double adjustable = 0;
+    private double previousTargetEncoderPosition = 0;
 
     public static double G = 386.09;
     public static double DELTA_H = 38.5;
-    public static double HOOD_ANGLE = Math.toRadians(45);
+    public static double HOOD_ANGLE = Math.toRadians(90 - 41);
     public static boolean VELOCITY_COMPENSATION = true;
 
     private PIDF controller;
@@ -52,7 +51,7 @@ public class Turret {
 
     private MotorEx motor;
 
-    private static double ENCODER_TICKS_PER_REV = 360.0 / (145.1 * 104 / 14);
+    private static double ENCODER_DEGREES_PER_TICK = 360.0 / (145.1 * 104 / 14);
 
     public Turret(LinearOpMode opMode, MecanumDrive drive) {
         this.drive = drive;
@@ -64,13 +63,16 @@ public class Turret {
         redAimPoint = new Vector2d(SHOOTER_X, SHOOTER_Y);
         blueAimPoint = Bot.mirror(redAimPoint);
         aimTowardsTargetPoint();
-        encoderPosition = motor.getCurrentPosition() * ENCODER_TICKS_PER_REV;
+        encoderPosition = motor.getCurrentPosition() * ENCODER_DEGREES_PER_TICK;
 
         double voltage = Bot.getInstance().getBatteryVoltage();
         controller.setGains(kP, kI, kD, kF);
-        double output = controller.calculate(targetEncoderPosition, encoderPosition);
+        double pidOutput = controller.calculate(targetEncoderPosition, encoderPosition);
 
-        motor.set(output / voltage);
+        double angularVelocityCompensation = (targetEncoderPosition - previousTargetEncoderPosition) / controller.getDt() * kVelocity;
+        previousTargetEncoderPosition = targetEncoderPosition;
+
+        motor.set((pidOutput + angularVelocityCompensation) / voltage);
     }
 
     private static double normalizeAngle(double angle) {
@@ -99,14 +101,14 @@ public class Turret {
         Vector2d robotPosition = pose.position;
         double robotHeading = pose.heading.log();
 
-        Vector2d robotVelocity = Rotation2d.fromDouble(pose.heading.log()).times(velocity.linearVel);
+        Vector2d robotVelocity = Rotation2d.fromDouble(-pose.heading.log()).times(velocity.linearVel);
         Vector2d shooterFieldPos = robotPosition.plus(Rotation2d.fromDouble(robotHeading).times(shooterTransform));
 
         Vector2d delta = aimPoint.minus(shooterFieldPos);
 
         if (VELOCITY_COMPENSATION) {
             Vector2d compensatedDelta = delta;
-            for (int i = 0; i < 2; i++) {
+            for (int i = 0; i < 3; i++) {
                 double time = getTimeToGoal(compensatedDelta.norm());
                 compensatedDelta = delta.minus(robotVelocity.times(time));
             }
@@ -118,7 +120,7 @@ public class Turret {
 
         angleToGoal = normalizeAngle(fieldAngleToGoal - robotHeading);
 
-        targetEncoderPosition = normalizeAngle(-angleToGoal + adjustable);
+        targetEncoderPosition = normalizeAngle(-angleToGoal + Math.toRadians(adjustable));
 
         while (targetEncoderPosition > HIGH_LIMIT)
             targetEncoderPosition -= 2 * Math.PI;

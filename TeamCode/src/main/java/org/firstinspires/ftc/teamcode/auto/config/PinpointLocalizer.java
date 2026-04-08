@@ -17,7 +17,7 @@ import java.util.Objects;
 public final class PinpointLocalizer implements Localizer {
     public static class Params {
         public double xOffset = 2;
-        public double yOffset = -6.25; // x position of the perpendicular encoder (in tick units)
+        public double yOffset = -6.25;
     }
 
     public static Params PARAMS = new Params();
@@ -37,7 +37,6 @@ public final class PinpointLocalizer implements Localizer {
         driver.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         driver.setOffsets(PARAMS.xOffset, PARAMS.yOffset, DistanceUnit.INCH);
 
-        // TODO: reverse encoder directions if needed
         initialParDirection = GoBildaPinpointDriver.EncoderDirection.FORWARD;
         initialPerpDirection = GoBildaPinpointDriver.EncoderDirection.REVERSED;
 

@@ -17,9 +17,9 @@ import org.firstinspires.ftc.teamcode.auto.config.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Bot;
 import org.firstinspires.ftc.teamcode.subsystems.Outtake;
 
-@Autonomous(name = "Nine Ball Far")
+@Autonomous(name = "Far Auto")
 @Config
-public class NineBall extends LinearOpMode {
+public class FarAuto extends LinearOpMode {
     // Positions
     public static Pose2d start = new Pose2d(-70.28 + 15.0 / 2, -24.0 + 14.75 / 2, Math.toRadians(0));
     public static Pose2d preSpike3 = new Pose2d(-36, -39, Math.toRadians(-90));
@@ -43,8 +43,6 @@ public class NineBall extends LinearOpMode {
                 .stopAndAdd(new InstantAction(() -> bot.intake.in()))
                 .stopAndAdd(new InstantAction(() -> bot.outtake.enable()))
                 .strafeToSplineHeading(shoot.position, shoot.heading.log())
-                .stopAndAdd(new InstantAction(() -> Outtake.MANUAL = true))
-                .stopAndAdd(new InstantAction(() -> Outtake.MANUAL_VELOCITY = 4400))
                 .stopAndAdd(bot.actionShootThreeFar());
 
         // spike 2
@@ -82,18 +80,18 @@ public class NineBall extends LinearOpMode {
 
         while (opModeInInit() && !isStarted() && !isStopRequested()) {
             gp1.readButtons();
-            telemetry.addData("Bot Alliance", (Bot.alliance == Bot.Alliance.RED) ? "Red" : "Blue");
-            telemetry.addData("Auto Built?", (builtAuto == null) ? "false" : "true");
 
-            if (gp1.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
+            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                 Bot.switchAlliance();
                 builtAuto = null;
             }
 
-            if (gp1.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
+            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
                 buildAuto();
             }
 
+            bot.addTelemetry();
+            telemetry.addData("Auto Built", (builtAuto != null) ? "true" : "false");
             telemetry.update();
         }
 

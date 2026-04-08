@@ -262,8 +262,6 @@ public final class MecanumDrive {
         rightFront.setPower(wheelVels.rightFront.get(0) / maxPowerMag);
     }
 
-    public static boolean enablePreciseShooting = false;
-
     public final class FollowTrajectoryAction implements Action {
         public final TimeTrajectory timeTrajectory;
         private double beginTs = -1;
@@ -293,6 +291,15 @@ public final class MecanumDrive {
                 t = 0;
             } else {
                 t = Actions.now() - beginTs;
+            }
+
+            if (t >= timeTrajectory.duration) {
+                leftFront.setPower(0);
+                leftBack.setPower(0);
+                rightBack.setPower(0);
+                rightFront.setPower(0);
+
+                return false;
             }
 
             Pose2dDual<Time> txWorldTarget = timeTrajectory.get(t);
@@ -347,26 +354,6 @@ public final class MecanumDrive {
             c.setStroke("#4CAF50FF");
             c.setStrokeWidth(1);
             c.strokePolyline(xPoints, yPoints);
-
-            if (!enablePreciseShooting) {
-                if (t >= timeTrajectory.duration) {
-                    leftFront.setPower(0);
-                    leftBack.setPower(0);
-                    rightBack.setPower(0);
-                    rightFront.setPower(0);
-
-                    return false;
-                }
-            } else {
-                if ((t >= timeTrajectory.duration && Math.abs(Math.toDegrees(error.heading.toDouble())) < 2) || t >= timeTrajectory.duration + 1) {
-                    leftFront.setPower(0);
-                    leftBack.setPower(0);
-                    rightBack.setPower(0);
-                    rightFront.setPower(0);
-
-                    return false;
-                }
-            }
 
             return true;
         }
