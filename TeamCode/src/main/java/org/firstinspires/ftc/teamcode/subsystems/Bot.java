@@ -113,8 +113,10 @@ public class Bot {
         telemetry.addData("Alliance", alliance.toString());
         telemetry.addData("\nIntake Resistance", intake.getEMFResistance());
         telemetry.addData("Intake Possession Level", intake.getPossessionLevel().toString());
-        telemetry.addData("\nFlywheel Target Velocity", outtake.getTargetVelocity());
-        telemetry.addData("Flywheel Velocity", outtake.getRealVelocity());
+        telemetry.addData("\nOuttake Target Velocity", outtake.getTargetVelocity());
+        telemetry.addData("Outtake Velocity", outtake.getRealVelocity());
+        telemetry.addData("Outtake Motor Disconnected", outtake.isShooterMotorDisconnected());
+        telemetry.addData("Outtake Primary Encoder", outtake.isUsingPrimaryEncoder());
         telemetry.addData("\nTurret Target Angle ", turret.getTargetEncoderPosition());
         telemetry.addData("Turret Angle ", turret.getEncoderPosition());
         telemetry.addData("Turret Distance to Goal", turret.getDistanceToGoal());

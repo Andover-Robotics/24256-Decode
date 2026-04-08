@@ -55,7 +55,7 @@ public class Outtake {
     private boolean inTolerance;
     private TriggeredTimer inToleranceTimer;
 
-    private boolean usePrimaryEncoder = true;
+    private boolean usingPrimaryEncoder = true;
     private boolean shooterMotorDisconnected = false;
 
     private static double ENCODER_REV_PER_TICK = 1 / 28.0 * 60;
@@ -64,8 +64,8 @@ public class Outtake {
         controller = new PIDF(kP, kI, kD, kF);
         motor1 = opMode.hardwareMap.get(DcMotorEx.class, "outtake1");
         motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motor1 = opMode.hardwareMap.get(DcMotorEx.class, "outtake2");
-        motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motor2 = opMode.hardwareMap.get(DcMotorEx.class, "outtake2");
+        motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         inToleranceTimer = new TriggeredTimer(IN_TOLERANCE_TIME);
     }
@@ -79,10 +79,6 @@ public class Outtake {
             return MANUAL_VELOCITY;
         }
 
-        if (VELOCITY_LOOKUP_TABLE.isEmpty()) {
-            return 0;
-        }
-
         Double lowerKey = VELOCITY_LOOKUP_TABLE.floorKey(distanceToGoal);
         Double upperKey = VELOCITY_LOOKUP_TABLE.ceilingKey(distanceToGoal);
 
@@ -92,7 +88,7 @@ public class Outtake {
 
         if (lowerKey.equals(upperKey)) {
             Double velocity = VELOCITY_LOOKUP_TABLE.get(lowerKey);
-            return velocity != null ? velocity : 0;
+            return velocity != null ? velocity : DEFAULT_VELOCITY;
         }
 
         Double lowerVelocity = VELOCITY_LOOKUP_TABLE.get(lowerKey);
@@ -120,23 +116,23 @@ public class Outtake {
     }
 
     public void updateMotorData() {
-        if (usePrimaryEncoder) {
-            realVelocity = motor1.getVelocity() * ENCODER_REV_PER_TICK;
-        } else {
+        if (usingPrimaryEncoder) {
             realVelocity = motor2.getVelocity() * ENCODER_REV_PER_TICK * -1.0;
+        } else {
+            realVelocity = motor1.getVelocity() * ENCODER_REV_PER_TICK;
         }
 
-        if (targetVelocity == 0)
+        if (Math.abs(targetVelocity) < 0.001)
             return;
 
         double currentDrawOne = motor1.getCurrent(CurrentUnit.MILLIAMPS);
         double currentDrawTwo = motor2.getCurrent(CurrentUnit.MILLIAMPS) * -1.0;
 
-        if (currentDrawOne == 0 || currentDrawTwo == 0)
+        if (Math.abs(currentDrawOne) < 0.001 || Math.abs(currentDrawTwo) < 0.001)
             shooterMotorDisconnected = true;
 
-        if (realVelocity == 0)
-            usePrimaryEncoder = !usePrimaryEncoder;
+        if (Math.abs(realVelocity) < 0.001)
+            usingPrimaryEncoder = !usingPrimaryEncoder;
     }
 
     public void periodic() {
@@ -174,5 +170,9 @@ public class Outtake {
 
     public boolean isShooterMotorDisconnected() {
         return shooterMotorDisconnected;
+    }
+
+    public boolean isUsingPrimaryEncoder() {
+        return usingPrimaryEncoder;
     }
 }

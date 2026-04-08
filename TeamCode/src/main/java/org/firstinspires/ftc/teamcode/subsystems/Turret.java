@@ -88,6 +88,24 @@ public class Turret {
         return Math.sqrt(tSquared);
     }
 
+    private static Vector2d applyVelocityCompensation(Vector2d robotVelocity, Vector2d delta) {
+        Vector2d compensatedDelta = delta;
+        for (int i = 0; i < 3; i++) {
+            double time = getTimeToGoal(compensatedDelta.norm());
+            compensatedDelta = delta.minus(robotVelocity.times(time));
+        }
+        return compensatedDelta;
+    }
+
+    private void wraparound() {
+        while (targetEncoderPosition > HIGH_LIMIT)
+            targetEncoderPosition -= 2 * Math.PI;
+        while (targetEncoderPosition < LOW_LIMIT)
+            targetEncoderPosition += 2 * Math.PI;
+
+        targetEncoderPosition = Math.toDegrees(Math.max(LOW_LIMIT, Math.min(HIGH_LIMIT, targetEncoderPosition)));
+    }
+
     private void aimTowardsTargetPoint() {
         if (MANUAL) {
             targetEncoderPosition = MANUAL_POSITION;
@@ -107,27 +125,16 @@ public class Turret {
         Vector2d delta = aimPoint.minus(shooterFieldPos);
 
         if (VELOCITY_COMPENSATION) {
-            Vector2d compensatedDelta = delta;
-            for (int i = 0; i < 3; i++) {
-                double time = getTimeToGoal(compensatedDelta.norm());
-                compensatedDelta = delta.minus(robotVelocity.times(time));
-            }
-            delta = compensatedDelta;
+            delta = applyVelocityCompensation(robotVelocity, delta);
         }
 
         double fieldAngleToGoal = delta.angleCast().log();
         distanceToGoal = delta.norm();
 
         angleToGoal = normalizeAngle(fieldAngleToGoal - robotHeading);
-
         targetEncoderPosition = normalizeAngle(-angleToGoal + Math.toRadians(adjustable));
 
-        while (targetEncoderPosition > HIGH_LIMIT)
-            targetEncoderPosition -= 2 * Math.PI;
-        while (targetEncoderPosition < LOW_LIMIT)
-            targetEncoderPosition += 2 * Math.PI;
-
-        targetEncoderPosition = Math.toDegrees(Math.max(LOW_LIMIT, Math.min(HIGH_LIMIT, targetEncoderPosition)));
+        wraparound();
     }
 
     public double getTargetEncoderPosition() {

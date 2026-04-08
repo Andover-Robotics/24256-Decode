@@ -35,6 +35,8 @@ public class Intake {
         4000, 2000, 1000, 500, 250
     };
 
+    public static boolean AUTO_REVERSE = false;
+
     private PossessionState proposedState = PossessionState.NONE;
     private PossessionState realState = PossessionState.NONE;
 
@@ -130,7 +132,7 @@ public class Intake {
     
     public void periodic() {
         double voltage = Bot.getInstance().getBatteryVoltage();
-        emfResistance = voltage * setPower / motor.getCurrent(CurrentUnit.AMPS);
+        emfResistance = (setPower == 0) ? 0 : voltage * setPower / motor.getCurrent(CurrentUnit.AMPS);
 
         PossessionState raw = classifyResistance(emfResistance);
 
@@ -142,6 +144,11 @@ public class Intake {
         if (possessionConfirmationTimer.periodic(true)) {
             realState = proposedState;
         }
+
+        motor.setPower(setPower);
+
+        if (!AUTO_REVERSE)
+            return;
 
         if (realState == PossessionState.OVER && !shouldReverse) {
             shouldReverse = true;
@@ -156,7 +163,6 @@ public class Intake {
             }
         } else {
             reversalTimer.reset();
-            motor.setPower(setPower);
         }
     }
 }
