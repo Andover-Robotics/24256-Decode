@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.util.WaitUntilAction;
 
 @Autonomous(name = "Twelve Ball Close")
 @Config
-public class CloseAutoCyle extends LinearOpMode {
+public class CloseAutoCycle extends LinearOpMode {
     // Variables
     public static int numCycles = 5;
     // Positions

@@ -58,9 +58,9 @@ public class Outtake {
         controller = new PIDF(kP, kI, kD, kF);
         motor1 = new MotorEx(opMode.hardwareMap, "outtake1", MotorEx.GoBILDA.BARE);
         motor1.setRunMode(Motor.RunMode.RawPower);
+        motor1.setInverted(true);
         motor2 = new MotorEx(opMode.hardwareMap, "outtake2", MotorEx.GoBILDA.BARE);
         motor2.setRunMode(Motor.RunMode.RawPower);
-        motor2.setInverted(true);
 
         inToleranceTimer = new TriggeredTimer(IN_TOLERANCE_TIME);
     }
