@@ -20,15 +20,9 @@ import org.firstinspires.ftc.teamcode.util.RRActions;
 
 @Autonomous(name = "Close Auto")
 @Config
-<<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/auto/CloseAutoCycle.java
-public class CloseAutoCycle extends LinearOpMode {
-    // Variables
-    public static int numCycles = 5;
-    // Positions
-========
+
 public class CloseAuto extends LinearOpMode {
     public static int numCycles = 4;
->>>>>>>> origin/master:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/auto/CloseAuto.java
     public static Pose2d preSpike1 = new Pose2d(12, -28, Math.toRadians(-90));
     public static Pose2d spike1 = new Pose2d(12, -48, Math.toRadians(-90));
     public static Pose2d preSpike2 = new Pose2d(-12, -35, Math.toRadians(-90));

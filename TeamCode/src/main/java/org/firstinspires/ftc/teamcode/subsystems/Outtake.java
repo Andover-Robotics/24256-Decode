@@ -64,8 +64,8 @@ public class Outtake {
         controller = new PIDF(kP, kI, kD, kF);
         motor1 = opMode.hardwareMap.get(DcMotorEx.class, "outtake1");
         motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motor1 = opMode.hardwareMap.get(DcMotorEx.class, "outtake2");
-        motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motor2 = opMode.hardwareMap.get(DcMotorEx.class, "outtake2");
+        motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         inToleranceTimer = new TriggeredTimer(IN_TOLERANCE_TIME);
     }
