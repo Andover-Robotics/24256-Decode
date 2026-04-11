@@ -124,7 +124,7 @@ public class Turret {
 
         Vector2d delta = aimPoint.minus(shooterFieldPos);
 
-        if (VELOCITY_COMPENSATION) {
+        if (VELOCITY_COMPENSATION && velocity.linearVel.norm() > 0.1) {
             delta = applyVelocityCompensation(robotVelocity, delta);
         }
 

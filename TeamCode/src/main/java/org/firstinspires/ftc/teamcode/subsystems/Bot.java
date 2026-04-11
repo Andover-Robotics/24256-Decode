@@ -47,6 +47,7 @@ public class Bot {
 
     public static double SHOOT_ONE_DELAY = 0.2;
     public static double SHOOT_THREE_QUICKFIRE_DELAY = 1.25;
+    public static double FAR_SHOOTING_DISTANCE = 140;
 
     private boolean inShootingAction = false;
 
@@ -126,11 +127,8 @@ public class Bot {
     }
 
     public static Bot getInstance(LinearOpMode opMode) {
-        if (instance == null) {
+        if (instance == null || opMode != null) {
             instance = new Bot(opMode);
-        }
-        if (opMode != null) {
-            instance.opMode = opMode;
         }
         return instance;
     }
@@ -194,7 +192,11 @@ public class Bot {
     }
 
     public Action actionShootThree() {
-        return actionShoot(SHOOT_THREE_QUICKFIRE_DELAY);
+        return new RRActions.IfElseAction(
+                () -> turret.getDistanceToGoal() > FAR_SHOOTING_DISTANCE,
+                actionShootThreeFar(),
+                actionShoot(SHOOT_THREE_QUICKFIRE_DELAY)
+        );
     }
 
     public Action actionShootOne() {
@@ -222,7 +224,10 @@ public class Bot {
                 new InstantAction(() -> inShootingAction = false)
         );
 
-        return new RRActions.IfElseAction(() -> !inShootingAction, shootingAction);
+        return new RRActions.IfElseAction(
+                () -> !inShootingAction,
+                shootingAction
+        );
     }
 
     public double getBatteryVoltage() {

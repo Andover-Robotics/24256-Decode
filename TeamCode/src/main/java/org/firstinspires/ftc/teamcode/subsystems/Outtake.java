@@ -40,8 +40,8 @@ public class Outtake {
         VELOCITY_LOOKUP_TABLE.put(84.0, 3750.0);
     }
 
-    public static double VELOCITY_TOLERANCE = 150;
-    public static double IN_TOLERANCE_TIME = 0.300;
+    public static double VELOCITY_TOLERANCE = 100;
+    public static double IN_TOLERANCE_TIME = 0.150;
 
     public static boolean MANUAL = false;
     public static double MANUAL_VELOCITY = 0;
