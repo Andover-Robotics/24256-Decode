@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.teamcode.util.PIDF;
 import org.firstinspires.ftc.teamcode.util.TriggeredTimer;
 
@@ -28,16 +29,33 @@ public class Outtake {
     private static final TreeMap<Double, Double> VELOCITY_LOOKUP_TABLE = new TreeMap<>();
 
     static {
-        VELOCITY_LOOKUP_TABLE.put(46.0, 3050.0);
-        VELOCITY_LOOKUP_TABLE.put(50.0, 3100.0);
-        VELOCITY_LOOKUP_TABLE.put(54.0, 3150.0);
-        VELOCITY_LOOKUP_TABLE.put(59.0, 3200.0);
-        VELOCITY_LOOKUP_TABLE.put(64.0, 3350.0);
-        VELOCITY_LOOKUP_TABLE.put(68.0, 3400.0);
-        VELOCITY_LOOKUP_TABLE.put(72.0, 3400.0);
-        VELOCITY_LOOKUP_TABLE.put(76.0, 3550.0);
-        VELOCITY_LOOKUP_TABLE.put(80.0, 3650.0);
-        VELOCITY_LOOKUP_TABLE.put(84.0, 3750.0);
+        VELOCITY_LOOKUP_TABLE.put(40.0, 3050.0);
+        VELOCITY_LOOKUP_TABLE.put(43.0, 3050.0);
+        VELOCITY_LOOKUP_TABLE.put(46.0, 3100.0);
+        VELOCITY_LOOKUP_TABLE.put(49.0, 3100.0);
+        VELOCITY_LOOKUP_TABLE.put(52.0, 3100.0);
+        VELOCITY_LOOKUP_TABLE.put(55.0, 3100.0);
+        VELOCITY_LOOKUP_TABLE.put(58.0, 3150.0);
+        VELOCITY_LOOKUP_TABLE.put(61.0, 3150.0);
+        VELOCITY_LOOKUP_TABLE.put(64.0, 3150.0);
+        VELOCITY_LOOKUP_TABLE.put(67.0, 3200.0);
+        VELOCITY_LOOKUP_TABLE.put(70.0, 3200.0);
+        VELOCITY_LOOKUP_TABLE.put(73.0, 3250.0);
+        VELOCITY_LOOKUP_TABLE.put(76.0, 3300.0);
+        VELOCITY_LOOKUP_TABLE.put(79.0, 3350.0);
+        VELOCITY_LOOKUP_TABLE.put(82.0, 3400.0);
+        VELOCITY_LOOKUP_TABLE.put(85.0, 3400.0);
+        VELOCITY_LOOKUP_TABLE.put(88.0, 3450.0);
+        VELOCITY_LOOKUP_TABLE.put(91.0, 3450.0);
+        VELOCITY_LOOKUP_TABLE.put(94.0, 3500.0);
+        VELOCITY_LOOKUP_TABLE.put(97.0, 3550.0);
+        VELOCITY_LOOKUP_TABLE.put(100.0, 3600.0);
+        VELOCITY_LOOKUP_TABLE.put(103.0, 3650.0);
+        VELOCITY_LOOKUP_TABLE.put(106.0, 3750.0);
+        VELOCITY_LOOKUP_TABLE.put(109.0, 3800.0);
+        VELOCITY_LOOKUP_TABLE.put(112.0, 3850.0);
+        VELOCITY_LOOKUP_TABLE.put(115.0, 3900.0);
+        VELOCITY_LOOKUP_TABLE.put(118.0, 3950.0);
     }
 
     public static double VELOCITY_TOLERANCE = 150;
