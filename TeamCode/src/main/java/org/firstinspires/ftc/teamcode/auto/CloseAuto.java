@@ -20,7 +20,6 @@ import org.firstinspires.ftc.teamcode.util.RRActions;
 
 @Autonomous(name = "Close Auto")
 @Config
-
 public class CloseAuto extends LinearOpMode {
     public static int numCycles = 4;
     public static Pose2d preSpike1 = new Pose2d(12, -28, Math.toRadians(-90));

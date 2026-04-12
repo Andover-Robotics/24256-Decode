@@ -59,6 +59,8 @@ public class MainTeleOp extends LinearOpMode {
         boolean intakeVibrated = false;
         boolean shooterDisconnectVibrated = false;
         Outtake.MANUAL = false;
+        boolean lastLeftTrigger = false;
+        boolean lastRightTrigger = false;
 
         while (opModeIsActive() && !isStopRequested()) {
             TelemetryPacket packet = new TelemetryPacket();
@@ -93,11 +95,15 @@ public class MainTeleOp extends LinearOpMode {
                 addAction(bot.intake.actionResetGate());
             }
 
-            if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2) {
+            if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2 && !lastLeftTrigger) {
                 addAction(bot.actionShootThree());
-            } else if (gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.2) {
+            }
+            if (gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.2 && !lastRightTrigger) {
                 addAction(bot.actionShootOne());
             }
+
+            lastLeftTrigger = gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2;
+            lastRightTrigger = gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.2;
 
             if (gp2.getButton(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
                 bot.outtake.enable();

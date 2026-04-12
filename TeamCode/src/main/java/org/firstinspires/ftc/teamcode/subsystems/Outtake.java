@@ -17,7 +17,7 @@ public class Outtake {
     private DcMotorEx motor1;
     private DcMotorEx motor2;
 
-    public static double kP = 0.011;
+    public static double kP = 0.010;
     public static double kI = 0;
     public static double kD = 0;
     public static double kF = 0.00255;
@@ -58,8 +58,8 @@ public class Outtake {
         VELOCITY_LOOKUP_TABLE.put(118.0, 3950.0);
     }
 
-    public static double VELOCITY_TOLERANCE = 150;
-    public static double IN_TOLERANCE_TIME = 0.300;
+    public static double VELOCITY_TOLERANCE = 100;
+    public static double IN_TOLERANCE_TIME = 0.150;
 
     public static boolean MANUAL = false;
     public static double MANUAL_VELOCITY = 0;
@@ -146,10 +146,10 @@ public class Outtake {
         double currentDrawOne = motor1.getCurrent(CurrentUnit.MILLIAMPS);
         double currentDrawTwo = motor2.getCurrent(CurrentUnit.MILLIAMPS) * -1.0;
 
-        if (Math.abs(currentDrawOne) < 0.001 || Math.abs(currentDrawTwo) < 0.001)
+        if (enabled && (Math.abs(currentDrawOne) < 0.001 || Math.abs(currentDrawTwo) < 0.001))
             shooterMotorDisconnected = true;
 
-        if (Math.abs(realVelocity) < 0.001)
+        if (enabled && Math.abs(realVelocity) < 0.001)
             usingPrimaryEncoder = !usingPrimaryEncoder;
     }
 
