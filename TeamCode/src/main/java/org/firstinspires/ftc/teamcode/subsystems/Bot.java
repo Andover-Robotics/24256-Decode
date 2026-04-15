@@ -230,6 +230,10 @@ public class Bot {
         );
     }
 
+    public boolean inShootingAction() {
+        return inShootingAction;
+    }
+
     public double getBatteryVoltage() {
         return batteryVoltage;
     }

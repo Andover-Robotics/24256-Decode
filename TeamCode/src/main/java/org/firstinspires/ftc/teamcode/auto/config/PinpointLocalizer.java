@@ -71,6 +71,6 @@ public final class PinpointLocalizer implements Localizer {
     }
 
     public void calibrate() {
-        driver.recalibrateIMU();
+        driver.resetPosAndIMU();
     }
 }

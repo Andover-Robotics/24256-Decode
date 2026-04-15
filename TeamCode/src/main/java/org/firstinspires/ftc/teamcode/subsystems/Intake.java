@@ -23,7 +23,7 @@ public class Intake {
     public static double STORE_POWER = 0.2;
 
     public static double GATE_OPEN = 0.0400;
-    public static double GATE_CLOSED = 0.1800;
+    public static double GATE_CLOSED = 0.1600;
 
     private boolean gateOpen = false;
 
@@ -53,6 +53,7 @@ public class Intake {
     private double setPower;
     private double emfResistance;
 
+
     public Intake(LinearOpMode opMode) {
         motor = opMode.hardwareMap.get(DcMotorEx.class, "intake");
         gate = opMode.hardwareMap.get(Servo.class, "gate");
@@ -78,6 +79,10 @@ public class Intake {
 
     public void store() {
         setPower(STORE_POWER);
+    }
+
+    public double getPower() {
+        return setPower;
     }
 
     public void stop() {

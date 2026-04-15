@@ -17,10 +17,10 @@ public class Outtake {
     private DcMotorEx motor1;
     private DcMotorEx motor2;
 
-    public static double kP = 0.010;
+    public static double kP = 0.016;
     public static double kI = 0;
     public static double kD = 0;
-    public static double kF = 0.00255;
+    public static double kF = 0.00235;
 
     private PIDF controller;
 
@@ -67,6 +67,7 @@ public class Outtake {
 
     public static double VELOCITY_TOLERANCE = 100;
     public static double IN_TOLERANCE_TIME = 0.150;
+    public static double WINDUP_RANGE = 100;
 
     public static boolean MANUAL = false;
     public static double MANUAL_VELOCITY = 0;
@@ -86,7 +87,7 @@ public class Outtake {
     private static double ENCODER_REV_PER_TICK = 1 / 28.0 * 60;
 
     public Outtake(LinearOpMode opMode) {
-        controller = new PIDF(kP, kI, kD, kF);
+        controller = new PIDF(kP, kI, kD, kF, WINDUP_RANGE, false);
         motor1 = opMode.hardwareMap.get(DcMotorEx.class, "outtake1");
         motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor2 = opMode.hardwareMap.get(DcMotorEx.class, "outtake2");

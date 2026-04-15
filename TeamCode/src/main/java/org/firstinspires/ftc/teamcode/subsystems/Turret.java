@@ -14,8 +14,8 @@ import org.firstinspires.ftc.teamcode.util.PIDF;
 
 @Config
 public class Turret {
-    public static double SHOOTER_X = 68;
-    public static double SHOOTER_Y = -68;
+    public static double SHOOTER_X = 62;
+    public static double SHOOTER_Y = -62;
     private static Vector2d shooterTransform = new Vector2d(-1.65, 0);
     private static Vector2d redAimPoint = new Vector2d(SHOOTER_X, SHOOTER_Y);
     private static Vector2d blueAimPoint = Bot.mirror(redAimPoint);
