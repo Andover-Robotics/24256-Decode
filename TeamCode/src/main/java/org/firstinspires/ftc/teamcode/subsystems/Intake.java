@@ -25,7 +25,7 @@ public class Intake {
     public static double GATE_OPEN = 0.0200;
     public static double GATE_CLOSED = 0.1600;
     
-    public static boolean AUTO_REVERSE = false;
+    public static boolean AUTO_REVERSE = true;
 
     private boolean gateOpen = false;
 
