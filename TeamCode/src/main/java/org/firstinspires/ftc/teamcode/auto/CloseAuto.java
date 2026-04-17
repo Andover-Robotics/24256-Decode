@@ -28,7 +28,7 @@ public class CloseAuto extends LinearOpMode {
     public static Pose2d preSpike3 = new Pose2d(-36, -35, Math.toRadians(-90));
     public static Pose2d spike3 = new Pose2d(-36, -54, Math.toRadians(-90));
     public static Pose2d shoot = new Pose2d(30, -30, Math.toRadians(-53));
-    public static Pose2d end = new Pose2d(0, -45, Math.toRadians(0));
+    public static Pose2d shootEnd = new Pose2d(40, -24, Math.toRadians(-45));
 
     public Bot bot;
 
@@ -77,10 +77,9 @@ public class CloseAuto extends LinearOpMode {
                 .splineToSplineHeading(spike3, Math.toRadians(-90))
                 .stopAndAdd(new InstantAction(() -> bot.outtake.enable()))
                 .setTangent(Math.toRadians(90))
-                .splineToSplineHeading(shoot, Math.toRadians(0))
-                .stopAndAdd(bot.actionShootThree())
-                .setTangent(Math.toRadians(180))
-                .splineToSplineHeading(end, Math.toRadians(-90));
+                .splineToSplineHeading(shootEnd, Math.toRadians(0))
+                .stopAndAdd(bot.actionShootThree());
+
 
         builtAuto = builder.build();
     }

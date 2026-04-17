@@ -44,8 +44,8 @@ public class FarAuto extends LinearOpMode {
                 .stopAndAdd(new InstantAction(() -> bot.outtake.enable()))
                 .strafeToSplineHeading(shoot.position, shoot.heading.log())
                 .stopAndAdd(new InstantAction(() -> Outtake.MANUAL = true))
-                .stopAndAdd(new InstantAction(() -> Outtake.MANUAL_VELOCITY = 4400))
-                .stopAndAdd(bot.actionShootThreeFar());
+                .stopAndAdd(new InstantAction(() -> Outtake.MANUAL_VELOCITY = 4500))
+                .stopAndAdd(bot.actionShootThree());
 
         // spike 2
         builder = builder
@@ -55,7 +55,7 @@ public class FarAuto extends LinearOpMode {
                 .stopAndAdd(new InstantAction(() -> bot.outtake.enable()))
                 .setTangent(Math.toRadians(90))
                 .splineToSplineHeading(shoot, Math.toRadians(180))
-                .stopAndAdd(bot.actionShootThreeFar());
+                .stopAndAdd(bot.actionShootThree());
 
         builder = builder
                 .setTangent(Math.toRadians(0))
@@ -63,7 +63,7 @@ public class FarAuto extends LinearOpMode {
                 .splineToSplineHeading(hp, Math.toRadians(180))
                 .stopAndAdd(new InstantAction(() -> bot.outtake.enable()))
                 .strafeToSplineHeading(shoot.position, shoot.heading.log())
-                .stopAndAdd(bot.actionShootThreeFar())
+                .stopAndAdd(bot.actionShootThree())
                 .stopAndAdd(new InstantAction(() -> Outtake.MANUAL = false))
                 .strafeToSplineHeading(new Vector2d(shoot.position.x + 8, shoot.position.y), shoot.heading.log());
 

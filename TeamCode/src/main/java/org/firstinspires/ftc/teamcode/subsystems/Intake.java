@@ -22,43 +22,40 @@ public class Intake {
     public static double OUT_POWER = -1.0;
     public static double STORE_POWER = 0.2;
 
-    public static double GATE_OPEN = 0.0400;
+    public static double GATE_OPEN = 0.0200;
     public static double GATE_CLOSED = 0.1600;
+    
+    public static boolean AUTO_REVERSE = false;
 
     private boolean gateOpen = false;
 
-    public enum PossessionState {
-        NONE, ONE, TWO, THREE, OVER
-    }
+    public static double THREE_EMF_THRESHOLD = 3;
+    public static double THREE_EMF_TIME = 0.150;
 
-    public static double[] EMF_THRESHOLDS = {
-        4000, 2000, 1000, 500, 250
-    };
+    private static double JAM_TIME = 0.5;
 
-    public static boolean AUTO_REVERSE = false;
-
-    private PossessionState proposedState = PossessionState.NONE;
-    private PossessionState realState = PossessionState.NONE;
-
-
-    public static double EMF_TIME = 0.150;
-
-    private TriggeredTimer possessionConfirmationTimer;
-
-    public static double REVERSAL_POWER = -0.5;
-    public static double REVERSAL_TIME = 0.150;
+    private boolean threePossession = false;
+    private boolean jammed = false;
     private boolean shouldReverse = false;
+
+    public static double REVERSAL_POWER = -0.3;
+    public static double REVERSAL_TIME = 0.150;
+    private TriggeredTimer possessionConfirmationTimer;
+    private TriggeredTimer jamConfirmationTimer;
     private TriggeredTimer reversalTimer;
 
     private double setPower;
     private double emfResistance;
+
+    public static double FLYWHEEL_VELOCITY_DROPPING = 100;
 
 
     public Intake(LinearOpMode opMode) {
         motor = opMode.hardwareMap.get(DcMotorEx.class, "intake");
         gate = opMode.hardwareMap.get(Servo.class, "gate");
 
-        possessionConfirmationTimer = new TriggeredTimer(EMF_TIME);
+        possessionConfirmationTimer = new TriggeredTimer(THREE_EMF_TIME);
+        jamConfirmationTimer = new TriggeredTimer(JAM_TIME);
         reversalTimer = new TriggeredTimer(REVERSAL_TIME);
 
         closeGate();
@@ -117,54 +114,44 @@ public class Intake {
         }
     }
 
+    public boolean isThreePossession() {
+        return threePossession;
+    }
+
     public double getEMFResistance() {
         return emfResistance;
     }
 
-    public PossessionState getPossessionLevel() {
-        return realState;
+    public boolean isJammed() {
+        return jammed;
     }
 
-    private static PossessionState classifyResistance(double resistance) {
-        PossessionState[] states = PossessionState.values();
-        for (int i = 0; i < EMF_THRESHOLDS.length; i++) {
-            if (resistance > EMF_THRESHOLDS[i]) {
-                return states[i];
-            }
-        }
-        return PossessionState.OVER;
-    }
-    
     public void periodic() {
         double voltage = Bot.getInstance().getBatteryVoltage();
         emfResistance = (setPower == 0) ? 0 : voltage * setPower / motor.getCurrent(CurrentUnit.AMPS);
 
-        PossessionState raw = classifyResistance(emfResistance);
-
-        if (raw != proposedState) {
-            proposedState = raw;
-            possessionConfirmationTimer.reset();
-        }
-
-        if (possessionConfirmationTimer.periodic(true)) {
-            realState = proposedState;
-        }
-
         motor.setPower(setPower);
 
+        threePossession = possessionConfirmationTimer.periodic(setPower == 1.0 && emfResistance < THREE_EMF_THRESHOLD);
+        
         if (!AUTO_REVERSE)
             return;
 
-        if (realState == PossessionState.OVER && !shouldReverse) {
+        Bot bot = Bot.getInstance();
+
+        double error = bot.outtake.getTargetVelocity() - bot.outtake.getRealVelocity();
+        jammed = jamConfirmationTimer.periodic(bot.isShooting() && Math.abs(error) < FLYWHEEL_VELOCITY_DROPPING);
+
+        if (jammed) {
             shouldReverse = true;
-            reversalTimer.reset();
+            jamConfirmationTimer.reset();
         }
 
         if (shouldReverse) {
             motor.setPower(REVERSAL_POWER);
             if (reversalTimer.periodic(true)) {
-                shouldReverse = false;
                 reversalTimer.reset();
+                shouldReverse = false;
             }
         } else {
             reversalTimer.reset();

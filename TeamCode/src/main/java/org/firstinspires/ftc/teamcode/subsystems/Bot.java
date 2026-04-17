@@ -46,10 +46,12 @@ public class Bot {
     public VoltageSensor voltageSensor;
 
     public static double SHOOT_ONE_DELAY = 0.2;
-    public static double SHOOT_THREE_QUICKFIRE_DELAY = 1.25;
+    public static double SHOOT_ONE_DELAY_FAR = 0.2;
+    public static double SHOOT_THREE_QUICKFIRE_DELAY = 2;
     public static double FAR_SHOOTING_DISTANCE = 140;
 
     private boolean inShootingAction = false;
+    private boolean isShooting = true;
 
     private double batteryVoltage;
     private PoseVelocity2d robotVelocity;
@@ -113,7 +115,6 @@ public class Bot {
 
         telemetry.addData("Alliance", alliance.toString());
         telemetry.addData("\nIntake Resistance", intake.getEMFResistance());
-        telemetry.addData("Intake Possession Level", intake.getPossessionLevel().toString());
         telemetry.addData("\nOuttake Target Velocity", outtake.getTargetVelocity());
         telemetry.addData("Outtake Velocity", outtake.getRealVelocity());
         telemetry.addData("Outtake Motor Disconnected", outtake.isShooterMotorDisconnected());
@@ -205,9 +206,9 @@ public class Bot {
 
     public Action actionShootThreeFar() {
         return new SequentialAction(
-                actionShootOne(),
-                actionShootOne(),
-                actionShootOne()
+                actionShoot(SHOOT_ONE_DELAY_FAR),
+                actionShoot(SHOOT_ONE_DELAY_FAR),
+                actionShoot(SHOOT_ONE_DELAY_FAR)
         );
     }
 
@@ -218,9 +219,10 @@ public class Bot {
                 new InstantAction(() -> outtake.enable()),
                 new RRActions.WaitUntilAction(() -> outtake.inTolerance(), 0, 2),
                 new InstantAction(() -> intake.openGate()),
+                new InstantAction(() -> isShooting = true),
                 new SleepAction(time),
+                new InstantAction(() -> isShooting = false),
                 new InstantAction(() -> intake.closeGate()),
-                new InstantAction(() -> outtake.disable()),
                 new InstantAction(() -> inShootingAction = false)
         );
 
@@ -232,6 +234,10 @@ public class Bot {
 
     public boolean inShootingAction() {
         return inShootingAction;
+    }
+
+    public boolean isShooting() {
+        return isShooting;
     }
 
     public double getBatteryVoltage() {

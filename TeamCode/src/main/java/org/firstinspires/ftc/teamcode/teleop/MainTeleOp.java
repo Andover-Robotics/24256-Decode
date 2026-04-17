@@ -124,7 +124,7 @@ public class MainTeleOp extends LinearOpMode {
                 shooterDisconnectVibrated = false;
             }
 
-            if (bot.intake.getPossessionLevel() == Intake.PossessionState.THREE) {
+            if (bot.intake.isThreePossession()) {
                 gamepad1.setLedColor(0, 255, 0, Gamepad.LED_DURATION_CONTINUOUS);
                 if (!intakeVibrated) {
                     gamepad1.rumble(500);

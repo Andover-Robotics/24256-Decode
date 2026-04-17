@@ -25,7 +25,7 @@ public class Turret {
     private double angleToGoal;
     private double targetEncoderPosition;
 
-    public static double HIGH_LIMIT = Math.toRadians(45);
+    public static double HIGH_LIMIT = Math.toRadians(70);
     public static double LOW_LIMIT = Math.toRadians(-150);
 
     public static boolean MANUAL = false;

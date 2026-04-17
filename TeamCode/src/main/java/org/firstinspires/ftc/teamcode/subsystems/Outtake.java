@@ -17,6 +17,11 @@ public class Outtake {
     private DcMotorEx motor1;
     private DcMotorEx motor2;
 
+    private double emfResistance;
+
+    private double currentDrawOne;
+    private double currentDrawTwo;
+
     public static double kP = 0.016;
     public static double kI = 0;
     public static double kD = 0;
@@ -29,40 +34,24 @@ public class Outtake {
     private static final TreeMap<Double, Double> VELOCITY_LOOKUP_TABLE = new TreeMap<>();
 
     static {
-        VELOCITY_LOOKUP_TABLE.put(40.0, 3050.0);
-        VELOCITY_LOOKUP_TABLE.put(43.0, 3050.0);
-        VELOCITY_LOOKUP_TABLE.put(46.0, 3100.0);
-        VELOCITY_LOOKUP_TABLE.put(49.0, 3100.0);
-        VELOCITY_LOOKUP_TABLE.put(52.0, 3100.0);
-        VELOCITY_LOOKUP_TABLE.put(55.0, 3100.0);
-        VELOCITY_LOOKUP_TABLE.put(58.0, 3150.0);
-        VELOCITY_LOOKUP_TABLE.put(61.0, 3150.0);
-        VELOCITY_LOOKUP_TABLE.put(64.0, 3150.0);
-        VELOCITY_LOOKUP_TABLE.put(67.0, 3200.0);
-        VELOCITY_LOOKUP_TABLE.put(70.0, 3200.0);
-        VELOCITY_LOOKUP_TABLE.put(73.0, 3250.0);
-        VELOCITY_LOOKUP_TABLE.put(76.0, 3300.0);
-        VELOCITY_LOOKUP_TABLE.put(79.0, 3350.0);
-        VELOCITY_LOOKUP_TABLE.put(82.0, 3400.0);
-        VELOCITY_LOOKUP_TABLE.put(85.0, 3400.0);
-        VELOCITY_LOOKUP_TABLE.put(88.0, 3450.0);
-        VELOCITY_LOOKUP_TABLE.put(91.0, 3450.0);
-        VELOCITY_LOOKUP_TABLE.put(94.0, 3500.0);
-        VELOCITY_LOOKUP_TABLE.put(97.0, 3550.0);
-        VELOCITY_LOOKUP_TABLE.put(100.0, 3600.0);
-        VELOCITY_LOOKUP_TABLE.put(103.0, 3650.0);
-        VELOCITY_LOOKUP_TABLE.put(106.0, 3750.0);
-        VELOCITY_LOOKUP_TABLE.put(109.0, 3800.0);
-        VELOCITY_LOOKUP_TABLE.put(112.0, 3850.0);
-        VELOCITY_LOOKUP_TABLE.put(115.0, 3900.0);
-        VELOCITY_LOOKUP_TABLE.put(118.0, 3950.0);
-        VELOCITY_LOOKUP_TABLE.put(121.0, 4100.0);
-        VELOCITY_LOOKUP_TABLE.put(124.0, 4150.0);
-        VELOCITY_LOOKUP_TABLE.put(127.0, 4250.0);
-        VELOCITY_LOOKUP_TABLE.put(130.0, 4300.0);
-        VELOCITY_LOOKUP_TABLE.put(133.0, 4350.0);
-        VELOCITY_LOOKUP_TABLE.put(136.0, 4450.0);
-        VELOCITY_LOOKUP_TABLE.put(139.0, 4500.0);
+        VELOCITY_LOOKUP_TABLE.put(35.0, 2700.0);
+        VELOCITY_LOOKUP_TABLE.put(38.0, 2750.0);
+        VELOCITY_LOOKUP_TABLE.put(41.0, 2750.0);
+        VELOCITY_LOOKUP_TABLE.put(44.0, 2800.0);
+        VELOCITY_LOOKUP_TABLE.put(47.0, 2800.0);
+        VELOCITY_LOOKUP_TABLE.put(51.0, 2850.0);
+        VELOCITY_LOOKUP_TABLE.put(54.0, 2850.0);
+        VELOCITY_LOOKUP_TABLE.put(57.0, 2850.0);
+        VELOCITY_LOOKUP_TABLE.put(60.0, 2850.0);
+        VELOCITY_LOOKUP_TABLE.put(63.0, 2900.0);
+        VELOCITY_LOOKUP_TABLE.put(66.0, 2950.0);
+        VELOCITY_LOOKUP_TABLE.put(69.0, 2950.0);
+        VELOCITY_LOOKUP_TABLE.put(72.0, 3050.0);
+        VELOCITY_LOOKUP_TABLE.put(75.0, 3150.0);
+        VELOCITY_LOOKUP_TABLE.put(78.0, 3200.0);
+        VELOCITY_LOOKUP_TABLE.put(81.0, 3250.0);
+        VELOCITY_LOOKUP_TABLE.put(84.0, 3300.0);
+        VELOCITY_LOOKUP_TABLE.put(87.0, 3350.0);
     }
 
     public static double VELOCITY_TOLERANCE = 100;
@@ -151,8 +140,8 @@ public class Outtake {
         if (Math.abs(targetVelocity) < 0.001)
             return;
 
-        double currentDrawOne = motor1.getCurrent(CurrentUnit.MILLIAMPS);
-        double currentDrawTwo = motor2.getCurrent(CurrentUnit.MILLIAMPS) * -1.0;
+        currentDrawOne = motor1.getCurrent(CurrentUnit.MILLIAMPS);
+        currentDrawTwo = motor2.getCurrent(CurrentUnit.MILLIAMPS) * -1.0;
 
         if (enabled && (Math.abs(currentDrawOne) < 0.001 || Math.abs(currentDrawTwo) < 0.001))
             shooterMotorDisconnected = true;
@@ -161,12 +150,16 @@ public class Outtake {
             usingPrimaryEncoder = !usingPrimaryEncoder;
     }
 
+    public boolean isRunning() {
+        return enabled && targetVelocity != 0;
+    }
+
     public void periodic() {
         updateMotorData();
         targetVelocity = getVelocity();
         inTolerance = inToleranceTimer.periodic(Math.abs(targetVelocity - realVelocity) < VELOCITY_TOLERANCE);
 
-        if (!enabled || targetVelocity == 0) {
+        if (!isRunning()) {
             setPower(0);
             return;
         }
@@ -176,6 +169,8 @@ public class Outtake {
         double output = controller.calculate(targetVelocity, realVelocity);
 
         setPower(output / voltage);
+
+        emfResistance = voltage / (currentDrawOne + currentDrawTwo);
     }
 
     public boolean inTolerance() {
@@ -200,5 +195,9 @@ public class Outtake {
 
     public boolean isUsingPrimaryEncoder() {
         return usingPrimaryEncoder;
+    }
+
+    public double getEMFResistance() {
+        return emfResistance;
     }
 }
