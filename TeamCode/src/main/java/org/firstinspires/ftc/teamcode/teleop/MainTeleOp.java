@@ -127,7 +127,7 @@ public class MainTeleOp extends LinearOpMode {
             if (bot.intake.isThreePossession()) {
                 gamepad1.setLedColor(0, 255, 0, Gamepad.LED_DURATION_CONTINUOUS);
                 if (!intakeVibrated) {
-                    gamepad1.rumble(500);
+                    gamepad1.rumble(1000);
                     intakeVibrated = true;
                 }
             } else {
@@ -143,14 +143,16 @@ public class MainTeleOp extends LinearOpMode {
 
             if (gp1.getButton(GamepadKeys.Button.DPAD_DOWN)) {
                 bot.resetLocalizerTeleOp();
+                bot.turret.setAdjustable(0);
             }
 
             if (gp1.wasJustPressed(GamepadKeys.Button.A)) {
                 if (Bot.alliance == Bot.Alliance.RED) {
-                    bot.resetLocalizer(Bot.autoStartRedClose);
+                    bot.drive.localizer.setPose(Bot.autoStartRedClose);
                 } else {
-                    bot.resetLocalizer(Bot.autoStartBlueClose);
+                    bot.drive.localizer.setPose(Bot.autoStartBlueClose);
                 }
+                bot.turret.setAdjustable(0);
             }
 
             if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {

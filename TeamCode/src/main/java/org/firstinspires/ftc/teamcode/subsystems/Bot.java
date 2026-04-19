@@ -47,7 +47,7 @@ public class Bot {
 
     public static double SHOOT_ONE_DELAY = 0.2;
     public static double SHOOT_ONE_DELAY_FAR = 0.2;
-    public static double SHOOT_THREE_QUICKFIRE_DELAY = 2;
+    public static double SHOOT_THREE_QUICKFIRE_DELAY = 1.25;
     public static double FAR_SHOOTING_DISTANCE = 140;
 
     private boolean inShootingAction = false;

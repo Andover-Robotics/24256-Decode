@@ -6,7 +6,6 @@ import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -15,18 +14,21 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.auto.config.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Bot;
-import org.firstinspires.ftc.teamcode.subsystems.Outtake;
 
-@Autonomous(name = "Far Auto")
+@Autonomous(name = "Close Auto Playoffs")
 @Config
-public class FarAuto extends LinearOpMode {
+public class CloseAutoPlayoffs extends LinearOpMode {
     // Positions
-    public static Pose2d start = new Pose2d(-70.28 + 15.0 / 2, -24.0, Math.toRadians(0));
-    public static Pose2d preSpike3 = new Pose2d(-36, -39, Math.toRadians(-90));
+    public static Pose2d preSpike1 = new Pose2d(12, -28, Math.toRadians(-90));
+    public static Pose2d spike1 = new Pose2d(12, -48, Math.toRadians(-90));
+    public static Pose2d preSpike2 = new Pose2d(-12, -35, Math.toRadians(-90));
+    public static Pose2d spike2 = new Pose2d(-12, -54, Math.toRadians(-90));
+    public static Pose2d gate1 = new Pose2d(2, -60, Math.toRadians(0));
+    public static Pose2d gate2 = new Pose2d(2, -60, Math.toRadians(0));
+    public static Pose2d preSpike3 = new Pose2d(-36, -35, Math.toRadians(-90));
     public static Pose2d spike3 = new Pose2d(-36, -54, Math.toRadians(-90));
-    public static Pose2d preHp = new Pose2d(-40, -70.28 + 14.75 / 2, Math.toRadians(180));
-    public static Pose2d hp = new Pose2d(-70.28 + 15.0 / 2 + 2.5, -70.28 + 14.75 / 2, Math.toRadians(180));
-    public static Pose2d shoot = new Pose2d(start.position.x + 3, start.position.y, Math.toRadians(0));
+    public static Pose2d shoot = new Pose2d(30, -30, Math.toRadians(-53));
+    public static Pose2d shootEnd = new Pose2d(40, -24, Math.toRadians(-45));
 
     public Bot bot;
 
@@ -35,38 +37,49 @@ public class FarAuto extends LinearOpMode {
     public void buildAuto() {
         MecanumDrive drive = bot.drive;
 
-        drive.localizer.setPose(Bot.alliance == Bot.Alliance.RED ? start : Bot.mirror(start));
-        TrajectoryActionBuilder builder = drive.actionBuilderColor(start, Bot.alliance == Bot.Alliance.BLUE);
+        drive.localizer.setPose(Bot.alliance == Bot.Alliance.RED ? Bot.autoStartRedClose : Bot.autoStartBlueClose);
+        TrajectoryActionBuilder builder = drive.actionBuilderColor(Bot.autoStartRedClose, Bot.alliance == Bot.Alliance.BLUE);
 
         // preload
         builder = builder
                 .stopAndAdd(new InstantAction(() -> bot.intake.in()))
                 .stopAndAdd(new InstantAction(() -> bot.outtake.enable()))
                 .strafeToSplineHeading(shoot.position, shoot.heading.log())
-                .stopAndAdd(new InstantAction(() -> Outtake.MANUAL = true))
-                .stopAndAdd(new InstantAction(() -> Outtake.MANUAL_VELOCITY = 4500))
+                .stopAndAdd(bot.actionShootThree());
+
+        // spike 1
+        builder = builder
+                .setTangent(Math.toRadians(180))
+                .splineToSplineHeading(preSpike1, Math.toRadians(-90))
+                .splineToSplineHeading(spike1, Math.toRadians(-90))
+                .strafeToSplineHeading(gate1.position, gate1.heading.log())
+                .stopAndAdd(new InstantAction(() -> bot.outtake.enable()))
+                .setTangent(Math.toRadians(90))
+                .splineToSplineHeading(shoot, Math.toRadians(0))
                 .stopAndAdd(bot.actionShootThree());
 
         // spike 2
         builder = builder
-                .setTangent(Math.toRadians(0))
+                .setTangent(Math.toRadians(180))
+                .splineToSplineHeading(preSpike2, Math.toRadians(-90))
+                .splineToSplineHeading(spike2, Math.toRadians(-90))
+                .setTangent(Math.toRadians(90))
+                .splineToSplineHeading(gate2, Math.toRadians(-90))
+                .stopAndAdd(new InstantAction(() -> bot.outtake.enable()))
+                .setTangent(Math.toRadians(90))
+                .splineToSplineHeading(shoot, Math.toRadians(0))
+                .stopAndAdd(bot.actionShootThree());
+
+        // spike 3
+        builder = builder
+                .setTangent(Math.toRadians(180))
                 .splineToSplineHeading(preSpike3, Math.toRadians(-90))
                 .splineToSplineHeading(spike3, Math.toRadians(-90))
                 .stopAndAdd(new InstantAction(() -> bot.outtake.enable()))
                 .setTangent(Math.toRadians(90))
-                .splineToSplineHeading(shoot, Math.toRadians(180))
+                .splineToSplineHeading(shootEnd, Math.toRadians(0))
                 .stopAndAdd(bot.actionShootThree());
 
-        // hp
-        builder = builder
-                .setTangent(Math.toRadians(0))
-                .splineToSplineHeading(preHp, Math.toRadians(180))
-                .splineToSplineHeading(hp, Math.toRadians(180))
-                .stopAndAdd(new InstantAction(() -> bot.outtake.enable()))
-                .strafeToSplineHeading(shoot.position, shoot.heading.log())
-                .stopAndAdd(bot.actionShootThree())
-                .stopAndAdd(new InstantAction(() -> Outtake.MANUAL = false))
-                .strafeToSplineHeading(new Vector2d(shoot.position.x + 8, shoot.position.y), shoot.heading.log());
 
         builtAuto = builder.build();
     }
